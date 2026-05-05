@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="120dp"
+            android:height="120dp"
+            android:viewportWidth="120"
+            android:viewportHeight="120">
+
+            <!-- Background circle -->
+            <path
+                android:name="bg_circle"
+                android:pathData="M60,60 m-52,0 a52,52 0 1,0 104,0 a52,52 0 1,0 -104,0"
+                android:fillColor="#073642"
+                android:strokeWidth="0"/>
+
+            <!-- Heart rate line -->
+            <path
+                android:name="pulse_line"
+                android:pathData="M8,60 L30,60 L38,38 L46,82 L54,50 L62,70 L70,60 L112,60"
+                android:strokeColor="#2AA198"
+                android:strokeWidth="3.5"
+                android:fillColor="#00000000"
+                android:strokeLineCap="round"
+                android:strokeLineJoin="round"
+                android:trimPathStart="0"
+                android:trimPathEnd="0"/>
+
+            <!-- Center dot (pulse indicator) -->
+            <path
+                android:name="dot"
+                android:pathData="M60,60 m-5,0 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0"
+                android:fillColor="#2AA198"
+                android:strokeWidth="0"
+                android:scaleX="0"
+                android:scaleY="0"/>
+        </vector>
+    </aapt:attr>
+
+    <!-- Animate pulse line drawing from left to right -->
+    <target android:name="pulse_line">
+        <aapt:attr name="android:animation">
+            <set android:ordering="together">
+                <objectAnimator
+                    android:propertyName="trimPathEnd"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:duration="1200"
+                    android:startOffset="300"
+                    android:interpolator="@android:interpolator/accelerate_decelerate"/>
+                <objectAnimator
+                    android:propertyName="trimPathStart"
+                    android:valueFrom="0"
+                    android:valueTo="0.3"
+                    android:duration="900"
+                    android:startOffset="900"
+                    android:interpolator="@android:interpolator/accelerate_decelerate"/>
+            </set>
+        </aapt:attr>
+    </target>
+
+</animated-vector>

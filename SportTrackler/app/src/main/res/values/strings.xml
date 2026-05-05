@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FitnessTrainer</string>
+
+    <!-- Auth -->
+    <string name="login">Войти</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+    <string name="logout">Выйти</string>
+
+    <!-- Меню -->
+    <string name="menu_dashboard">Главная</string>
+    <string name="menu_measurements">Замеры</string>
+    <string name="menu_food">Питание</string>
+    <string name="menu_workout">Тренировки</string>
+    <string name="menu_photos">Фото</string>
+    <string name="menu_chat">Чат</string>
+
+    <!-- Замеры -->
+    <string name="weight_kg">Вес (кг)</string>
+    <string name="height_cm">Рост (см)</string>
+    <string name="chest_cm">Грудь (см)</string>
+    <string name="waist_cm">Талия (см)</string>
+    <string name="hips_cm">Бёдра (см)</string>
+    <string name="bicep_cm">Бицепс (см)</string>
+    <string name="body_fat">Жир (%)</string>
+    <string name="bmi">ИМТ</string>
+    <string name="add_measurement">Добавить замер</string>
+
+    <!-- Питание -->
+    <string name="breakfast">Завтрак</string>
+    <string name="lunch">Обед</string>
+    <string name="dinner">Ужин</string>
+    <string name="snack">Перекус</string>
+    <string name="calories">ккал</string>
+    <string name="protein">Белки</string>
+    <string name="fat">Жиры</string>
+    <string name="carbs">Углеводы</string>
+    <string name="search_food">Поиск продукта…</string>
+    <string name="add_to_diary">Добавить в дневник</string>
+
+    <!-- Тренировки -->
+    <string name="sets">подх.</string>
+    <string name="reps">повт.</string>
+    <string name="rest">Отдых</string>
+    <string name="sec">сек</string>
+    <string name="mark_done">Отметить выполненным</string>
+
+    <!-- Общее -->
+    <string name="save">Сохранить</string>
+    <string name="cancel">Отмена</string>
+    <string name="delete">Удалить</string>
+    <string name="no_data">Нет данных</string>
+    <string name="loading">Загрузка…</string>
+    <string name="error_connection">Нет подключения к серверу</string>
+</resources>

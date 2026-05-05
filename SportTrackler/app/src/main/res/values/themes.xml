@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ===== DEFAULT (Light) Theme ===== -->
+    <style name="Theme.FitnessTrainer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/md_primary</item>
+        <item name="colorPrimaryDark">@color/md_primary_variant</item>
+        <item name="colorAccent">@color/md_secondary</item>
+        <item name="android:windowBackground">@color/md_background</item>
+        <item name="android:statusBarColor">@color/md_background</item>
+        <item name="android:navigationBarColor">@color/md_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- ===== SOLARIZED DARK Theme ===== -->
+    <style name="Theme.FitnessTrainer.SolarizedDark" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/sol_cyan</item>
+        <item name="colorPrimaryDark">@color/sol_base02</item>
+        <item name="colorAccent">@color/sol_blue</item>
+        <item name="colorSurface">@color/sol_base02</item>
+        <item name="android:windowBackground">@color/sol_base03</item>
+        <item name="android:statusBarColor">@color/sol_base03</item>
+        <item name="android:navigationBarColor">@color/sol_base02</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:textColorPrimary">@color/sol_base1</item>
+        <item name="android:textColorSecondary">@color/sol_base0</item>
+        <item name="android:textColorHint">@color/sol_base01</item>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- Splash — always dark, fullscreen -->
+    <style name="Theme.FitnessTrainer.Splash" parent="Theme.FitnessTrainer.SolarizedDark">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/sol_base03</item>
+        <item name="android:navigationBarColor">@color/sol_base03</item>
+    </style>
+
+    <!-- Card -->
+    <style name="CardStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- Outlined input -->
+    <style name="InputField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+    </style>
+
+    <!-- Primary button -->
+    <style name="PrimaryButton" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+</resources>

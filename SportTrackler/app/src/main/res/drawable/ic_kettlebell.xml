@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Kettlebell handle (top arc) -->
+    <path
+        android:strokeColor="#CB4B16"
+        android:strokeWidth="2"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M8,10 C8,6 16,6 16,10"/>
+
+    <!-- Kettlebell body (circle) -->
+    <path
+        android:fillColor="#CB4B16"
+        android:pathData="M4,14 C4,9.5 8,7 12,7 C16,7 20,9.5 20,14 C20,18.5 16.5,22 12,22 C7.5,22 4,18.5 4,14 Z"/>
+
+    <!-- Handle top flat -->
+    <path
+        android:fillColor="#CB4B16"
+        android:pathData="M7,10 h10 v2 h-10 Z"/>
+
+    <!-- Shine highlight -->
+    <path
+        android:fillColor="#FDF6E3"
+        android:fillAlpha="0.2"
+        android:pathData="M8,12 C7,13.5 7,16 8,17.5 C7,15.5 7,13 8,12 Z"/>
+</vector>

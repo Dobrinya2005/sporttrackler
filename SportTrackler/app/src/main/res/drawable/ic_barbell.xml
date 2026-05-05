@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="24dp"
+    android:viewportWidth="48"
+    android:viewportHeight="24">
+
+    <!-- Barbell: outer plates + collars + bar -->
+    <path
+        android:fillColor="#268BD2"
+        android:pathData="M1,5 h6 v3 h3 v2 h28 v-2 h3 v-3 h6 v14 h-6 v-3 h-3 v-2 h-28 v2 h-3 v3 h-6 Z"/>
+</vector>

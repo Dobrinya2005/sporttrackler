@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingHorizontal="4dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="6dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/tv_meal_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/sol_base1"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium"/>
+
+    <TextView
+        android:id="@+id/tv_meal_calories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/sol_base01"
+        android:textSize="13sp"
+        android:layout_marginEnd="8dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_food"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:text="+ Добавить"
+        android:textColor="@color/sol_cyan"
+        android:textSize="12sp"
+        android:paddingHorizontal="10dp"
+        app:strokeColor="@color/sol_cyan"
+        app:cornerRadius="8dp"/>
+
+</LinearLayout>

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Remove-Item -Recurse -Force \"$env:USERPROFILE\\\\.gradle\\\\caches\" -ErrorAction SilentlyContinue; Write-Host \"Кэш Gradle очищен\")",
+      "PowerShell(Get-ChildItem \"$env:USERPROFILE\\\\.gradle\\\\config.properties\" -ErrorAction SilentlyContinue)",
+      "Bash(dir \"c:\\\\Users\\\\neerm\\\\OneDrive\\\\Desktop\\\\ПРЕДДИМЛОМНАЯ ПРАККТИКА\\\\SportTrackler\\\\app\\\\src\\\\main\")",
+      "Bash(dir \"c:\\\\Users\\\\neerm\\\\OneDrive\\\\Desktop\\\\ПРЕДДИМЛОМНАЯ ПРАККТИКА\\\\SportTrackler\\\\app\\\\src\\\\main\\\\java\" -Recurse)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet ef *)"
+    ]
+  }
+}

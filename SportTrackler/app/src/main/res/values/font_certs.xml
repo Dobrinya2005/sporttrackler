@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="com_google_android_gms_fonts_certs">
+        <item>@array/com_google_android_gms_fonts_certs_dev</item>
+        <item>@array/com_google_android_gms_fonts_certs_prod</item>
+    </array>
+
+    <string-array name="com_google_android_gms_fonts_certs_dev">
+        <item>
+            MIIEqDCCA5CgAwIBAgIJANWFuGx90071MA0GCSqGSIb3DQEBBAUAMIGUMQswCQYD
+            VQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FudGEgTW9u
+            aWNhMREwDwYDVQQKEwhBbmRyb2lkMRAwDgYDVQQLEwdBbmRyb2lkMRAwDgYDVQQD
+            EwdBbmRyb2lkMSEwHwYJKoZIhvcNAQkBFhJhbmRyb2lkQGFuZHJvaWQuY29tMB4X
+            DTExMDkxNDIzMzU1NloXDTQxMDkwNjIzMzU1NlowgZQxCzAJBgNVBAYTAlVTMRMw
+            EQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW50YSBNb25pY2ExETAPBgNV
+            BAoTCEFuZHJvaWQxEDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWQx
+            ITAfBgkqhkiG9w0BCQEWEmFuZHJvaWRAYW5kcm9pZC5jb20wggEiMA0GCSqGSIb3
+            DQEBAQUAA4IBDwAwggEKAoIBAQC2q8vCbzCmm8ZwFh0A/7B5Wrc8BjqvBFbPh9Dp
+            KiqmrXqxnEp1IZzRTCFGvnHqQqf9xQFDuGdXAGqIacmPsOhEfxmkFvFvFqCEiGJW
+            aXI1mIYIAqWbhxjcSdYGkbgBQqFOI2EvGKEEjYNJEjy2M01tRPpbTPZsIDyZkBKP
+            z1E5tz5zEGl4bfRXIf/dGCEYY7h8vdkN6rHUmG0T5vXAuXfnKBWj3YXXvQyHm2+O
+            5xTTpjn1JA23O/FVZn8BVbnMRJOjGt5XJGVQ0l5KzN1GaTEWMmB3X4KNz7lTEjZI
+            5qCvBm5j3E1NvN5FzS3N0mVCR1QoVBknIaJFJIBFIIkwXKP7RZCBp4OGBMQqAJXE
+            nIR2ggAgMBAAGjgfQwgfEwHQYDVR0OBBYEFIx/PinrVBqQs3+gNe89LYZ4VBTxMIG
+            BBgNVHSMEgbkwgbaAFIx/PinrVBqQs3+gNe89LYZ4VBTxoYGapIGXMIGUMQswCQYD
+            VQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FudGEgTW9u
+            aWNhMREwDwYDVQQKEwhBbmRyb2lkMRAwDgYDVQQLEwdBbmRyb2lkMRAwDgYDVQQD
+            EwdBbmRyb2lkMSEwHwYJKoZIhvcNAQkBFhJhbmRyb2lkQGFuZHJvaWQuY29tggkA
+            1YW4bH3TjjcwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQQFAAOCAQEACnbUDpCL
+            TmTBGWZzL4BEmAWFqpWA8M/mCiS0BPMB0GpUH4zSLFRygCiWiuFi7wqt6Z5GQ==
+        </item>
+    </string-array>
+
+    <string-array name="com_google_android_gms_fonts_certs_prod">
+        <item>
+            MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHMxCzAJBgNV
+            BAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBW
+            aWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjETMBEGA1UECxMKR29vZ2xlIElUMQ4w
+            DAYDVQQDEwVHb29nbGUwHhcNMDgwNzE1MDI1MzI1WhcNMzUxMTMwMDI1MzI1WjBz
+            MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91
+            bnRhaW4gVmlldzEUMBIGA1UEChMLR29vZ2xlIEluYy4xEzARBgNVBAsTCkdvb2ds
+            ZSBJVDEOMAwGA1UEAxMFR29vZ2xlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+            CgKCAQEA2a2rwplBQLzHPZe5RJb0vCKpBLmJFYxHGMCy20bPZnpQJg/8lOwvmEqL
+            OGTJiHpV+0gd+E3nAB1L4nFKV15J5/HZZ6tKJuQo2jWuJqSqHFoXTJGfAFTHEG+P
+            iDDWKJEBHFoXiNLMOuOFQOMW/gvS9sMSLFVHkQ2XP0LY9f/VY5HiJT+BO9Xqe8/v
+            3d8bE5W+ZNnOFD34BQUI6a5a9ZDMRJQ1J3zp5fKYjNL3QrHbEiQDhB2kF+KqfOEi
+            B5t2rRL3Z45r4fHdxSfHr+UVUd9EwgbL0IPwdRVi67OqRNUd0zj/I4s5VF6tCi2i
+            IQ7sVmT4Sm5M6z3SyqCKwIDAQABo2YwZDAdBgNVHQ4EFgQUkJv+E+shNJGFp2G0v
+            0HgXo3s2sMwHwYDVR0jBBgwFoAUkJv+E+shNJGFp2G0v0HgXo3s2sMwEgYDVR0T
+            AQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAQYwDQYJKoZIhvcNAQEFBQADggEB
+            AHpYnMeAhAWpNaExVlGQe+2Q6M4TFhvkK7F4M2P+8mkCHJDLUW7oHcBdB0WBGB/I
+            3lNKI9cGFj7hhPYbYLX95v2TdZaRi9u/p5qUCb+2kNBqLSF+1oCL/L6C+j/JkAbX
+            j5SFa1I+VBOG2B+H9I1EVFN1VH25TsX2LoHk1h5nAg5nMf2pDGP7W8n8XN/35ISn
+            UiV7uU+2fP9S3n8FQRH1KU0Hh18Ge+Q0hn3hOXJ7LPqt7L9Y1EZN5U+9S0bXJRz
+            f6mYQ40gYnGr0f7u7fE9i/KFQ6fvd+KWM5L7U9cG5F+TN3JCGH2ZD7fByOp1RVIr
+            LRQPkp/pXgN3Ng=
+        </item>
+    </string-array>
+</resources>

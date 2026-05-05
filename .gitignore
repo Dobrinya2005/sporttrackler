@@ -1,0 +1,32 @@
+# ===== .NET / ASP.NET Core =====
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.swp
+*.sln.docstates
+appsettings.Development.json
+firebase-credentials.json
+
+# ===== Android / Gradle =====
+.gradle/
+.idea/
+*.iml
+local.properties
+*.keystore
+*.jks
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+google-services.json
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Logs =====
+*.log
+logs/
