@@ -33,6 +33,18 @@ public class ChatHub(IChatService chatService, IFcmService fcmService) : Hub
     }
 
     // Клиент запрашивает статус контакта — ответ приходит через событие UserStatusChanged
+    public async Task SendTyping(int receiverId, string typingType)
+    {
+        var senderId = GetUserId();
+        await Clients.User(receiverId.ToString()).SendAsync("ReceiveTyping", senderId, typingType);
+    }
+
+    public async Task StopTyping(int receiverId)
+    {
+        var senderId = GetUserId();
+        await Clients.User(receiverId.ToString()).SendAsync("ReceiveStopTyping", senderId);
+    }
+
     public async Task GetUserStatus(int targetUserId)
     {
         var isOnline = _online.ContainsKey(targetUserId);

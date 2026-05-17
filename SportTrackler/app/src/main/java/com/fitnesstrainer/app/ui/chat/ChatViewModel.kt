@@ -49,6 +49,11 @@ class ChatViewModel : ViewModel() {
     private val _uploadError = MutableLiveData<String?>(null)
     val uploadError: LiveData<String?> = _uploadError
 
+    private val _typingStatus = MutableLiveData<String?>(null)
+    val typingStatus: LiveData<String?> = _typingStatus
+    private val typingClearHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val typingClearRunnable = Runnable { _typingStatus.postValue(null) }
+
     private var hubConnection: HubConnection? = null
     private var contactId = -1
 
@@ -123,6 +128,26 @@ class ChatViewModel : ViewModel() {
             _messages.postValue(list)
         }, MessageDto::class.java)
 
+        hubConnection?.on("ReceiveTyping", { senderId: Int, typingType: String ->
+            if (senderId == contactId) {
+                val label = when (typingType) {
+                    "voice" -> "Записывает голосовое..."
+                    "video" -> "Записывает видеосообщение..."
+                    else    -> "Печатает..."
+                }
+                _typingStatus.postValue(label)
+                typingClearHandler.removeCallbacks(typingClearRunnable)
+                typingClearHandler.postDelayed(typingClearRunnable, 5000)
+            }
+        }, Int::class.java, String::class.java)
+
+        hubConnection?.on("ReceiveStopTyping", { senderId: Int ->
+            if (senderId == contactId) {
+                typingClearHandler.removeCallbacks(typingClearRunnable)
+                _typingStatus.postValue(null)
+            }
+        }, Int::class.java)
+
         hubConnection?.on("UserStatusChanged", { changedUserId: Int, isOnline: Boolean, lastSeen: String ->
             if (changedUserId == contactId) {
                 _contactStatus.postValue(ContactStatus(isOnline, lastSeen.ifBlank { null }))
@@ -145,6 +170,18 @@ class ChatViewModel : ViewModel() {
             } catch (_: Exception) {
                 _connectionState.postValue(false)
             }
+        }
+    }
+
+    fun sendTyping(type: String = "text") {
+        viewModelScope.launch(Dispatchers.IO) {
+            try { hubConnection?.send("SendTyping", contactId, type) } catch (_: Exception) {}
+        }
+    }
+
+    fun stopTyping() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try { hubConnection?.send("StopTyping", contactId) } catch (_: Exception) {}
         }
     }
 
@@ -252,6 +289,7 @@ class ChatViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+        typingClearHandler.removeCallbacks(typingClearRunnable)
         try { hubConnection?.stop() } catch (_: Exception) {}
         mediaRecorder?.release()
     }

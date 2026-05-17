@@ -40,6 +40,9 @@ class ChatFragment : Fragment() {
     private lateinit var adapter: ChatAdapter
     private var infoVisible = false
 
+    private val typingStopHandler = Handler(Looper.getMainLooper())
+    private val typingStopRunnable = Runnable { viewModel.stopTyping() }
+
     private var recordingSeconds = 0
     private var isRecordingLocked = false
     private var isPaused = false
@@ -175,6 +178,26 @@ class ChatFragment : Fragment() {
                 Toast.makeText(requireContext(), err, Toast.LENGTH_SHORT).show()
         }
 
+        viewModel.typingStatus.observe(viewLifecycleOwner) { typing ->
+            val tv = binding.tvConnectionStatus
+            if (!typing.isNullOrBlank()) {
+                tv.visibility = View.VISIBLE
+                tv.text = typing
+                tv.setTextColor(android.graphics.Color.parseColor("#89b4fa"))
+            } else {
+                // восстанавливаем статус онлайн/оффлайн
+                viewModel.contactStatus.value?.let { status ->
+                    if (status.isOnline) {
+                        tv.text = "● в сети"
+                        tv.setTextColor(android.graphics.Color.parseColor("#00E596"))
+                    } else {
+                        tv.text = formatLastSeen(status.lastSeen)
+                        tv.setTextColor(android.graphics.Color.parseColor("#888888"))
+                    }
+                }
+            }
+        }
+
         binding.btnVideoNote.setOnClickListener { openVideoNoteRecorder() }
 
         // Show send/mic/vidnote based on text content
@@ -184,6 +207,14 @@ class ChatFragment : Fragment() {
                 binding.btnSend.visibility      = if (hasText) View.VISIBLE else View.GONE
                 binding.btnMic.visibility       = if (hasText) View.GONE  else View.VISIBLE
                 binding.btnVideoNote.visibility = if (hasText) View.GONE  else View.VISIBLE
+                if (hasText) {
+                    viewModel.sendTyping("text")
+                    typingStopHandler.removeCallbacks(typingStopRunnable)
+                    typingStopHandler.postDelayed(typingStopRunnable, 3000)
+                } else {
+                    typingStopHandler.removeCallbacks(typingStopRunnable)
+                    viewModel.stopTyping()
+                }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -192,6 +223,8 @@ class ChatFragment : Fragment() {
         binding.btnSend.setOnClickListener {
             val text = binding.etMessage.text.toString().trim()
             if (text.isNotEmpty()) {
+                typingStopHandler.removeCallbacks(typingStopRunnable)
+                viewModel.stopTyping()
                 viewModel.sendMessage(text)
                 binding.etMessage.setText("")
             }
@@ -279,8 +312,10 @@ class ChatFragment : Fragment() {
         }
         val sheet = VideoNoteBottomSheet()
         sheet.onVideoReady = { file ->
+            viewModel.stopTyping()
             viewModel.sendMediaFile(file, "video/mp4", "video_note")
         }
+        viewModel.sendTyping("video")
         sheet.show(parentFragmentManager, "video_note")
     }
 
@@ -313,6 +348,7 @@ class ChatFragment : Fragment() {
         binding.layoutLockedControls.visibility = View.GONE
         binding.tvRecordingTime.text = "0:00"
         recordingHandler.post(recordingTicker)
+        viewModel.sendTyping("voice")
     }
 
     private fun lockRecording() {
@@ -343,6 +379,7 @@ class ChatFragment : Fragment() {
         isPaused = false
         binding.recordingPanel.visibility = View.GONE
         binding.inputPanel.visibility     = View.VISIBLE
+        viewModel.stopTyping()
         viewModel.stopVoiceRecordingAndSend()
     }
 
@@ -352,6 +389,7 @@ class ChatFragment : Fragment() {
         isPaused = false
         binding.recordingPanel.visibility = View.GONE
         binding.inputPanel.visibility     = View.VISIBLE
+        viewModel.stopTyping()
         viewModel.cancelVoiceRecording()
     }
 
@@ -390,6 +428,7 @@ class ChatFragment : Fragment() {
 
     override fun onDestroyView() {
         recordingHandler.removeCallbacks(recordingTicker)
+        typingStopHandler.removeCallbacks(typingStopRunnable)
         super.onDestroyView()
         _binding = null
     }
