@@ -44,42 +44,43 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                 Subject    = mailSubject,
                 IsBodyHtml = true,
                 Body       = $"""
-                    <div style="font-family:Arial,sans-serif;max-width:420px;margin:0 auto;background:#1e1e2e;color:#cdd6f4;border-radius:16px;overflow:hidden;">
-                      <!-- header strip -->
-                      <div style="background:linear-gradient(135deg,#1a1f45 0%,#252545 100%);padding:20px 28px 16px;border-bottom:1px solid #313244;">
-                        <table width="100%" cellpadding="0" cellspacing="0"><tr>
-                          <td>
-                            <span style="font-size:20px;font-weight:bold;color:#89b4fa;letter-spacing:0.5px;">SportTrackler</span>
-                          </td>
-                          <td align="right">
-                            <!-- dumbbell icon (SVG inline) -->
-                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.55;vertical-align:middle;">
-                              <rect x="1.5" y="9" width="3" height="6" rx="1.5" fill="#89b4fa"/>
-                              <rect x="4.5" y="7" width="2.5" height="10" rx="1.25" fill="#89b4fa"/>
-                              <rect x="7" y="11" width="10" height="2" rx="1" fill="#89b4fa"/>
-                              <rect x="17" y="7" width="2.5" height="10" rx="1.25" fill="#89b4fa"/>
-                              <rect x="19.5" y="9" width="3" height="6" rx="1.5" fill="#89b4fa"/>
-                            </svg>
-                          </td>
-                        </tr></table>
-                      </div>
-                      <!-- body -->
-                      <div style="position:relative;padding:28px 28px 24px;overflow:hidden;">
-                        <!-- watermark dumbbell -->
-                        <div style="position:absolute;right:-10px;bottom:-10px;opacity:0.06;pointer-events:none;">
-                          <svg width="160" height="160" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="1.5" y="9" width="3" height="6" rx="1.5" fill="#cdd6f4"/>
-                            <rect x="4.5" y="7" width="2.5" height="10" rx="1.25" fill="#cdd6f4"/>
-                            <rect x="7" y="11" width="10" height="2" rx="1" fill="#cdd6f4"/>
-                            <rect x="17" y="7" width="2.5" height="10" rx="1.25" fill="#cdd6f4"/>
-                            <rect x="19.5" y="9" width="3" height="6" rx="1.5" fill="#cdd6f4"/>
-                          </svg>
-                        </div>
-                        <p style="margin:0 0 16px;color:#cdd6f4;font-size:15px;">{mailHeading}</p>
-                        <div style="font-size:42px;font-weight:bold;letter-spacing:14px;color:#a6e3a1;padding:12px 0;font-family:monospace;">{code}</div>
-                        <p style="margin:20px 0 0;color:#6c7086;font-size:13px;">Код действителен 10 минут.</p>
-                      </div>
-                    </div>
+                    <table width="100%" cellpadding="0" cellspacing="0" style="font-family:Arial,sans-serif;background:#f4f4f8;">
+                      <tr><td align="center" style="padding:32px 16px;">
+                        <table width="420" cellpadding="0" cellspacing="0" style="background:#1e1e2e;border-radius:16px;overflow:hidden;max-width:420px;">
+                          <!-- header -->
+                          <tr>
+                            <td style="background:#1a1f45;padding:18px 24px;border-bottom:1px solid #313244;">
+                              <table width="100%" cellpadding="0" cellspacing="0"><tr>
+                                <td style="color:#89b4fa;font-size:20px;font-weight:bold;letter-spacing:0.5px;">
+                                  🏋️ SportTrackler
+                                </td>
+                              </tr></table>
+                            </td>
+                          </tr>
+                          <!-- body -->
+                          <tr>
+                            <td style="padding:28px 24px 8px;">
+                              <p style="margin:0 0 20px;color:#cdd6f4;font-size:15px;">{mailHeading}</p>
+                              <!-- code row: code left, watermark emoji right -->
+                              <table width="100%" cellpadding="0" cellspacing="0"><tr>
+                                <td style="font-size:44px;font-weight:bold;letter-spacing:10px;color:#a6e3a1;font-family:monospace;vertical-align:middle;">
+                                  {code}
+                                </td>
+                                <td align="right" style="font-size:72px;color:#2a2a40;vertical-align:middle;padding-left:8px;">
+                                  🏋️
+                                </td>
+                              </tr></table>
+                            </td>
+                          </tr>
+                          <!-- footer -->
+                          <tr>
+                            <td style="padding:16px 24px 24px;border-top:1px solid #313244;">
+                              <p style="margin:0;color:#6c7086;font-size:12px;">Код действителен 10 минут. Не передавайте его никому.</p>
+                            </td>
+                          </tr>
+                        </table>
+                      </td></tr>
+                    </table>
                     """
             };
             mail.To.Add(toEmail);
