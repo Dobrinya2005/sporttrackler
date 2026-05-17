@@ -65,10 +65,10 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                               <!-- code row with watermark -->
                               <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                  <td style="font-size:44px;font-weight:bold;letter-spacing:10px;color:#a6e3a1;font-family:monospace;padding:10px 0 0 0;vertical-align:bottom;">
+                                  <td style="font-size:44px;font-weight:bold;letter-spacing:10px;color:#a6e3a1;font-family:monospace;padding:8px 0 0 0;vertical-align:middle;">
                                     {code}
                                   </td>
-                                  <td align="right" width="150" style="vertical-align:bottom;padding-bottom:0;">
+                                  <td align="right" width="150" style="vertical-align:middle;">
                                     <img src="http://185.185.71.46:5001/icon-wm.png" width="150" height="150" alt="" style="display:block;border-radius:32px;"/>
                                   </td>
                                 </tr>
