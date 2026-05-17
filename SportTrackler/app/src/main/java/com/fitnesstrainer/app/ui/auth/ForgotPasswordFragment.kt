@@ -50,7 +50,7 @@ class ForgotPasswordFragment : Fragment() {
                 val resp = App.instance.apiService.forgotPassword(SendCodeRequest(email))
                 if (resp.isSuccessful) {
                     val args = Bundle().apply { putString("email", email) }
-                    findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetPasswordFragment, args)
+                    findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetPasswordCodeFragment, args)
                 } else {
                     val msg = resp.errorBody()?.string()?.let {
                         try { org.json.JSONObject(it).getString("message") } catch (_: Exception) { null }

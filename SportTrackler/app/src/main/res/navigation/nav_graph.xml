@@ -59,7 +59,24 @@
         android:name="com.fitnesstrainer.app.ui.auth.ForgotPasswordFragment"
         android:label="Забыли пароль">
         <action
-            android:id="@+id/action_forgotPasswordFragment_to_resetPasswordFragment"
+            android:id="@+id/action_forgotPasswordFragment_to_resetPasswordCodeFragment"
+            app:destination="@id/resetPasswordCodeFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/resetPasswordCodeFragment"
+        android:name="com.fitnesstrainer.app.ui.auth.ResetPasswordCodeFragment"
+        android:label="Код подтверждения">
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue=""/>
+        <action
+            android:id="@+id/action_resetPasswordCodeFragment_to_resetPasswordFragment"
             app:destination="@id/resetPasswordFragment"
             app:enterAnim="@anim/nav_slide_in_right"
             app:exitAnim="@anim/nav_slide_out_left"
@@ -73,6 +90,10 @@
         android:label="Новый пароль">
         <argument
             android:name="email"
+            app:argType="string"
+            android:defaultValue=""/>
+        <argument
+            android:name="code"
             app:argType="string"
             android:defaultValue=""/>
     </fragment>

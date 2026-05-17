@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         R.id.adminReviewsFragment,
         R.id.adminSettingsFragment,
         R.id.forgotPasswordFragment,
+        R.id.resetPasswordCodeFragment,
         R.id.resetPasswordFragment
     )
 
