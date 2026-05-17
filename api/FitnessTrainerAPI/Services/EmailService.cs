@@ -51,8 +51,9 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                           <tr>
                             <td style="background:#1a1f45;padding:18px 24px;border-bottom:1px solid #313244;">
                               <table width="100%" cellpadding="0" cellspacing="0"><tr>
-                                <td style="color:#89b4fa;font-size:20px;font-weight:bold;letter-spacing:0.5px;">
-                                  🏋️ SportTrackler
+                                <td style="vertical-align:middle;">
+                                  <img src="http://185.185.71.46:5001/icon.png" width="36" height="36" alt="SportTrackler" style="vertical-align:middle;border-radius:8px;margin-right:10px;"/>
+                                  <span style="color:#89b4fa;font-size:20px;font-weight:bold;letter-spacing:0.5px;vertical-align:middle;">SportTrackler</span>
                                 </td>
                               </tr></table>
                             </td>
@@ -61,13 +62,13 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                           <tr>
                             <td style="padding:28px 24px 8px;">
                               <p style="margin:0 0 20px;color:#cdd6f4;font-size:15px;">{mailHeading}</p>
-                              <!-- code row: code left, watermark emoji right -->
+                              <!-- code row: code left, watermark icon right -->
                               <table width="100%" cellpadding="0" cellspacing="0"><tr>
                                 <td style="font-size:44px;font-weight:bold;letter-spacing:10px;color:#a6e3a1;font-family:monospace;vertical-align:middle;">
                                   {code}
                                 </td>
-                                <td align="right" style="font-size:72px;color:#2a2a40;vertical-align:middle;padding-left:8px;">
-                                  🏋️
+                                <td align="right" style="vertical-align:middle;padding-left:8px;opacity:0.15;">
+                                  <img src="http://185.185.71.46:5001/icon.png" width="72" height="72" alt="" style="border-radius:16px;filter:grayscale(100%) brightness(2);opacity:0.15;"/>
                                 </td>
                               </tr></table>
                             </td>
