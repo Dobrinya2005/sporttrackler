@@ -142,6 +142,61 @@ public class AdminController(AppDbContext db) : ControllerBase
         return Ok(new { message = "Тренер удалён" });
     }
 
+    // GET api/admin/clients
+    [HttpGet("clients")]
+    public async Task<IActionResult> GetClients()
+    {
+        var clientRole = await db.Roles.FirstAsync(r => r.RoleName == "Client");
+        var clients = await db.ClientProfiles
+            .Include(cp => cp.User)
+            .Include(cp => cp.Trainer)
+            .Select(cp => new
+            {
+                userId      = cp.UserId,
+                firstName   = cp.User.FirstName,
+                lastName    = cp.User.LastName,
+                email       = cp.User.Email,
+                phone       = cp.User.Phone,
+                avatarUrl   = cp.User.AvatarUrl,
+                isActive    = cp.User.IsActive,
+                createdAt   = cp.User.CreatedAt,
+                trainerName = cp.Trainer != null
+                    ? cp.Trainer.FirstName + " " + cp.Trainer.LastName
+                    : null,
+                trainerId   = (int?)cp.TrainerId
+            })
+            .OrderByDescending(c => c.createdAt)
+            .ToListAsync();
+        return Ok(clients);
+    }
+
+    // PUT api/admin/clients/{id}/block
+    [HttpPut("clients/{id:int}/block")]
+    public async Task<IActionResult> ToggleClientBlock(int id)
+    {
+        var u = await db.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.UserId == id);
+        if (u is null || u.Role.RoleName != "Client")
+            return NotFound(new { message = "Клиент не найден" });
+        u.IsActive = !u.IsActive;
+        await db.SaveChangesAsync();
+        return Ok(new { isActive = u.IsActive });
+    }
+
+    // DELETE api/admin/clients/{id}
+    [HttpDelete("clients/{id:int}")]
+    public async Task<IActionResult> DeleteClient(int id)
+    {
+        var user = await db.Users
+            .Include(u => u.Role)
+            .Include(u => u.ClientProfile)
+            .FirstOrDefaultAsync(u => u.UserId == id);
+        if (user is null || user.Role.RoleName != "Client")
+            return NotFound(new { message = "Клиент не найден" });
+        db.Users.Remove(user);
+        await db.SaveChangesAsync();
+        return Ok(new { message = "Клиент удалён" });
+    }
+
     // GET api/admin/trainers/{id}/reviews
     [HttpGet("trainers/{id:int}/reviews")]
     public async Task<IActionResult> GetReviews(int id)
