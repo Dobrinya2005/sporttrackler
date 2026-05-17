@@ -67,8 +67,8 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                                 <td style="font-size:44px;font-weight:bold;letter-spacing:10px;color:#a6e3a1;font-family:monospace;vertical-align:middle;">
                                   {code}
                                 </td>
-                                <td align="right" style="vertical-align:middle;padding-left:8px;">
-                                  <img src="http://185.185.71.46:5001/icon.png" width="180" height="180" alt="" style="border-radius:40px;opacity:0.1;"/>
+                                <td align="right" width="130" style="vertical-align:middle;padding-left:8px;overflow:hidden;">
+                                  <img src="http://185.185.71.46:5001/icon.png" width="180" height="180" alt="" style="border-radius:40px;opacity:0.1;display:block;margin-left:auto;margin-right:-24px;"/>
                                 </td>
                               </tr></table>
                             </td>
