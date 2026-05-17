@@ -80,8 +80,24 @@ public class UserController(AppDbContext db, IWebHostEnvironment env) : Controll
         return Ok(new { message = "Телефон обновлён" });
     }
 
+    // PUT api/user/profile — обновить имя/фамилию/телефон
+    [HttpPut("profile")]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest req)
+    {
+        var userId = GetUserId();
+        var user = await db.Users.FindAsync(userId);
+        if (user is null) return NotFound();
+        if (!string.IsNullOrWhiteSpace(req.FirstName)) user.FirstName = req.FirstName.Trim();
+        if (!string.IsNullOrWhiteSpace(req.LastName))  user.LastName  = req.LastName.Trim();
+        if (req.Phone != null) user.Phone = req.Phone.Trim();
+        user.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        return Ok(new { firstName = user.FirstName, lastName = user.LastName, phone = user.Phone });
+    }
+
     private int GetUserId() =>
         int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 }
 
 public class UpdatePhoneRequest { public string? Phone { get; set; } }
+public class UpdateProfileRequest { public string? FirstName { get; set; } public string? LastName { get; set; } public string? Phone { get; set; } }
