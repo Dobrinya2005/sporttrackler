@@ -351,6 +351,19 @@ data class AdminReviewItem(
     val createdAt: String
 )
 
+data class AdminClientItem(
+    val userId: Int,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val phone: String?,
+    val avatarUrl: String?,
+    val isActive: Boolean,
+    val createdAt: String,
+    val trainerName: String?,
+    val trainerId: Int?
+)
+
 data class CreateTrainerRequest(
     val firstName: String,
     val lastName: String,
@@ -359,6 +372,18 @@ data class CreateTrainerRequest(
 )
 
 data class ReplyRequest(val reply: String)
+
+data class UpdateProfileRequest(
+    val firstName: String,
+    val lastName: String,
+    val phone: String?
+)
+
+data class UpdateProfileResponse(
+    val firstName: String,
+    val lastName: String,
+    val phone: String?
+)
 
 data class BlockResponse(val isActive: Boolean)
 

@@ -28,6 +28,7 @@ class TokenStorage(private val context: Context) {
         private val KEY_REMINDER_MINUTE    = intPreferencesKey("reminder_minute")
         private val KEY_PIN_HASH           = stringPreferencesKey("pin_hash")
         private val KEY_PIN_OFFERED        = booleanPreferencesKey("pin_offered")
+        private val KEY_PHONE              = stringPreferencesKey("phone")
     }
 
     suspend fun saveAuth(
@@ -55,6 +56,16 @@ class TokenStorage(private val context: Context) {
     suspend fun saveAvatarUrl(url: String) {
         context.dataStore.edit { it[KEY_AVATAR_URL] = url }
     }
+
+    suspend fun saveProfile(firstName: String, lastName: String, phone: String?) {
+        context.dataStore.edit {
+            it[KEY_FIRST_NAME] = firstName
+            it[KEY_LAST_NAME]  = lastName
+            if (phone != null) it[KEY_PHONE] = phone else it.remove(KEY_PHONE)
+        }
+    }
+
+    suspend fun getPhone() = context.dataStore.data.map { it[KEY_PHONE] }.first()
 
     suspend fun clearAuth() {
         context.dataStore.edit { prefs ->

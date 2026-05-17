@@ -146,6 +146,9 @@ interface ApiService {
     @POST("api/user/avatar")
     suspend fun uploadAvatar(@Part file: MultipartBody.Part): Response<Map<String, String>>
 
+    @PUT("api/user/profile")
+    suspend fun updateProfile(@Body req: UpdateProfileRequest): Response<UpdateProfileResponse>
+
     // ── Photos ───────────────────────────────────────────────
     @Multipart
     @POST("api/photos/upload")
@@ -180,4 +183,13 @@ interface ApiService {
 
     @POST("api/admin/reviews/{id}/reply")
     suspend fun adminReplyReview(@Path("id") id: Int, @Body req: ReplyRequest): Response<MessageResponse>
+
+    @GET("api/admin/clients")
+    suspend fun adminGetClients(): Response<List<AdminClientItem>>
+
+    @PUT("api/admin/clients/{id}/block")
+    suspend fun adminToggleClientBlock(@Path("id") id: Int): Response<BlockResponse>
+
+    @DELETE("api/admin/clients/{id}")
+    suspend fun adminDeleteClient(@Path("id") id: Int): Response<MessageResponse>
 }

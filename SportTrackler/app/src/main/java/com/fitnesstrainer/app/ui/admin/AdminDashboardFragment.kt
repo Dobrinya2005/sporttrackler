@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fitnesstrainer.app.R
+import com.fitnesstrainer.app.data.model.AdminClientItem
 import com.fitnesstrainer.app.data.model.AdminTrainerItem
 import com.fitnesstrainer.app.databinding.DialogCreateTrainerBinding
 import com.fitnesstrainer.app.databinding.FragmentAdminDashboardBinding
@@ -21,8 +22,14 @@ class AdminDashboardFragment : Fragment() {
     private var _b: FragmentAdminDashboardBinding? = null
     private val b get() = _b!!
     private val vm: AdminViewModel by viewModels()
-    private lateinit var adapter: AdminTrainerAdapter
+
+    private lateinit var trainerAdapter: AdminTrainerAdapter
+    private lateinit var clientAdapter: AdminClientAdapter
+
     private var allTrainers: List<AdminTrainerItem> = emptyList()
+    private var allClients: List<AdminClientItem> = emptyList()
+
+    private var showingTrainers = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _b = FragmentAdminDashboardBinding.inflate(inflater, container, false)
@@ -32,7 +39,7 @@ class AdminDashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = AdminTrainerAdapter(
+        trainerAdapter = AdminTrainerAdapter(
             onReviews = { trainer ->
                 findNavController().navigate(
                     R.id.action_adminDashboard_to_adminReviews,
@@ -58,23 +65,54 @@ class AdminDashboardFragment : Fragment() {
             }
         )
 
+        clientAdapter = AdminClientAdapter(
+            onBlock = { client ->
+                val action = if (client.isActive) "заблокировать" else "разблокировать"
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Подтверждение")
+                    .setMessage("${client.firstName} ${client.lastName}: $action?")
+                    .setPositiveButton("Да") { _, _ -> vm.toggleClientBlock(client.userId) }
+                    .setNegativeButton("Отмена", null)
+                    .show()
+            },
+            onDelete = { client ->
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Удалить клиента")
+                    .setMessage("Удалить ${client.firstName} ${client.lastName}? Это действие необратимо.")
+                    .setPositiveButton("Удалить") { _, _ -> vm.deleteClient(client.userId) }
+                    .setNegativeButton("Отмена", null)
+                    .show()
+            }
+        )
+
         b.rvTrainers.layoutManager = LinearLayoutManager(requireContext())
-        b.rvTrainers.adapter = adapter
+        b.rvTrainers.adapter = trainerAdapter
+
+        b.rvClients.layoutManager = LinearLayoutManager(requireContext())
+        b.rvClients.adapter = clientAdapter
 
         b.btnAddTrainer.setOnClickListener { showCreateDialog() }
         b.btnSettings.setOnClickListener {
             findNavController().navigate(R.id.action_adminDashboard_to_adminSettings)
         }
 
+        b.btnTabTrainers.setOnClickListener { switchTab(true) }
+        b.btnTabClients.setOnClickListener  { switchTab(false) }
+
         b.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = filterTrainers(s?.toString() ?: "")
+            override fun afterTextChanged(s: Editable?) = applyFilter(s?.toString() ?: "")
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
         vm.trainers.observe(viewLifecycleOwner) { trainers ->
             allTrainers = trainers
-            filterTrainers(b.etSearch.text?.toString() ?: "")
+            if (showingTrainers) applyFilter(b.etSearch.text?.toString() ?: "")
+        }
+
+        vm.clients.observe(viewLifecycleOwner) { clients ->
+            allClients = clients
+            if (!showingTrainers) applyFilter(b.etSearch.text?.toString() ?: "")
         }
 
         vm.loading.observe(viewLifecycleOwner) { loading ->
@@ -96,17 +134,46 @@ class AdminDashboardFragment : Fragment() {
         }
 
         vm.loadTrainers()
+        vm.loadClients()
     }
 
-    private fun filterTrainers(query: String) {
-        val filtered = if (query.isBlank()) allTrainers
-        else allTrainers.filter {
-            it.firstName.contains(query, true) ||
-            it.lastName.contains(query, true) ||
-            it.email.contains(query, true) ||
-            it.trainerCode.contains(query, true)
+    private fun switchTab(trainers: Boolean) {
+        showingTrainers = trainers
+        b.rvTrainers.visibility = if (trainers) View.VISIBLE else View.GONE
+        b.rvClients.visibility  = if (trainers) View.GONE else View.VISIBLE
+        b.btnTabTrainers.setTextColor(
+            if (trainers) resources.getColor(R.color.accent_indigo, null)
+            else resources.getColor(R.color.text_secondary, null)
+        )
+        b.btnTabClients.setTextColor(
+            if (!trainers) resources.getColor(R.color.accent_indigo, null)
+            else resources.getColor(R.color.text_secondary, null)
+        )
+        b.tilSearch.hint = if (trainers) "Поиск тренеров..." else "Поиск клиентов..."
+        b.etSearch.text?.clear()
+        applyFilter("")
+    }
+
+    private fun applyFilter(query: String) {
+        if (showingTrainers) {
+            val filtered = if (query.isBlank()) allTrainers
+            else allTrainers.filter {
+                it.firstName.contains(query, true) ||
+                it.lastName.contains(query, true) ||
+                it.email.contains(query, true) ||
+                it.trainerCode.contains(query, true)
+            }
+            trainerAdapter.submitList(filtered)
+        } else {
+            val filtered = if (query.isBlank()) allClients
+            else allClients.filter {
+                it.firstName.contains(query, true) ||
+                it.lastName.contains(query, true) ||
+                it.email.contains(query, true) ||
+                (it.trainerName?.contains(query, true) == true)
+            }
+            clientAdapter.submitList(filtered)
         }
-        adapter.submitList(filtered)
     }
 
     private fun showCreateDialog() {

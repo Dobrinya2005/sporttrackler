@@ -88,6 +88,22 @@
                         android:minWidth="0dp"
                         app:strokeColor="@color/accent_indigo"
                         app:cornerRadius="8dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_edit_profile"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Редактировать"
+                        android:textSize="12sp"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp"
+                        app:strokeColor="@color/accent_cyan"
+                        app:cornerRadius="8dp"/>
+
                 </LinearLayout>
             </LinearLayout>
 

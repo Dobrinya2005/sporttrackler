@@ -15,6 +15,9 @@ class AdminViewModel : ViewModel() {
     private val _trainers = MutableLiveData<List<AdminTrainerItem>>()
     val trainers: LiveData<List<AdminTrainerItem>> = _trainers
 
+    private val _clients = MutableLiveData<List<AdminClientItem>>()
+    val clients: LiveData<List<AdminClientItem>> = _clients
+
     private val _reviews = MutableLiveData<List<AdminReviewItem>>()
     val reviews: LiveData<List<AdminReviewItem>> = _reviews
 
@@ -83,6 +86,49 @@ class AdminViewModel : ViewModel() {
                 if (r.isSuccessful) {
                     _success.value = "Тренер удалён"
                     loadTrainers()
+                } else {
+                    _error.value = "Ошибка удаления"
+                }
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
+
+    fun loadClients() {
+        viewModelScope.launch {
+            _loading.value = true
+            try {
+                val r = api.adminGetClients()
+                if (r.isSuccessful) _clients.value = r.body() ?: emptyList()
+                else _error.value = "Ошибка загрузки клиентов"
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    fun toggleClientBlock(clientId: Int) {
+        viewModelScope.launch {
+            try {
+                val r = api.adminToggleClientBlock(clientId)
+                if (r.isSuccessful) loadClients()
+                else _error.value = "Ошибка"
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
+
+    fun deleteClient(clientId: Int) {
+        viewModelScope.launch {
+            try {
+                val r = api.adminDeleteClient(clientId)
+                if (r.isSuccessful) {
+                    _success.value = "Клиент удалён"
+                    loadClients()
                 } else {
                     _error.value = "Ошибка удаления"
                 }

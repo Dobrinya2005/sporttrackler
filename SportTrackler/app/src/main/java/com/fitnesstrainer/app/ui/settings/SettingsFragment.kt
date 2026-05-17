@@ -78,6 +78,9 @@ class SettingsFragment : Fragment() {
         // Аватар
         b.btnChangeAvatar.setOnClickListener { pickImage.launch("image/*") }
 
+        // Редактирование профиля
+        b.btnEditProfile.setOnClickListener { showEditProfileDialog() }
+
         // Биометрия
         lifecycleScope.launch {
             val biometricEnabled = App.instance.tokenStorage.isBiometricEnabled()
@@ -280,6 +283,12 @@ class SettingsFragment : Fragment() {
             FileOutputStream(file).use { input.copyTo(it) }
             file
         } catch (_: Exception) { null }
+    }
+
+    private fun showEditProfileDialog() {
+        EditProfileSheet { firstName, lastName ->
+            b.tvUserName.text = "$firstName $lastName".trim()
+        }.show(parentFragmentManager, "edit_profile")
     }
 
     private fun updateThemeUI(isDark: Boolean) {
