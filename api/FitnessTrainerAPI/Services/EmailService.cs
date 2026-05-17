@@ -5,12 +5,12 @@ namespace FitnessTrainerAPI.Services;
 
 public interface IEmailService
 {
-    Task SendVerificationCodeAsync(string toEmail, string code);
+    Task SendVerificationCodeAsync(string toEmail, string code, string? subject = null, string? heading = null);
 }
 
 public class EmailService(IConfiguration config, ILogger<EmailService> logger) : IEmailService
 {
-    public async Task SendVerificationCodeAsync(string toEmail, string code)
+    public async Task SendVerificationCodeAsync(string toEmail, string code, string? subject = null, string? heading = null)
     {
         logger.LogInformation("EMAIL VERIFICATION CODE for {Email}: {Code}", toEmail, code);
 
@@ -36,15 +36,17 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                 Timeout     = 5000
             };
 
+            var mailSubject = subject ?? "Код подтверждения SportTrackler";
+            var mailHeading = heading ?? "Ваш код подтверждения:";
             var mail = new MailMessage
             {
                 From       = new MailAddress(fromEmail!, fromName),
-                Subject    = "Код подтверждения SportTrackler",
+                Subject    = mailSubject,
                 IsBodyHtml = true,
                 Body       = $"""
                     <div style="font-family:Arial,sans-serif;max-width:400px;margin:0 auto;padding:24px;background:#1e1e2e;color:#cdd6f4;border-radius:12px;">
                       <h2 style="color:#89b4fa;margin-bottom:8px;">SportTrackler</h2>
-                      <p>Ваш код подтверждения:</p>
+                      <p>{mailHeading}</p>
                       <div style="font-size:36px;font-weight:bold;letter-spacing:12px;color:#a6e3a1;padding:16px 0;">{code}</div>
                       <p style="color:#6c7086;font-size:13px;">Код действителен 10 минут.</p>
                     </div>

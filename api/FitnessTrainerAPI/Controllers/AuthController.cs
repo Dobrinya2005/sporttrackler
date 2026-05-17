@@ -126,7 +126,9 @@ public class AuthController(IAuthService authService, AppDbContext db, IEmailSer
         });
         await db.SaveChangesAsync();
 
-        _ = Task.Run(() => emailService.SendVerificationCodeAsync(request.Email, code));
+        _ = Task.Run(() => emailService.SendVerificationCodeAsync(request.Email, code,
+            subject: "Сброс пароля SportTrackler",
+            heading: "Ваш код для сброса пароля:"));
         return Ok(new { message = "Код отправлен на email" });
     }
 
