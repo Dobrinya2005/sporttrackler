@@ -10,34 +10,217 @@
         android:name="com.fitnesstrainer.app.ui.auth.LoginFragment"
         android:label="Вход">
         <action
+            android:id="@+id/action_loginFragment_to_pinFragment"
+            app:destination="@id/pinFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
+        <action
             android:id="@+id/action_loginFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
+            app:destination="@id/registerFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
             android:id="@+id/action_loginFragment_to_trainerDashboardFragment"
             app:destination="@id/trainerDashboardFragment"
             app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
         <action
             android:id="@+id/action_loginFragment_to_clientDashboardFragment"
             app:destination="@id/clientDashboardFragment"
             app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
+        <action
+            android:id="@+id/action_loginFragment_to_adminDashboardFragment"
+            app:destination="@id/adminDashboardFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
+    <!-- ── Восстановление пароля ──────────── -->
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.fitnesstrainer.app.ui.auth.ForgotPasswordFragment"
+        android:label="Забыли пароль">
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_resetPasswordFragment"
+            app:destination="@id/resetPasswordFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.fitnesstrainer.app.ui.auth.ResetPasswordFragment"
+        android:label="Новый пароль">
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue=""/>
+    </fragment>
+
+    <!-- Глобальный action на PIN (для onResume из любого фрагмента) -->
+    <action
+        android:id="@+id/action_global_to_pinFragment"
+        app:destination="@id/pinFragment"
+        app:enterAnim="@anim/nav_slide_in_right"
+        app:exitAnim="@anim/nav_slide_out_left"/>
+
+    <!-- ── PIN ─────────────────────────────── -->
+    <fragment
+        android:id="@+id/pinFragment"
+        android:name="com.fitnesstrainer.app.ui.auth.PinFragment"
+        android:label="PIN-код">
+        <argument
+            android:name="purpose"
+            app:argType="string"
+            android:defaultValue="default"/>
+        <action
+            android:id="@+id/action_pinFragment_to_trainerDashboardFragment"
+            app:destination="@id/trainerDashboardFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
+        <action
+            android:id="@+id/action_pinFragment_to_clientDashboardFragment"
+            app:destination="@id/clientDashboardFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
+        <action
+            android:id="@+id/action_pinFragment_to_adminDashboardFragment"
+            app:destination="@id/adminDashboardFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
     </fragment>
 
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.fitnesstrainer.app.ui.auth.RegisterFragment"
         android:label="Регистрация">
+        <!-- After register → email verification -->
+        <action
+            android:id="@+id/action_registerFragment_to_emailVerification"
+            app:destination="@id/emailVerificationFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <!-- Legacy direct actions (login flow) -->
         <action
             android:id="@+id/action_registerFragment_to_trainerDashboardFragment"
             app:destination="@id/trainerDashboardFragment"
             app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
         <action
             android:id="@+id/action_registerFragment_to_clientDashboardFragment"
             app:destination="@id/clientDashboardFragment"
             app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
+    </fragment>
+
+    <!-- ── Онбординг ─────────────────────────── -->
+    <fragment
+        android:id="@+id/emailVerificationFragment"
+        android:name="com.fitnesstrainer.app.ui.auth.EmailVerificationFragment"
+        android:label="Подтверждение Email">
+        <argument android:name="email"     app:argType="string" android:defaultValue=""/>
+        <argument android:name="role"      app:argType="string" android:defaultValue="Client"/>
+        <argument android:name="weightKg"  app:argType="float"  android:defaultValue="-1"/>
+        <argument android:name="heightCm"  app:argType="float"  android:defaultValue="-1"/>
+        <action
+            android:id="@+id/action_emailVerification_to_trainerDashboardFragment"
+            app:destination="@id/trainerDashboardFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
+        <action
+            android:id="@+id/actionEmailVerificationToClientOnboarding"
+            app:destination="@id/clientOnboardingFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/clientOnboardingFragment"
+        android:name="com.fitnesstrainer.app.ui.onboarding.ClientOnboardingFragment"
+        android:label="Анкета">
+        <argument android:name="email"    app:argType="string" android:defaultValue=""/>
+        <argument android:name="weightKg" app:argType="float"  android:defaultValue="-1"/>
+        <argument android:name="heightCm" app:argType="float"  android:defaultValue="-1"/>
+        <action
+            android:id="@+id/action_clientOnboarding_to_onboardingMeasurements"
+            app:destination="@id/onboardingMeasurementsFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/onboardingMeasurementsFragment"
+        android:name="com.fitnesstrainer.app.ui.onboarding.OnboardingMeasurementsFragment"
+        android:label="Начальные замеры">
+        <action
+            android:id="@+id/action_onboardingMeasurements_to_onboardingPhotos"
+            app:destination="@id/onboardingPhotosFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/onboardingPhotosFragment"
+        android:name="com.fitnesstrainer.app.ui.onboarding.OnboardingPhotosFragment"
+        android:label="Фото до">
+        <action
+            android:id="@+id/action_onboardingPhotos_to_trainerSelection"
+            app:destination="@id/trainerSelectionFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/trainerSelectionFragment"
+        android:name="com.fitnesstrainer.app.ui.trainer.TrainerSelectionFragment"
+        android:label="Выбор тренера">
+        <action
+            android:id="@+id/action_trainerSelection_to_qrScan"
+            app:destination="@id/qrScanFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
     </fragment>
 
     <!-- ── Тренер ─────────────────────────────── -->
@@ -47,35 +230,61 @@
         android:label="Мои клиенты">
         <action
             android:id="@+id/action_trainerDashboard_to_clientDetail"
-            app:destination="@id/clientDetailFragment" />
+            app:destination="@id/clientDetailFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
             android:id="@+id/action_trainerDashboard_to_chat"
-            app:destination="@id/chatFragment" />
+            app:destination="@id/chatFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_trainerDashboard_to_qr"
+            app:destination="@id/trainerQrFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
     </fragment>
 
     <fragment
         android:id="@+id/clientDetailFragment"
         android:name="com.fitnesstrainer.app.ui.trainer.ClientDetailFragment"
         android:label="Карточка клиента">
-        <argument
-            android:name="clientId"
-            app:argType="integer" />
-        <argument
-            android:name="clientName"
-            app:argType="string"
-            android:defaultValue="" />
+        <argument android:name="clientId" app:argType="integer"/>
+        <argument android:name="clientName" app:argType="string" android:defaultValue=""/>
         <action
             android:id="@+id/action_clientDetail_to_measurements"
-            app:destination="@id/measurementsFragment" />
+            app:destination="@id/measurementsFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
             android:id="@+id/action_clientDetail_to_photos"
-            app:destination="@id/photosFragment" />
+            app:destination="@id/photosFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
             android:id="@+id/action_clientDetail_to_workoutPlan"
-            app:destination="@id/workoutPlanFragment" />
+            app:destination="@id/workoutPlanFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
             android:id="@+id/action_clientDetail_to_chat"
-            app:destination="@id/chatFragment" />
+            app:destination="@id/chatFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
     </fragment>
 
     <!-- ── Клиент ─────────────────────────────── -->
@@ -85,19 +294,53 @@
         android:label="Главная">
         <action
             android:id="@+id/action_clientDashboard_to_measurements"
-            app:destination="@id/measurementsFragment" />
+            app:destination="@id/measurementsFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
             android:id="@+id/action_clientDashboard_to_food"
-            app:destination="@id/foodDiaryFragment" />
+            app:destination="@id/foodDiaryFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
             android:id="@+id/action_clientDashboard_to_photos"
-            app:destination="@id/photosFragment" />
+            app:destination="@id/photosFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
             android:id="@+id/action_clientDashboard_to_workout"
-            app:destination="@id/workoutPlanFragment" />
+            app:destination="@id/workoutPlanFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
             android:id="@+id/action_clientDashboard_to_chat"
-            app:destination="@id/chatFragment" />
+            app:destination="@id/chatFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_clientDashboard_to_goals"
+            app:destination="@id/goalsFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_clientDashboard_to_qrScan"
+            app:destination="@id/qrScanFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
     </fragment>
 
     <!-- ── Общие экраны ───────────────────────── -->
@@ -105,47 +348,105 @@
         android:id="@+id/measurementsFragment"
         android:name="com.fitnesstrainer.app.ui.measurements.MeasurementsFragment"
         android:label="Замеры">
-        <argument
-            android:name="clientId"
-            app:argType="integer"
-            android:defaultValue="-1" />
+        <argument android:name="clientId" app:argType="integer" android:defaultValue="-1"/>
     </fragment>
 
     <fragment
         android:id="@+id/foodDiaryFragment"
         android:name="com.fitnesstrainer.app.ui.food.FoodDiaryFragment"
-        android:label="Дневник питания" />
+        android:label="Дневник питания"/>
 
     <fragment
         android:id="@+id/photosFragment"
         android:name="com.fitnesstrainer.app.ui.photos.PhotosFragment"
         android:label="Фото прогресса">
-        <argument
-            android:name="clientId"
-            app:argType="integer"
-            android:defaultValue="-1" />
+        <argument android:name="clientId" app:argType="integer" android:defaultValue="-1"/>
     </fragment>
 
     <fragment
         android:id="@+id/workoutPlanFragment"
         android:name="com.fitnesstrainer.app.ui.workout.WorkoutPlanFragment"
         android:label="Тренировочный план">
-        <argument
-            android:name="clientId"
-            app:argType="integer"
-            android:defaultValue="-1" />
+        <argument android:name="clientId" app:argType="integer" android:defaultValue="-1"/>
+        <action
+            android:id="@+id/action_workoutPlan_to_createPlan"
+            app:destination="@id/createWorkoutPlanFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/createWorkoutPlanFragment"
+        android:name="com.fitnesstrainer.app.ui.workout.CreateWorkoutPlanFragment"
+        android:label="Создать план">
+        <argument android:name="clientId" app:argType="integer"/>
     </fragment>
 
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.fitnesstrainer.app.ui.chat.ChatFragment"
         android:label="Чат">
-        <argument
-            android:name="contactId"
-            app:argType="integer" />
-        <argument
-            android:name="contactName"
-            app:argType="string" />
+        <argument android:name="contactId" app:argType="integer"/>
+        <argument android:name="contactName" app:argType="string"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.fitnesstrainer.app.ui.settings.SettingsFragment"
+        android:label="Настройки"/>
+
+    <!-- ── Цели ───────────────────────────────── -->
+    <fragment
+        android:id="@+id/goalsFragment"
+        android:name="com.fitnesstrainer.app.ui.goals.GoalsFragment"
+        android:label="Мои цели"/>
+
+    <!-- ── QR тренера ────────────────────────── -->
+    <fragment
+        android:id="@+id/trainerQrFragment"
+        android:name="com.fitnesstrainer.app.ui.trainer.TrainerQrFragment"
+        android:label="Мой QR-код"/>
+
+    <!-- ── Сканирование QR ────────────────────── -->
+    <fragment
+        android:id="@+id/qrScanFragment"
+        android:name="com.fitnesstrainer.app.ui.trainer.QrScanFragment"
+        android:label="Сканировать QR"/>
+
+    <!-- ── Администратор ─────────────────────── -->
+    <fragment
+        android:id="@+id/adminDashboardFragment"
+        android:name="com.fitnesstrainer.app.ui.admin.AdminDashboardFragment"
+        android:label="Администратор">
+        <action
+            android:id="@+id/action_adminDashboard_to_adminReviews"
+            app:destination="@id/adminReviewsFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_adminDashboard_to_adminSettings"
+            app:destination="@id/adminSettingsFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/adminSettingsFragment"
+        android:name="com.fitnesstrainer.app.ui.admin.AdminSettingsFragment"
+        android:label="Настройки администратора"/>
+
+    <fragment
+        android:id="@+id/adminReviewsFragment"
+        android:name="com.fitnesstrainer.app.ui.admin.AdminReviewsFragment"
+        android:label="Отзывы тренера">
+        <argument android:name="trainerId"    app:argType="integer"/>
+        <argument android:name="trainerName"  app:argType="string"/>
     </fragment>
 
 </navigation>

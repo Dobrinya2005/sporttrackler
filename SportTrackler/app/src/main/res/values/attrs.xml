@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme-aware background colors used in fragment root views -->
+    <attr name="bgPrimary"  format="color"/>
+    <attr name="bgSurface"  format="color"/>
+    <attr name="bgElevated" format="color"/>
+    <attr name="textPrimary"   format="color"/>
+    <attr name="textSecondary" format="color"/>
+    <attr name="textHint"      format="color"/>
+    <attr name="borderDefault" format="color"/>
+    <attr name="accentMain"    format="color"/>
+</resources>

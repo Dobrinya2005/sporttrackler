@@ -35,8 +35,9 @@ object RetrofitClient {
                 else
                     HttpLoggingInterceptor.Level.NONE
             })
-            .connectTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             // Доверяем self-signed сертификату для локальной разработки
             .apply { trustAllCertificates() }
             .build()

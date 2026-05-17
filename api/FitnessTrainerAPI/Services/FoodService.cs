@@ -14,7 +14,7 @@ public interface IFoodService
     Task<bool> DeleteDiaryEntryAsync(int diaryId, int clientId);
 }
 
-public class FoodService(AppDbContext db) : IFoodService
+public class FoodService(AppDbContext db, IClientProfileService profileService) : IFoodService
 {
     public async Task<List<FoodProductResponse>> SearchProductsAsync(string query)
     {
@@ -67,6 +67,15 @@ public class FoodService(AppDbContext db) : IFoodService
     public async Task<DailySummaryResponse> GetDailySummaryAsync(int clientId, DateOnly date)
     {
         var profile = await db.ClientProfiles.FirstOrDefaultAsync(cp => cp.UserId == clientId);
+        if (profile is not null && profile.DailyCalorieGoal is null)
+        {
+            try
+            {
+                profileService.RecalculateMacros(profile);
+                await db.SaveChangesAsync();
+            }
+            catch { /* non-critical */ }
+        }
 
         var entries = await db.FoodDiary
             .Include(d => d.Product)

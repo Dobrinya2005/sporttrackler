@@ -1,20 +1,25 @@
 package com.fitnesstrainer.app.ui.food
 
 import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.widget.Toast
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Toast
-import androidx.appcompat.widget.SearchView
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fitnesstrainer.app.R
+import com.fitnesstrainer.app.data.model.FoodProduct
 import com.fitnesstrainer.app.databinding.DialogAddFoodBinding
+import com.fitnesstrainer.app.databinding.DialogFoodWeightBinding
 import com.fitnesstrainer.app.databinding.FragmentFoodDiaryBinding
+import com.fitnesstrainer.app.util.FoodEmojiUtil
 import java.time.format.DateTimeFormatter
 
 class FoodDiaryFragment : Fragment() {
@@ -51,17 +56,29 @@ class FoodDiaryFragment : Fragment() {
             binding.tvDate.text = date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
         }
 
+        binding.btnRetry.setOnClickListener { viewModel.loadDiary() }
+
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is FoodDiaryState.Loading -> binding.progressBar.visibility = View.VISIBLE
+                is FoodDiaryState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.errorState.visibility  = View.GONE
+                }
                 is FoodDiaryState.Success -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.errorState.visibility  = View.GONE
                     val s = state.summary
                     binding.tvTotalCalories.text =
                         "%.0f / %d ккал".format(s.totalCalories, s.calorieGoal ?: 2000)
-                    binding.tvProtein.text = "Б %.1f г".format(s.totalProtein)
-                    binding.tvFat.text     = "Ж %.1f г".format(s.totalFat)
-                    binding.tvCarbs.text   = "У %.1f г".format(s.totalCarbs)
+                    binding.tvProtein.text = if (s.proteinGoal != null)
+                        "Б %.0f / %.0f г".format(s.totalProtein, s.proteinGoal)
+                    else "Б %.1f г".format(s.totalProtein)
+                    binding.tvFat.text = if (s.fatGoal != null)
+                        "Ж %.0f / %.0f г".format(s.totalFat, s.fatGoal)
+                    else "Ж %.1f г".format(s.totalFat)
+                    binding.tvCarbs.text = if (s.carbGoal != null)
+                        "У %.0f / %.0f г".format(s.totalCarbs, s.carbGoal)
+                    else "У %.1f г".format(s.totalCarbs)
 
                     val goal = (s.calorieGoal ?: 2000).toFloat()
                     binding.progressCalories.max      = 100
@@ -71,7 +88,8 @@ class FoodDiaryFragment : Fragment() {
                 }
                 is FoodDiaryState.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    binding.tvError.text           = state.message
+                    binding.errorState.visibility  = View.VISIBLE
                 }
             }
         }
@@ -81,20 +99,23 @@ class FoodDiaryFragment : Fragment() {
         pendingMealType = mealType
         val dialogBinding = DialogAddFoodBinding.inflate(layoutInflater)
         searchAdapter = FoodSearchAdapter { product ->
-            showWeightDialog(product.productId, product.name, mealType)
+            showWeightDialog(product, mealType)
         }
         dialogBinding.rvResults.layoutManager = LinearLayoutManager(requireContext())
         dialogBinding.rvResults.adapter       = searchAdapter
 
-        dialogBinding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?) = true.also { viewModel.searchFood(query ?: "") }
-            override fun onQueryTextChange(newText: String?) = true.also { viewModel.searchFood(newText ?: "") }
+        dialogBinding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.searchFood(s?.toString() ?: "")
+            }
+            override fun afterTextChanged(s: Editable?) = Unit
         })
 
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Добавить продукт")
             .setView(dialogBinding.root)
-            .setNegativeButton("Отмена") { _, _ -> viewModel.clearSearch() }
+            .setPositiveButton("Готово") { _, _ -> viewModel.clearSearch() }
             .create()
 
         viewModel.searchState.observe(viewLifecycleOwner) { state ->
@@ -114,25 +135,40 @@ class FoodDiaryFragment : Fragment() {
         dialog.show()
     }
 
-    private fun showWeightDialog(productId: Int, productName: String, mealType: String) {
-        val et = android.widget.EditText(requireContext()).apply {
-            hint          = "Вес в граммах"
-            inputType     = android.text.InputType.TYPE_CLASS_NUMBER or
-                            android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+    private fun showWeightDialog(product: FoodProduct, mealType: String) {
+        val b = DialogFoodWeightBinding.inflate(layoutInflater)
+
+        b.tvProductName.text     = product.name
+        b.tvFoodEmoji.text       = FoodEmojiUtil.getEmoji(product.name)
+        b.tvProductCalories.text = "%.0f ккал / 100 г".format(product.caloriesPer100g)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(b.root)
+            .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+
+        fun setWeight(w: String) {
+            b.etWeight.setText(w)
+            b.etWeight.setSelection(w.length)
         }
-        AlertDialog.Builder(requireContext())
-            .setTitle(productName)
-            .setView(et)
-            .setPositiveButton("Добавить") { _, _ ->
-                val weight = et.text.toString().toDoubleOrNull()
-                if (weight != null && weight > 0) {
-                    viewModel.addToMeal(productId, weight, mealType)
-                } else {
-                    Toast.makeText(requireContext(), "Введите корректный вес", Toast.LENGTH_SHORT).show()
-                }
+
+        b.chip50.setOnClickListener  { setWeight("50") }
+        b.chip100.setOnClickListener { setWeight("100") }
+        b.chip150.setOnClickListener { setWeight("150") }
+        b.chip200.setOnClickListener { setWeight("200") }
+        b.chip300.setOnClickListener { setWeight("300") }
+
+        b.btnCancel.setOnClickListener { dialog.dismiss() }
+        b.btnAdd.setOnClickListener {
+            val weight = b.etWeight.text.toString().toDoubleOrNull()
+            if (weight != null && weight > 0) {
+                viewModel.addToMeal(product.productId, weight, mealType)
+                dialog.dismiss()
+            } else {
+                b.tilWeight.error = "Введите корректный вес"
             }
-            .setNegativeButton("Отмена", null)
-            .show()
+        }
     }
 
     override fun onDestroyView() {

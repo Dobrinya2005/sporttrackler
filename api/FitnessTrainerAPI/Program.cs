@@ -48,12 +48,15 @@ builder.Services.AddAuthorization();
 
 // ── Сервисы ──────────────────────────────────────────────────
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IClientProfileService, ClientProfileService>();
 builder.Services.AddScoped<IMeasurementService, MeasurementService>();
 builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IFcmService, FcmService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 // ── SignalR ──────────────────────────────────────────────────
 builder.Services.AddSignalR();
@@ -110,7 +113,10 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors("AllowAll");
-app.UseStaticFiles();
+var mimeProvider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+mimeProvider.Mappings[".m4a"] = "audio/mp4";
+mimeProvider.Mappings[".aac"] = "audio/aac";
+app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = mimeProvider });
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

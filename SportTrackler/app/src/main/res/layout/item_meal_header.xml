@@ -6,37 +6,67 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingHorizontal="4dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="6dp"
+    android:paddingTop="22dp"
+    android:paddingBottom="8dp"
     android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/tv_meal_name"
+    <!-- Meal emoji badge -->
+    <FrameLayout
+        android:id="@+id/meal_icon_container"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_food_emoji_circle"
+        android:layout_marginEnd="10dp">
+
+        <TextView
+            android:id="@+id/tv_meal_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="🍽️"
+            android:textSize="16sp"/>
+
+    </FrameLayout>
+
+    <!-- Meal name -->
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/sol_base1"
-        android:textSize="15sp"
-        android:fontFamily="sans-serif-medium"/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_meal_calories"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/sol_base01"
-        android:textSize="13sp"
-        android:layout_marginEnd="8dp"/>
+        <TextView
+            android:id="@+id/tv_meal_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.02"/>
 
+        <TextView
+            android:id="@+id/tv_meal_calories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:textColor="@color/text_hint"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <!-- Add button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_add_food"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:text="+ Добавить"
-        android:textColor="@color/sol_cyan"
-        android:textSize="12sp"
-        android:paddingHorizontal="10dp"
-        app:strokeColor="@color/sol_cyan"
-        app:cornerRadius="8dp"/>
+        android:layout_height="36dp"
+        android:text="＋ Добавить"
+        android:textColor="@color/accent_cyan"
+        android:textSize="13sp"
+        android:textAllCaps="false"
+        android:paddingHorizontal="16dp"
+        android:minWidth="0dp"
+        app:strokeColor="@color/accent_cyan"
+        app:cornerRadius="10dp"/>
 
 </LinearLayout>

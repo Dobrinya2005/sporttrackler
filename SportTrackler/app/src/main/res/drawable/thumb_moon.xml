@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Crescent moon: dark circle + offset yellow circle on top = same effect as CSS inset box-shadow -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Base: yellow circle (full) -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#FFD700"/>
+        </shape>
+    </item>
+    <!-- Overlay: dark circle shifted top-right to cut crescent -->
+    <item
+        android:left="6dp"
+        android:bottom="6dp">
+        <shape android:shape="oval">
+            <solid android:color="#28096b"/>
+        </shape>
+    </item>
+</layer-list>

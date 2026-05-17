@@ -1,12 +1,16 @@
-package com.fitnesstrainer.app.ui.client
+﻿package com.fitnesstrainer.app.ui.client
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
+import com.fitnesstrainer.app.data.model.AddReviewRequest
+import com.fitnesstrainer.app.util.toUserMessage
 import com.fitnesstrainer.app.data.model.DailySummaryResponse
 import com.fitnesstrainer.app.data.model.MeasurementResponse
+import com.fitnesstrainer.app.data.model.TrainerInfo
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -24,14 +28,31 @@ sealed class DashboardState {
 
 class ClientDashboardViewModel : ViewModel() {
 
-    private val api          = App.instance.apiService
-    private val tokenStorage = App.instance.tokenStorage
+    private val api            = App.instance.apiService
+    private val tokenStorage   = App.instance.tokenStorage
+    private val networkMonitor = App.instance.networkMonitor
 
     private val _state = MutableLiveData<DashboardState>()
     val state: LiveData<DashboardState> = _state
 
+    init {
+        viewModelScope.launch {
+            networkMonitor.isOnline.collectLatest { online ->
+                if (online && _state.value is DashboardState.Error) {
+                    load()
+                }
+            }
+        }
+    }
+
     private val _navigateToChat = MutableLiveData<Pair<Int, String>?>()
     val navigateToChat: LiveData<Pair<Int, String>?> = _navigateToChat
+
+    private val _chatError = MutableLiveData<String?>()
+    val chatError: LiveData<String?> = _chatError
+
+    private val _myTrainer = MutableLiveData<TrainerInfo?>(null)
+    val myTrainer: LiveData<TrainerInfo?> = _myTrainer
 
     fun load() {
         viewModelScope.launch {
@@ -52,19 +73,44 @@ class ClientDashboardViewModel : ViewModel() {
                     )
                 )
             } catch (e: Exception) {
-                _state.value = DashboardState.Error("Нет подключения к серверу")
+                _state.value = DashboardState.Error(e.toUserMessage())
             }
+        }
+    }
+
+    fun loadTrainer() {
+        viewModelScope.launch {
+            try {
+                val response = api.getMyTrainer()
+                if (response.isSuccessful) {
+                    _myTrainer.value = response.body()
+                }
+            } catch (_: Exception) {}
         }
     }
 
     fun openChat() {
         viewModelScope.launch {
             try {
-                val response = api.getMyTrainer()
-                if (response.isSuccessful) {
-                    val t = response.body()!!
-                    _navigateToChat.value = Pair(t.userId, "${t.firstName} ${t.lastName}")
+                val trainer = _myTrainer.value
+                    ?: api.getMyTrainer().body()
+                if (trainer == null) {
+                    _chatError.value = "Тренер не назначен. Отсканируйте QR-код тренера для подключения."
+                    return@launch
                 }
+                _navigateToChat.value = Pair(trainer.userId, "${trainer.firstName} ${trainer.lastName}")
+            } catch (_: Exception) {
+                _chatError.value = "Не удалось подключиться к тренеру"
+            }
+        }
+    }
+
+    fun clearChatError() { _chatError.value = null }
+
+    fun submitReview(trainerId: Int, rating: Int, comment: String?) {
+        viewModelScope.launch {
+            try {
+                api.addReview(AddReviewRequest(trainerId, rating, comment))
             } catch (_: Exception) {}
         }
     }
@@ -77,6 +123,8 @@ class ClientDashboardViewModel : ViewModel() {
         viewModelScope.launch {
             try { api.logout() } catch (_: Exception) {}
             tokenStorage.clearAuth()
+            tokenStorage.clearPin()
         }
     }
 }
+

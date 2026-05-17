@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -36,20 +35,47 @@ class WorkoutPlanFragment : Fragment() {
 
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
         binding.swipeRefresh.setOnRefreshListener { viewModel.load() }
+        binding.btnRetry.setOnClickListener { viewModel.load() }
+
+        // FAB виден только тренеру (clientId != -1 означает тренер просматривает клиента)
+        if (args.clientId != -1) {
+            binding.fabCreatePlan.visibility = View.VISIBLE
+            binding.fabCreatePlan.setOnClickListener {
+                val action = WorkoutPlanFragmentDirections
+                    .actionWorkoutPlanToCreatePlan(args.clientId)
+                findNavController().navigate(action)
+            }
+        }
 
         viewModel.init(args.clientId)
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             binding.swipeRefresh.isRefreshing = false
             when (state) {
-                is WorkoutState.Loading -> binding.swipeRefresh.isRefreshing = true
+                is WorkoutState.Loading -> {
+                    binding.swipeRefresh.isRefreshing = true
+                    binding.emptyState.visibility = View.GONE
+                }
                 is WorkoutState.Success -> {
                     adapter.submitPlans(state.plans)
-                    binding.tvEmpty.visibility =
-                        if (state.plans.isEmpty()) View.VISIBLE else View.GONE
+                    if (state.plans.isEmpty()) {
+                        binding.tvEmpty.text    = "Тренировочный план не назначен"
+                        binding.tvEmptySub.text = if (args.clientId != -1)
+                            "Нажмите + чтобы создать план для клиента"
+                        else
+                            "Тренер назначит план в ближайшее время"
+                        binding.btnRetry.visibility   = View.GONE
+                        binding.emptyState.visibility = View.VISIBLE
+                    } else {
+                        binding.emptyState.visibility = View.GONE
+                    }
                 }
-                is WorkoutState.Error ->
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                is WorkoutState.Error -> {
+                    binding.tvEmpty.text    = state.message
+                    binding.tvEmptySub.text = ""
+                    binding.btnRetry.visibility   = View.VISIBLE
+                    binding.emptyState.visibility = View.VISIBLE
+                }
             }
         }
     }

@@ -1,6 +1,8 @@
+using FitnessTrainerAPI.Hubs;
 using FitnessTrainerAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace FitnessTrainerAPI.Controllers;
@@ -8,7 +10,7 @@ namespace FitnessTrainerAPI.Controllers;
 [ApiController]
 [Route("api/messages")]
 [Authorize]
-public class ChatController(IChatService chatService) : ControllerBase
+public class ChatController(IChatService chatService, IWebHostEnvironment env, IHubContext<ChatHub> hubContext) : ControllerBase
 {
     [HttpGet("conversations")]
     public async Task<IActionResult> GetConversations()
@@ -29,6 +31,9 @@ public class ChatController(IChatService chatService) : ControllerBase
     public async Task<IActionResult> Send([FromBody] SendMessageRequest request)
     {
         var result = await chatService.SendMessageAsync(GetUserId(), request);
+        // Отправить получателю через SignalR в реальном времени
+        await hubContext.Clients.Group($"user_{request.ReceiverId}")
+            .SendAsync("ReceiveMessage", result);
         return Ok(result);
     }
 
@@ -37,6 +42,38 @@ public class ChatController(IChatService chatService) : ControllerBase
     {
         await chatService.MarkAsReadAsync(GetUserId(), senderId);
         return NoContent();
+    }
+
+    [HttpPost("upload-media")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadMedia(IFormFile file)
+    {
+        if (file is null || file.Length == 0)
+            return BadRequest(new { message = "Файл не выбран" });
+
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+        string attachmentType = ext switch {
+            ".jpg" or ".jpeg" or ".png" or ".webp" or ".gif" => "image",
+            ".mp4" or ".mov" or ".avi" or ".mkv"             => "video",
+            ".m4a" or ".aac" or ".mp3" or ".ogg" or ".wav"  => "audio",
+            _                                                => "file"
+        };
+
+        var uploadsDir = Path.Combine(env.WebRootPath ?? "wwwroot", "chat-media");
+        Directory.CreateDirectory(uploadsDir);
+
+        var userId   = GetUserId();
+        var fileName = $"chat_{userId}_{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}{ext}";
+        var filePath = Path.Combine(uploadsDir, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+            await file.CopyToAsync(stream);
+
+        var baseUrl     = $"{Request.Scheme}://{Request.Host}";
+        var mediaUrl    = $"{baseUrl}/chat-media/{fileName}";
+
+        return Ok(new { mediaUrl, attachmentType, fileName = file.FileName });
     }
 
     private int GetUserId() =>

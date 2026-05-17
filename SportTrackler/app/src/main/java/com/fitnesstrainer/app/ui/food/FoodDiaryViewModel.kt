@@ -5,11 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
+import com.fitnesstrainer.app.data.local.db.DailySummaryEntity
 import com.fitnesstrainer.app.data.model.DailySummaryResponse
 import com.fitnesstrainer.app.data.model.DiaryEntryRequest
 import com.fitnesstrainer.app.data.model.FoodProduct
+import com.fitnesstrainer.app.util.toUserMessage
+import com.fitnesstrainer.app.widget.SportTracklerWidget
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -27,8 +31,10 @@ sealed class SearchState {
 
 class FoodDiaryViewModel : ViewModel() {
 
-    private val api          = App.instance.apiService
-    private val tokenStorage = App.instance.tokenStorage
+    private val api            = App.instance.apiService
+    private val tokenStorage   = App.instance.tokenStorage
+    private val networkMonitor = App.instance.networkMonitor
+    private val summaryDao     = App.instance.database.dailySummaryDao()
 
     private val _state = MutableLiveData<FoodDiaryState>()
     val state: LiveData<FoodDiaryState> = _state
@@ -47,21 +53,46 @@ class FoodDiaryViewModel : ViewModel() {
             userId = tokenStorage.getUserId()
             loadDiary()
         }
+        viewModelScope.launch {
+            networkMonitor.isOnline.collectLatest { online ->
+                if (online && _state.value is FoodDiaryState.Error) loadDiary()
+            }
+        }
     }
 
     fun loadDiary(date: LocalDate = _currentDate.value ?: LocalDate.now()) {
         _currentDate.value = date
         viewModelScope.launch {
             _state.value = FoodDiaryState.Loading
+
+            // Показываем кеш мгновенно
+            val cached = summaryDao.get(userId, date.toString())
+            if (cached != null) {
+                _state.value = FoodDiaryState.Success(cached.toResponse())
+            }
+
             try {
                 val response = api.getDailySummary(userId, date.toString())
                 if (response.isSuccessful) {
-                    _state.value = FoodDiaryState.Success(response.body()!!)
-                } else {
+                    val summary = response.body()!!
+                    _state.value = FoodDiaryState.Success(summary)
+                    // Сохраняем в Room
+                    summaryDao.insert(DailySummaryEntity(
+                        userId         = userId,
+                        date           = date.toString(),
+                        totalCalories  = summary.totalCalories,
+                        totalProtein   = summary.totalProtein,
+                        totalFat       = summary.totalFat,
+                        totalCarbs     = summary.totalCarbs,
+                        calorieGoal    = summary.calorieGoal
+                    ))
+                    // Обновляем виджет
+                    SportTracklerWidget.updateAll(App.instance)
+                } else if (cached == null) {
                     _state.value = FoodDiaryState.Error("Нет данных")
                 }
             } catch (e: Exception) {
-                _state.value = FoodDiaryState.Error("Нет подключения к серверу")
+                if (cached == null) _state.value = FoodDiaryState.Error(e.toUserMessage())
             }
         }
     }
@@ -106,3 +137,16 @@ class FoodDiaryViewModel : ViewModel() {
 
     fun clearSearch() { _searchState.value = SearchState.Idle }
 }
+
+private fun DailySummaryEntity.toResponse() = DailySummaryResponse(
+    date          = date,
+    calorieGoal   = calorieGoal,
+    proteinGoal   = null,
+    fatGoal       = null,
+    carbGoal      = null,
+    totalCalories = totalCalories,
+    totalProtein  = totalProtein,
+    totalFat      = totalFat,
+    totalCarbs    = totalCarbs,
+    meals         = emptyList()
+)

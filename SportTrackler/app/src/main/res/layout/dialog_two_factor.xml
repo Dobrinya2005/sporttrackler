@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/bg_surface"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Двухфакторная аутентификация"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Введите 4-значный код"
+        android:textColor="@color/text_hint"
+        android:textSize="13sp"
+        android:layout_marginBottom="24dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp">
+
+        <EditText
+            android:id="@+id/otp1"
+            android:layout_width="52dp"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="6dp"
+            android:inputType="number"
+            android:maxLength="1"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textColor="@color/text_primary"
+            android:background="@drawable/bg_card_surface"
+            android:padding="8dp"/>
+
+        <EditText
+            android:id="@+id/otp2"
+            android:layout_width="52dp"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="6dp"
+            android:inputType="number"
+            android:maxLength="1"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textColor="@color/text_primary"
+            android:background="@drawable/bg_card_surface"
+            android:padding="8dp"/>
+
+        <EditText
+            android:id="@+id/otp3"
+            android:layout_width="52dp"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="6dp"
+            android:inputType="number"
+            android:maxLength="1"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textColor="@color/text_primary"
+            android:background="@drawable/bg_card_surface"
+            android:padding="8dp"/>
+
+        <EditText
+            android:id="@+id/otp4"
+            android:layout_width="52dp"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="6dp"
+            android:inputType="number"
+            android:maxLength="1"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:textColor="@color/text_primary"
+            android:background="@drawable/bg_card_surface"
+            android:padding="8dp"/>
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_verify"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Подтвердить"
+        android:textSize="14sp"
+        app:cornerRadius="12dp"
+        app:backgroundTint="@color/accent_indigo"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_clear"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:text="Очистить"
+            android:textSize="13sp"
+            android:textColor="@color/text_hint"
+            app:cornerRadius="12dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_close"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:text="Закрыть"
+            android:textSize="13sp"
+            android:textColor="@color/text_hint"
+            app:cornerRadius="12dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+    </LinearLayout>
+</LinearLayout>

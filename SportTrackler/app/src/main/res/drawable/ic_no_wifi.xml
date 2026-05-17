@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Wifi arc top -->
+    <path
+        android:pathData="M1.5,8.4C5.1,4.8 10.3,3 12,3C13.7,3 18.9,4.8 22.5,8.4"
+        android:strokeColor="@color/accent_rose"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+    <!-- Wifi arc mid -->
+    <path
+        android:pathData="M5,12C7.2,9.8 9.6,8.5 12,8.5C14.4,8.5 16.8,9.8 19,12"
+        android:strokeColor="@color/accent_rose"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+    <!-- Wifi arc bottom -->
+    <path
+        android:pathData="M8.5,15.5C9.6,14.4 10.8,13.75 12,13.75C13.2,13.75 14.4,14.4 15.5,15.5"
+        android:strokeColor="@color/accent_rose"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+    <!-- Dot -->
+    <path
+        android:pathData="M12,19.5 L12,19.51"
+        android:strokeColor="@color/accent_rose"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+    <!-- Cross slash -->
+    <path
+        android:pathData="M3,3 L21,21"
+        android:strokeColor="@color/accent_rose"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+</vector>

@@ -1,5 +1,7 @@
 package com.fitnesstrainer.app.ui.photos
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,7 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.data.model.ProgressPhoto
+import com.fitnesstrainer.app.util.toUserMessage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -25,8 +29,9 @@ sealed class PhotosState {
 
 class PhotosViewModel : ViewModel() {
 
-    private val api          = App.instance.apiService
-    private val tokenStorage = App.instance.tokenStorage
+    private val api            = App.instance.apiService
+    private val tokenStorage   = App.instance.tokenStorage
+    private val networkMonitor = App.instance.networkMonitor
 
     private val _state = MutableLiveData<PhotosState>()
     val state: LiveData<PhotosState> = _state
@@ -37,6 +42,14 @@ class PhotosViewModel : ViewModel() {
     private var targetClientId = -1
     var isOwnData = true
         private set
+
+    init {
+        viewModelScope.launch {
+            networkMonitor.isOnline.collectLatest { online ->
+                if (online && _state.value is PhotosState.Error) load()
+            }
+        }
+    }
 
     fun init(clientId: Int) {
         viewModelScope.launch {
@@ -58,7 +71,7 @@ class PhotosViewModel : ViewModel() {
                 else
                     PhotosState.Error("Ошибка загрузки фото")
             } catch (e: Exception) {
-                _state.value = PhotosState.Error("Нет подключения к серверу")
+                _state.value = PhotosState.Error(e.toUserMessage())
             }
         }
     }
@@ -71,7 +84,20 @@ class PhotosViewModel : ViewModel() {
                 val tmpFile  = withContext(Dispatchers.IO) {
                     val file = File(context.cacheDir, "upload_${System.currentTimeMillis()}.jpg")
                     context.contentResolver.openInputStream(uri)?.use { input ->
-                        FileOutputStream(file).use { output -> input.copyTo(output) }
+                        val bitmap = BitmapFactory.decodeStream(input)
+                        val maxSide = 1080
+                        val scaled = if (bitmap.width > maxSide || bitmap.height > maxSide) {
+                            val ratio = bitmap.width.toFloat() / bitmap.height
+                            if (ratio > 1f)
+                                Bitmap.createScaledBitmap(bitmap, maxSide, (maxSide / ratio).toInt(), true)
+                            else
+                                Bitmap.createScaledBitmap(bitmap, (maxSide * ratio).toInt(), maxSide, true)
+                        } else bitmap
+                        FileOutputStream(file).use { out ->
+                            scaled.compress(Bitmap.CompressFormat.JPEG, 82, out)
+                        }
+                        if (scaled !== bitmap) scaled.recycle()
+                        bitmap.recycle()
                     }
                     file
                 }
@@ -87,7 +113,7 @@ class PhotosViewModel : ViewModel() {
                 if (response.isSuccessful) load()
                 withContext(Dispatchers.IO) { tmpFile.delete() }
             } catch (e: Exception) {
-                _state.value = PhotosState.Error("Ошибка загрузки: ${e.message}")
+                _state.value = PhotosState.Error(e.toUserMessage())
             } finally {
                 _uploading.value = false
             }

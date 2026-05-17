@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_marker"
+    android:padding="10dp"
+    android:minWidth="80dp">
+
+    <TextView
+        android:id="@+id/tv_marker_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#93A1A1"
+        android:textSize="10sp"/>
+
+    <TextView
+        android:id="@+id/tv_marker_weight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FDF6E3"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-medium"/>
+
+    <TextView
+        android:id="@+id/tv_marker_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="#93A1A1"
+        android:textSize="10sp"
+        android:maxWidth="120dp"/>
+
+</LinearLayout>

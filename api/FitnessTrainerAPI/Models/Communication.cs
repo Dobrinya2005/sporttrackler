@@ -33,6 +33,21 @@ public class Notification
     public User User { get; set; } = null!;
 }
 
+public class TrainerReview
+{
+    public int ReviewId { get; set; }
+    public int ClientId { get; set; }
+    public int TrainerId { get; set; }
+    public int Rating { get; set; }  // 1–5
+    public string? Comment { get; set; }
+    public string? AdminReply { get; set; }
+    public DateTime? AdminReplyAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public User Client { get; set; } = null!;
+    public User Trainer { get; set; } = null!;
+}
+
 public class FcmToken
 {
     [Key]

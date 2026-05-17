@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.data.model.LoginRequest
 import com.fitnesstrainer.app.data.model.RegisterRequest
+import com.fitnesstrainer.app.util.toUserMessage
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -14,7 +15,7 @@ import kotlinx.coroutines.tasks.await
 sealed class AuthState {
     object Idle : AuthState()
     object Loading : AuthState()
-    data class Success(val role: String) : AuthState()
+    data class Success(val role: String, val devCode: String? = null) : AuthState()
     data class Error(val message: String) : AuthState()
 }
 
@@ -25,6 +26,8 @@ class AuthViewModel : ViewModel() {
 
     private val _state = MutableLiveData<AuthState>(AuthState.Idle)
     val state: LiveData<AuthState> = _state
+
+    fun resetState() { _state.value = AuthState.Idle }
 
     fun login(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
@@ -49,7 +52,7 @@ class AuthViewModel : ViewModel() {
                     _state.value = AuthState.Error("Неверный email или пароль")
                 }
             } catch (e: Exception) {
-                _state.value = AuthState.Error("Нет подключения к серверу")
+                _state.value = AuthState.Error(e.toUserMessage())
             }
         }
     }
@@ -64,7 +67,11 @@ class AuthViewModel : ViewModel() {
     fun register(
         firstName: String, lastName: String,
         email: String, password: String,
-        role: String, phone: String?
+        role: String, phone: String?,
+        trainerCode: String? = null,
+        weightKg: Double? = null,
+        heightCm: Double? = null,
+        gender: String? = null
     ) {
         if (firstName.isBlank() || lastName.isBlank() || email.isBlank() || password.isBlank()) {
             _state.value = AuthState.Error("Заполните все обязательные поля")
@@ -74,28 +81,29 @@ class AuthViewModel : ViewModel() {
             _state.value = AuthState.Error("Пароль минимум 6 символов")
             return
         }
+        if (role == "Trainer" && trainerCode.isNullOrBlank()) {
+            _state.value = AuthState.Error("Введите код тренера")
+            return
+        }
         viewModelScope.launch {
             _state.value = AuthState.Loading
             try {
                 val response = api.register(
                     RegisterRequest(firstName.trim(), lastName.trim(),
-                        email.trim(), password, role, phone?.trim())
+                        email.trim(), password, role, phone?.trim(), trainerCode?.trim())
                 )
                 if (response.isSuccessful) {
-                    val body = response.body()!!
-                    tokenStorage.saveAuth(
-                        body.accessToken, body.refreshToken,
-                        body.userId, body.role,
-                        body.firstName, body.lastName,
-                        body.email, body.avatarUrl
-                    )
-                    registerFcmToken()
-                    _state.value = AuthState.Success(body.role)
+                    _state.value = AuthState.Success(role, response.body()?.devCode)
                 } else {
-                    _state.value = AuthState.Error("Ошибка регистрации. Email уже занят?")
+                    val msg = response.errorBody()?.string()
+                    _state.value = AuthState.Error(
+                        if (msg?.contains("код") == true || msg?.contains("Trainer") == true)
+                            "Неверный код тренера"
+                        else "Ошибка регистрации. Email уже занят?"
+                    )
                 }
             } catch (e: Exception) {
-                _state.value = AuthState.Error("Нет подключения к серверу")
+                _state.value = AuthState.Error(e.toUserMessage())
             }
         }
     }

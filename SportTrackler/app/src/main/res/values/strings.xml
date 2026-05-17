@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">FitnessTrainer</string>
+    <string name="app_name">SportTracker</string>
+    <string name="offline_message">Нет подключения к интернету</string>
+    <string name="online_message">Подключение восстановлено</string>
 
     <!-- Auth -->
     <string name="login">Войти</string>

@@ -1,29 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
-    android:paddingTop="8dp">
+    android:paddingTop="16dp"
+    android:paddingBottom="8dp">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_view"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/InputField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="Поиск продукта…"/>
+        android:hint="Поиск продукта…"
+        app:startIconDrawable="@drawable/ic_search"
+        app:startIconTint="@color/text_hint">
 
-    <ProgressBar
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:singleLine="true"
+            android:textColor="@color/text_primary"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progress_search"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:visibility="gone"/>
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:indicatorColor="@color/accent_indigo"
+        app:trackColor="@color/bg_elevated"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_results"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:clipToPadding="false"/>
 

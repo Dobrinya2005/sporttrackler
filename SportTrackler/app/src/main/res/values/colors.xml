@@ -1,44 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Default (Light) Theme -->
-    <color name="md_primary">#1E88E5</color>
-    <color name="md_primary_variant">#1565C0</color>
-    <color name="md_secondary">#00BCD4</color>
-    <color name="md_background">#F8FAFB</color>
-    <color name="md_surface">#FFFFFF</color>
-    <color name="md_surface_variant">#F0F4F8</color>
-    <color name="md_on_primary">#FFFFFF</color>
-    <color name="md_on_background">#1A1A2E</color>
-    <color name="md_on_surface">#1A1A2E</color>
-    <color name="md_on_surface_variant">#6B7280</color>
-    <color name="md_error">#EF4444</color>
+    <!-- ============================================================ -->
+    <!--  SPORT TRACKLER — 2026 SPACE DARK PALETTE                   -->
+    <!-- ============================================================ -->
 
-    <!-- Solarized Dark Palette -->
-    <color name="sol_base03">#002B36</color>
-    <color name="sol_base02">#073642</color>
-    <color name="sol_base01">#586E75</color>
-    <color name="sol_base00">#657B83</color>
-    <color name="sol_base0">#839496</color>
-    <color name="sol_base1">#93A1A1</color>
-    <color name="sol_base2">#EEE8D5</color>
-    <color name="sol_base3">#FDF6E3</color>
-    <color name="sol_cyan">#2AA198</color>
-    <color name="sol_blue">#268BD2</color>
-    <color name="sol_green">#859900</color>
-    <color name="sol_yellow">#B58900</color>
-    <color name="sol_orange">#CB4B16</color>
-    <color name="sol_red">#DC322F</color>
-    <color name="sol_magenta">#D33682</color>
-    <color name="sol_violet">#6C71C4</color>
+    <!-- Backgrounds -->
+    <color name="bg_primary">#080B14</color>
+    <color name="bg_surface">#0F1521</color>
+    <color name="bg_elevated">#161E30</color>
+    <color name="bg_glass">#1A2235</color>
 
-    <!-- Chart colors (work in both themes) -->
-    <color name="color_protein">#2AA198</color>
-    <color name="color_fat">#B58900</color>
-    <color name="color_carbs">#268BD2</color>
-    <color name="color_calories">#DC322F</color>
+    <!-- Semantic accents -->
+    <color name="accent_cyan">#00D4FF</color>
+    <color name="accent_indigo">#5B6AF0</color>
+    <color name="accent_violet">#7C61FA</color>
+    <color name="accent_emerald">#00E596</color>
+    <color name="accent_amber">#FFB547</color>
+    <color name="accent_rose">#FF4777</color>
+    <color name="accent_magenta">#E040FB</color>
 
-    <!-- Transparent -->
+    <!-- Text -->
+    <color name="text_primary">#C8D6F0</color>
+    <color name="text_secondary">#8BA3C0</color>
+    <color name="text_hint">#5E7A99</color>
+
+    <!-- Borders -->
+    <color name="border_default">#1E2D45</color>
+    <color name="border_active">#5B6AF0</color>
+
+
+    <!-- Chart colors -->
+    <color name="color_protein">#00E596</color>    <color name="color_fat">#FFB547</color>
+    <color name="color_carbs">#5B6AF0</color>
+    <color name="color_calories">#FF4777</color>
+
+    <!-- Gradients (start/end pairs) -->
+    <color name="grad_indigo_start">#4158D0</color>
+    <color name="grad_indigo_end">#C850C0</color>
+    <color name="grad_cyan_start">#0093E9</color>
+    <color name="grad_cyan_end">#80D0C7</color>
+    <color name="grad_green_start">#00B09B</color>
+    <color name="grad_green_end">#96C93D</color>
+    <color name="grad_amber_start">#F7971E</color>
+    <color name="grad_amber_end">#FFD200</color>
+    <color name="grad_rose_start">#F953C6</color>
+    <color name="grad_rose_end">#B91D73</color>
+    <color name="grad_violet_start">#4776E6</color>
+    <color name="grad_violet_end">#8E54E9</color>
+
+    <!-- Food category emoji backgrounds (semi-transparent) -->
+    <color name="food_cat_dairy">#1A2D3F</color>
+    <color name="food_cat_protein">#1A2A1A</color>
+    <color name="food_cat_carbs">#1A1F3F</color>
+    <color name="food_cat_veggies">#1A3020</color>
+    <color name="food_cat_fruits">#2D1A2D</color>
+    <color name="food_cat_nuts">#2D2A1A</color>
+    <color name="food_cat_sports">#1A2030</color>
+    <color name="food_cat_other">#1A1D28</color>
+
+    <!-- ============================================================ -->
+    <!--  LIGHT THEME PALETTE                                        -->
+    <!-- ============================================================ -->
+    <color name="light_bg_primary">#F0F4FF</color>
+    <color name="light_bg_surface">#FFFFFF</color>
+    <color name="light_bg_elevated">#E8EEFF</color>
+    <color name="light_text_primary">#1A1E3C</color>
+    <color name="light_text_secondary">#4A5680</color>
+    <color name="light_text_hint">#8A96BC</color>
+    <color name="light_border_default">#C8D0F0</color>
+
+    <color name="divider">#1E2D45</color>
+
+    <!-- System -->
     <color name="transparent">#00000000</color>
     <color name="scrim">#80000000</color>
-    <color name="ic_launcher_background">#268BD2</color>
+    <color name="ic_launcher_background">#5B6AF0</color>
 </resources>

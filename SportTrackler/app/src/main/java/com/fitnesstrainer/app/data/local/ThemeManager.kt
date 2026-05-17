@@ -10,25 +10,29 @@ object ThemeManager {
     private const val PREFS_NAME = "theme_prefs"
     private const val KEY_THEME = "selected_theme"
 
-    const val THEME_DEFAULT = "default"
-    const val THEME_SOLARIZED_DARK = "solarized_dark"
+    const val THEME_DARK  = "dark"
+    const val THEME_LIGHT = "light"
 
     private fun prefs(context: Context): SharedPreferences =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     fun getTheme(context: Context): String =
-        prefs(context).getString(KEY_THEME, THEME_SOLARIZED_DARK) ?: THEME_SOLARIZED_DARK
+        prefs(context).getString(KEY_THEME, THEME_DARK) ?: THEME_DARK
 
     fun setTheme(context: Context, theme: String) {
         prefs(context).edit().putString(KEY_THEME, theme).apply()
     }
 
+    fun isDark(context: Context) = getTheme(context) != THEME_LIGHT
+
     fun applyTheme(activity: AppCompatActivity) {
         when (getTheme(activity)) {
-            THEME_SOLARIZED_DARK -> activity.setTheme(R.style.Theme_FitnessTrainer_SolarizedDark)
-            else -> activity.setTheme(R.style.Theme_FitnessTrainer)
+            THEME_LIGHT -> activity.setTheme(R.style.Theme_FitnessTrainer_Light)
+            else        -> activity.setTheme(R.style.Theme_FitnessTrainer)
         }
     }
 
-    fun isSolarizedDark(context: Context) = getTheme(context) == THEME_SOLARIZED_DARK
+    fun toggle(context: Context) {
+        setTheme(context, if (isDark(context)) THEME_LIGHT else THEME_DARK)
+    }
 }

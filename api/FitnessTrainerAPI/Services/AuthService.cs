@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -42,7 +43,7 @@ public class AuthService(AppDbContext db, IConfiguration config) : IAuthService
         await db.SaveChangesAsync();
 
         if (role.RoleName == "Trainer")
-            db.TrainerProfiles.Add(new TrainerProfile { UserId = user.UserId });
+            db.TrainerProfiles.Add(new TrainerProfile { UserId = user.UserId, TrainerCode = GenerateTrainerCode() });
         else
             db.ClientProfiles.Add(new ClientProfile { UserId = user.UserId });
 
@@ -131,6 +132,14 @@ public class AuthService(AppDbContext db, IConfiguration config) : IAuthService
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private static string GenerateTrainerCode()
+    {
+        const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        var bytes = new byte[6];
+        RandomNumberGenerator.Fill(bytes);
+        return new string(bytes.Select(b => chars[b % chars.Length]).ToArray());
     }
 
     private static string GenerateRefreshToken()

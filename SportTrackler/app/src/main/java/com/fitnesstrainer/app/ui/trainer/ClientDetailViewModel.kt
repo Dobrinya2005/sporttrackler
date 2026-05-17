@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.data.model.MeasurementResponse
+import com.fitnesstrainer.app.util.toUserMessage
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 sealed class ClientDetailState {
@@ -16,12 +18,26 @@ sealed class ClientDetailState {
 
 class ClientDetailViewModel : ViewModel() {
 
-    private val api = App.instance.apiService
+    private val api            = App.instance.apiService
+    private val networkMonitor = App.instance.networkMonitor
 
     private val _state = MutableLiveData<ClientDetailState>()
     val state: LiveData<ClientDetailState> = _state
 
+    private var lastClientId = -1
+
+    init {
+        viewModelScope.launch {
+            networkMonitor.isOnline.collectLatest { online ->
+                if (online && _state.value is ClientDetailState.Error && lastClientId != -1) {
+                    loadLatest(lastClientId)
+                }
+            }
+        }
+    }
+
     fun loadLatest(clientId: Int) {
+        lastClientId = clientId
         viewModelScope.launch {
             _state.value = ClientDetailState.Loading
             try {
@@ -31,7 +47,7 @@ class ClientDetailViewModel : ViewModel() {
                 else
                     ClientDetailState.Success(null)
             } catch (e: Exception) {
-                _state.value = ClientDetailState.Error("Нет подключения к серверу")
+                _state.value = ClientDetailState.Error(e.toUserMessage())
             }
         }
     }

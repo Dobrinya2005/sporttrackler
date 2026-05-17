@@ -5,8 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
+import com.fitnesstrainer.app.data.local.db.toEntity
+import com.fitnesstrainer.app.data.local.db.toResponse
 import com.fitnesstrainer.app.data.model.MeasurementRequest
 import com.fitnesstrainer.app.data.model.MeasurementResponse
+import com.fitnesstrainer.app.util.toUserMessage
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 sealed class MeasurementsState {
@@ -17,8 +21,10 @@ sealed class MeasurementsState {
 
 class MeasurementsViewModel : ViewModel() {
 
-    private val api          = App.instance.apiService
-    private val tokenStorage = App.instance.tokenStorage
+    private val api            = App.instance.apiService
+    private val tokenStorage   = App.instance.tokenStorage
+    private val networkMonitor = App.instance.networkMonitor
+    private val dao            = App.instance.database.measurementDao()
 
     private val _state = MutableLiveData<MeasurementsState>()
     val state: LiveData<MeasurementsState> = _state
@@ -29,6 +35,14 @@ class MeasurementsViewModel : ViewModel() {
     private var targetClientId = -1
     var isOwnData = true
         private set
+
+    init {
+        viewModelScope.launch {
+            networkMonitor.isOnline.collectLatest { online ->
+                if (online && _state.value is MeasurementsState.Error) load()
+            }
+        }
+    }
 
     fun init(clientId: Int) {
         viewModelScope.launch {
@@ -43,15 +57,27 @@ class MeasurementsViewModel : ViewModel() {
         if (targetClientId == -1) return
         viewModelScope.launch {
             _state.value = MeasurementsState.Loading
+
+            // Показываем кеш мгновенно
+            val cached = dao.getAll(targetClientId).map { it.toResponse() }
+            if (cached.isNotEmpty()) {
+                _state.value = MeasurementsState.Success(cached)
+            }
+
             try {
                 val response = api.getMeasurementHistory(targetClientId)
                 if (response.isSuccessful) {
-                    _state.value = MeasurementsState.Success(response.body() ?: emptyList())
-                } else {
+                    val fresh = response.body() ?: emptyList()
+                    dao.deleteAll(targetClientId)
+                    dao.insertAll(fresh.map { it.toEntity(targetClientId) })
+                    _state.value = MeasurementsState.Success(fresh)
+                } else if (cached.isEmpty()) {
                     _state.value = MeasurementsState.Error("Ошибка загрузки замеров")
                 }
             } catch (e: Exception) {
-                _state.value = MeasurementsState.Error("Нет подключения к серверу")
+                if (cached.isEmpty()) {
+                    _state.value = MeasurementsState.Error(e.toUserMessage())
+                }
             }
         }
     }
@@ -65,7 +91,7 @@ class MeasurementsViewModel : ViewModel() {
                     load()
                 }
             } catch (e: Exception) {
-                _state.value = MeasurementsState.Error("Ошибка сохранения")
+                _state.value = MeasurementsState.Error(e.toUserMessage())
             }
         }
     }

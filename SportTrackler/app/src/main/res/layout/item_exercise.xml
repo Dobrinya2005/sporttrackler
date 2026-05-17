@@ -6,10 +6,10 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     android:layout_marginStart="8dp"
-    app:cardBackgroundColor="@color/sol_base02"
-    app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="@color/bg_elevated"
+    app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
-    app:strokeColor="@color/sol_base01"
+    app:strokeColor="@color/border_default"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -22,7 +22,7 @@
             android:id="@+id/tv_exercise_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/sol_base1"
+            android:textColor="@color/text_primary"
             android:textSize="14sp"
             android:fontFamily="sans-serif-medium"/>
 
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="@color/sol_cyan"
+            android:textColor="@color/accent_cyan"
             android:textSize="12sp"/>
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/sol_base0"
+            android:textColor="@color/text_secondary"
             android:textSize="13sp"/>
 
         <TextView
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="@color/sol_base01"
+            android:textColor="@color/text_hint"
             android:textSize="12sp"
             android:fontFamily="sans-serif-light"/>
     </LinearLayout>

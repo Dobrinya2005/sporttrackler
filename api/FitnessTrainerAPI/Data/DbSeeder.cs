@@ -7,6 +7,87 @@ public static class DbSeeder
 {
     public static async Task SeedAsync(AppDbContext db)
     {
+        await SeedUsersAsync(db);
+        await SeedFoodAsync(db);
+    }
+
+    private static async Task SeedUsersAsync(AppDbContext db)
+    {
+        if (await db.Users.AnyAsync()) return;
+
+        var adminRole   = await db.Roles.FirstAsync(r => r.RoleName == "Admin");
+        var trainerRole = await db.Roles.FirstAsync(r => r.RoleName == "Trainer");
+        var clientRole  = await db.Roles.FirstAsync(r => r.RoleName == "Client");
+
+        // ── Администратор ────────────────────────────────────────
+        var admin = new User
+        {
+            RoleId       = adminRole.RoleId,
+            FirstName    = "Администратор",
+            LastName     = "SportTrackler",
+            Email        = "admin@sporttrackler.ru",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+            Phone        = "+7 900 000-00-01",
+            IsActive     = true
+        };
+        db.Users.Add(admin);
+
+        // ── Тренер ───────────────────────────────────────────────
+        var trainer = new User
+        {
+            RoleId       = trainerRole.RoleId,
+            FirstName    = "Алексей",
+            LastName     = "Иванов",
+            Email        = "trainer@sporttrackler.ru",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Trainer123!"),
+            Phone        = "+7 900 000-00-02",
+            IsActive     = true
+        };
+        db.Users.Add(trainer);
+
+        // ── Тестовый клиент ──────────────────────────────────────
+        var client = new User
+        {
+            RoleId       = clientRole.RoleId,
+            FirstName    = "Мария",
+            LastName     = "Петрова",
+            Email        = "client@sporttrackler.ru",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Client123!"),
+            Phone        = "+7 900 000-00-03",
+            IsActive     = true
+        };
+        db.Users.Add(client);
+
+        await db.SaveChangesAsync();
+
+        // TrainerProfile для тренера
+        db.TrainerProfiles.Add(new TrainerProfile
+        {
+            UserId         = trainer.UserId,
+            Specialization = "Силовые тренировки",
+            Experience     = 5,
+            Description    = "Сертифицированный персональный тренер. Специализация: набор массы, похудение, силовой спорт.",
+            TrainerCode    = "TRAINER01"
+        });
+
+        // ClientProfile для клиента (привязан к тренеру)
+        db.ClientProfiles.Add(new ClientProfile
+        {
+            UserId         = client.UserId,
+            TrainerId      = trainer.UserId,
+            Gender         = "Female",
+            HeightCm       = 165,
+            InitialWeightKg = 62,
+            GoalWeight     = 55,
+            ActivityLevel  = "Moderate",
+            FitnessGoal    = "Похудение"
+        });
+
+        await db.SaveChangesAsync();
+    }
+
+    private static async Task SeedFoodAsync(AppDbContext db)
+    {
         if (await db.FoodProducts.AnyAsync()) return;
 
         var products = new List<FoodProduct>

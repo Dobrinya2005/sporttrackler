@@ -9,107 +9,67 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="8dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InputField"
+        <!-- Main metrics -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ОСНОВНЫЕ ПОКАЗАТЕЛИ"
+            android:textColor="@color/text_hint"
+            android:textSize="10sp"
+            android:letterSpacing="0.14"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Вес (кг)"
-            app:hintTextColor="@color/sol_cyan"
-            app:boxStrokeColor="@color/sol_cyan">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_weight"
-                android:layout_width="match_parent"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InputField"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="Вес (кг)"
+                app:hintTextColor="@color/accent_cyan"
+                app:boxStrokeColor="@color/accent_cyan">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InputField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Рост (см)"
-            app:hintTextColor="@color/sol_cyan"
-            app:boxStrokeColor="@color/sol_cyan">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_height"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InputField"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_weight="1"
+                android:hint="Рост (см)"
+                app:hintTextColor="@color/accent_cyan"
+                app:boxStrokeColor="@color/accent_cyan">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_height"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/InputField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Грудь (см)"
-            app:hintTextColor="@color/sol_cyan"
-            app:boxStrokeColor="@color/sol_cyan">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_chest"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InputField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Талия (см)"
-            app:hintTextColor="@color/sol_cyan"
-            app:boxStrokeColor="@color/sol_cyan">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_waist"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InputField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Бёдра (см)"
-            app:hintTextColor="@color/sol_cyan"
-            app:boxStrokeColor="@color/sol_cyan">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_hips"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InputField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Бицепс (см)"
-            app:hintTextColor="@color/sol_cyan"
-            app:boxStrokeColor="@color/sol_cyan">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_bicep"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/InputField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="10dp"
             android:hint="% жира"
-            app:hintTextColor="@color/sol_cyan"
-            app:boxStrokeColor="@color/sol_cyan">
+            app:hintTextColor="@color/accent_cyan"
+            app:boxStrokeColor="@color/accent_cyan">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_body_fat"
                 android:layout_width="match_parent"
@@ -117,14 +77,116 @@
                 android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Body measurements -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/border_default"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ОБХВАТЫ (СМ)"
+            android:textColor="@color/text_hint"
+            android:textSize="10sp"
+            android:letterSpacing="0.14"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InputField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="Грудь"
+                app:hintTextColor="@color/accent_indigo"
+                app:boxStrokeColor="@color/accent_indigo">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_chest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InputField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Талия"
+                app:hintTextColor="@color/accent_indigo"
+                app:boxStrokeColor="@color/accent_indigo">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_waist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InputField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="Бёдра"
+                app:hintTextColor="@color/accent_indigo"
+                app:boxStrokeColor="@color/accent_indigo">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_hips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/InputField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Бицепс"
+                app:hintTextColor="@color/accent_indigo"
+                app:boxStrokeColor="@color/accent_indigo">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_bicep"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <!-- Notes -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/border_default"/>
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/InputField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="Заметки"
-            app:hintTextColor="@color/sol_cyan"
-            app:boxStrokeColor="@color/sol_cyan">
+            android:hint="Заметки (необязательно)"
+            app:hintTextColor="@color/text_hint"
+            app:boxStrokeColor="@color/border_default">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_notes"
                 android:layout_width="match_parent"

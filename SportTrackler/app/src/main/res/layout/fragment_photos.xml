@@ -4,42 +4,64 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/sol_base03">
+    android:background="?attr/bgPrimary">
 
+    <!-- Gradient header -->
     <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingHorizontal="8dp"
-        android:paddingTop="44dp"
-        android:paddingBottom="8dp"
-        android:background="@color/sol_base02"
+        android:paddingTop="52dp"
+        android:paddingBottom="14dp"
+        android:background="@drawable/gradient_header"
         android:gravity="center_vertical">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_back"
             style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:text="←"
-            android:textColor="@color/sol_cyan"
-            android:textSize="20sp"/>
+            android:textColor="@color/accent_cyan"
+            android:textSize="20sp"
+            android:padding="0dp"
+            android:minWidth="0dp"/>
 
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Фото прогресса"
-            android:textColor="@color/sol_base1"
-            android:textSize="18sp"
-            android:fontFamily="sans-serif-medium"/>
+            android:orientation="vertical"
+            android:layout_marginStart="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ПРОГРЕСС"
+                android:textColor="@color/accent_violet"
+                android:textSize="10sp"
+                android:letterSpacing="0.16"
+                android:fontFamily="sans-serif-medium"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Фото прогресса"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="92dp">
+        android:layout_marginTop="104dp">
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -48,15 +70,54 @@
             android:layout_gravity="center"
             android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/tv_empty"
+        <!-- Empty state -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Фото пока нет"
-            android:textColor="@color/sol_base01"
-            android:textSize="16sp"
-            android:visibility="gone"/>
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            android:id="@+id/empty_state">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📸"
+                android:textSize="48sp"/>
+
+            <TextView
+                android:id="@+id/tv_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Фото пока нет"
+                android:textColor="@color/text_hint"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-medium"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:id="@+id/tv_empty_sub"
+                android:text="Нажмите + чтобы загрузить фото"
+                android:textColor="@color/text_hint"
+                android:textSize="13sp"
+                android:gravity="center"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_retry"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Повторить"
+                android:textColor="@color/accent_violet"
+                app:strokeColor="@color/accent_violet"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_photos"
@@ -64,18 +125,21 @@
             android:layout_height="match_parent"
             android:paddingHorizontal="8dp"
             android:paddingTop="8dp"
-            android:paddingBottom="80dp"
+            android:paddingBottom="88dp"
             android:clipToPadding="false"/>
 
+        <!-- FAB -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_upload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="100dp"
             android:src="@android:drawable/ic_menu_camera"
-            app:backgroundTint="@color/sol_blue"
-            app:tint="@color/sol_base03"/>
+            app:backgroundTint="@color/accent_violet"
+            app:tint="@color/text_primary"/>
+
     </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

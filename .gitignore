@@ -6,6 +6,7 @@ obj/
 .vs/
 *.swp
 *.sln.docstates
+appsettings.json
 appsettings.Development.json
 firebase-credentials.json
 

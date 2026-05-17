@@ -47,6 +47,16 @@ public class TrainerController(AppDbContext db) : ControllerBase
         return Ok(new { message = "Клиент привязан" });
     }
 
+    // GET api/trainer/my-code — код тренера для отображения клиентам
+    [HttpGet("my-code")]
+    public async Task<IActionResult> GetMyCode()
+    {
+        var trainerId = GetUserId();
+        var profile = await db.TrainerProfiles.FirstOrDefaultAsync(tp => tp.UserId == trainerId);
+        if (profile is null) return NotFound(new { message = "Профиль тренера не найден" });
+        return Ok(new { trainerCode = profile.TrainerCode });
+    }
+
     private int GetUserId() =>
         int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 }

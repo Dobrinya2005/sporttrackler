@@ -10,7 +10,8 @@ data class RegisterRequest(
     val email: String,
     val password: String,
     val role: String,
-    val phone: String?
+    val phone: String?,
+    val trainerCode: String? = null
 )
 
 data class LoginRequest(
@@ -30,6 +31,31 @@ data class AuthResponse(
 )
 
 data class RefreshTokenRequest(val refreshToken: String)
+
+data class SendCodeRequest(val email: String)
+data class VerifyCodeRequest(val email: String, val code: String)
+data class ResetPasswordRequest(val email: String, val code: String, val newPassword: String)
+data class MessageResponse(val message: String, val devCode: String? = null)
+
+data class SaveClientProfileRequest(
+    val fitnessGoal: String?,
+    val activityLevel: String?,
+    val weightKg: Double?,
+    val heightCm: Double?,
+    val goalWeightKg: Double?,
+    val gender: String?
+)
+
+data class ClientProfileDto(
+    val userId: Int,
+    val fitnessGoal: String?,
+    val activityLevel: String?,
+    val weightKg: Double?,
+    val heightCm: Double?,
+    val goalWeightKg: Double?,
+    val birthDate: String?,
+    val gender: String?
+)
 
 data class TokenResponse(
     val accessToken: String,
@@ -134,6 +160,34 @@ data class MealSummary(
 
 // ── Workout ──────────────────────────────────────────────────
 
+data class WorkoutPlanCreateRequest(
+    val clientId: Int,
+    val title: String,
+    val description: String?,
+    val startDate: String?,
+    val endDate: String?,
+    val days: List<WorkoutDayRequest>
+)
+
+data class WorkoutDayRequest(
+    val dayNumber: Int,
+    val dayName: String?,
+    val notes: String?,
+    val exercises: List<ExerciseRequest>
+)
+
+data class ExerciseRequest(
+    val orderIndex: Int,
+    val name: String,
+    val muscleGroup: String?,
+    val sets: Int?,
+    val reps: String?,
+    val weightKg: Double?,
+    val restSeconds: Int?,
+    val videoUrl: String?,
+    val notes: String?
+)
+
 data class WorkoutPlan(
     val planId: Int,
     val trainerId: Int,
@@ -215,6 +269,10 @@ data class TrainerInfo(
     val avatarUrl: String?
 )
 
+data class TrainerCodeResponse(
+    val trainerCode: String
+)
+
 // ── Photo ─────────────────────────────────────────────────────
 
 data class ProgressPhoto(
@@ -226,4 +284,92 @@ data class ProgressPhoto(
     val description: String?,
     val isVisibleToTrainer: Boolean,
     val createdAt: String
+)
+
+// ── Trainer list (for client to choose) ──────────────────────
+
+data class TrainerListItem(
+    val userId: Int,
+    val firstName: String,
+    val lastName: String,
+    val avatarUrl: String?,
+    val specialization: String?,
+    val experience: Int?,
+    val description: String?,
+    val rating: Double?,
+    val reviewCount: Int
+)
+
+// ── Reviews ──────────────────────────────────────────────────
+
+data class AddReviewRequest(
+    val trainerId: Int,
+    val rating: Int,
+    val comment: String?
+)
+
+data class ReviewItem(
+    val reviewId: Int,
+    val clientId: Int,
+    val clientName: String,
+    val avatarUrl: String?,
+    val rating: Int,
+    val comment: String?,
+    val createdAt: String
+)
+
+data class ReviewsResponse(
+    val averageRating: Double,
+    val reviews: List<ReviewItem>
+)
+
+// ── Admin ─────────────────────────────────────────────────────
+
+data class AdminTrainerItem(
+    val userId: Int,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val phone: String?,
+    val avatarUrl: String?,
+    val isActive: Boolean,
+    val trainerCode: String,
+    val createdAt: String,
+    val clientCount: Int,
+    val reviewCount: Int,
+    val avgRating: Double?
+)
+
+data class AdminReviewItem(
+    val reviewId: Int,
+    val clientName: String,
+    val avatarUrl: String?,
+    val rating: Int,
+    val comment: String?,
+    val adminReply: String?,
+    val adminReplyAt: String?,
+    val createdAt: String
+)
+
+data class CreateTrainerRequest(
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val password: String
+)
+
+data class ReplyRequest(val reply: String)
+
+data class BlockResponse(val isActive: Boolean)
+
+// ── User profile ─────────────────────────────────────────────
+
+data class UserProfile(
+    val userId: Int,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val phone: String?,
+    val role: String,
+    val avatarUrl: String?
 )

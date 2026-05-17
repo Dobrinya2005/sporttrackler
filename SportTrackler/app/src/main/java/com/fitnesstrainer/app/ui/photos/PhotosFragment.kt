@@ -7,7 +7,6 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -59,20 +58,33 @@ class PhotosFragment : Fragment() {
             binding.fabUpload.isEnabled    = !uploading
         }
 
+        binding.btnRetry.setOnClickListener { viewModel.load() }
+
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is PhotosState.Loading -> binding.progressBar.visibility = View.VISIBLE
+                is PhotosState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.emptyState.visibility  = View.GONE
+                }
                 is PhotosState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     adapter.submitList(state.photos)
-                    binding.tvEmpty.visibility =
-                        if (state.photos.isEmpty()) View.VISIBLE else View.GONE
-                    binding.fabUpload.visibility =
-                        if (viewModel.isOwnData) View.VISIBLE else View.GONE
+                    binding.fabUpload.visibility = if (viewModel.isOwnData) View.VISIBLE else View.GONE
+                    if (state.photos.isEmpty()) {
+                        binding.tvEmpty.text    = "Фото пока нет"
+                        binding.tvEmptySub.text = "Нажмите + чтобы загрузить фото"
+                        binding.btnRetry.visibility   = View.GONE
+                        binding.emptyState.visibility = View.VISIBLE
+                    } else {
+                        binding.emptyState.visibility = View.GONE
+                    }
                 }
                 is PhotosState.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    binding.tvEmpty.text    = state.message
+                    binding.tvEmptySub.text = ""
+                    binding.btnRetry.visibility   = View.VISIBLE
+                    binding.emptyState.visibility = View.VISIBLE
                 }
             }
         }

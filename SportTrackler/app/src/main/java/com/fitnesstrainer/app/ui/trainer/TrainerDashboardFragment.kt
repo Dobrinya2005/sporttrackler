@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
@@ -52,8 +51,9 @@ class TrainerDashboardFragment : Fragment() {
         binding.rvClients.adapter       = adapter
 
         binding.swipeRefresh.setOnRefreshListener { viewModel.loadClients() }
+        binding.btnRetry.setOnClickListener { viewModel.loadClients() }
 
-        binding.btnLogout.setOnClickListener {
+        binding.btnLogout.onClick = {
             viewModel.logout()
             findNavController().navigate(
                 R.id.loginFragment, null,
@@ -61,19 +61,48 @@ class TrainerDashboardFragment : Fragment() {
             )
         }
 
-        viewModel.trainerName.observe(viewLifecycleOwner) { binding.tvTrainerName.text = it }
+        viewModel.trainerName.observe(viewLifecycleOwner) { name ->
+            binding.tvTrainerName.text = name
+            val initials = name.trim().split(" ")
+                .filter { it.isNotEmpty() }
+                .take(2)
+                .joinToString("") { it.first().uppercaseChar().toString() }
+            binding.tvAvatarInitials.text = initials
+        }
+
+        viewModel.stats.observe(viewLifecycleOwner) { stats ->
+            binding.tvClientCount.text = stats.clientCount.toString()
+            binding.tvRating.text = stats.averageRating?.let { "%.1f".format(it) } ?: "—"
+            binding.tvReviewCount.text = stats.reviewCount.toString()
+        }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             binding.swipeRefresh.isRefreshing = false
             when (state) {
-                is TrainerState.Loading -> binding.swipeRefresh.isRefreshing = true
+                is TrainerState.Loading -> {
+                    binding.swipeRefresh.isRefreshing = true
+                    binding.emptyState.visibility = View.GONE
+                }
                 is TrainerState.Success -> {
                     adapter.submitList(state.clients)
-                    binding.tvEmpty.visibility =
-                        if (state.clients.isEmpty()) View.VISIBLE else View.GONE
+                    val isEmpty = state.clients.isEmpty()
+                    binding.rvClients.visibility = if (isEmpty) View.GONE else View.VISIBLE
+                    if (isEmpty) {
+                        binding.tvEmpty.text    = "Клиентов пока нет"
+                        binding.tvEmptySub.text = "Клиенты появятся после регистрации"
+                        binding.btnRetry.visibility   = View.GONE
+                        binding.emptyState.visibility = View.VISIBLE
+                    } else {
+                        binding.emptyState.visibility = View.GONE
+                    }
                 }
-                is TrainerState.Error ->
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                is TrainerState.Error -> {
+                    binding.rvClients.visibility  = View.GONE
+                    binding.tvEmpty.text    = state.message
+                    binding.tvEmptySub.text = ""
+                    binding.btnRetry.visibility   = View.VISIBLE
+                    binding.emptyState.visibility = View.VISIBLE
+                }
             }
         }
     }

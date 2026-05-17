@@ -2,22 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_dashboard"
-        android:icon="@android:drawable/ic_menu_today"
+        android:icon="@drawable/ic_home"
         android:title="Главная"/>
     <item
         android:id="@+id/nav_measurements"
-        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:icon="@drawable/ic_ruler"
         android:title="Замеры"/>
     <item
         android:id="@+id/nav_food"
-        android:icon="@android:drawable/ic_menu_agenda"
+        android:icon="@drawable/ic_nutrition"
         android:title="Питание"/>
     <item
         android:id="@+id/nav_workout"
-        android:icon="@android:drawable/ic_menu_directions"
+        android:icon="@drawable/ic_dumbbell"
         android:title="Тренировки"/>
     <item
-        android:id="@+id/nav_chat"
-        android:icon="@android:drawable/ic_menu_send"
-        android:title="Чат"/>
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/ic_settings"
+        android:title="Настройки"/>
 </menu>

@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.data.model.WorkoutPlan
+import com.fitnesstrainer.app.util.toUserMessage
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 sealed class WorkoutState {
@@ -16,13 +18,22 @@ sealed class WorkoutState {
 
 class WorkoutPlanViewModel : ViewModel() {
 
-    private val api          = App.instance.apiService
-    private val tokenStorage = App.instance.tokenStorage
+    private val api            = App.instance.apiService
+    private val tokenStorage   = App.instance.tokenStorage
+    private val networkMonitor = App.instance.networkMonitor
 
     private val _state = MutableLiveData<WorkoutState>()
     val state: LiveData<WorkoutState> = _state
 
     private var targetClientId = -1
+
+    init {
+        viewModelScope.launch {
+            networkMonitor.isOnline.collectLatest { online ->
+                if (online && _state.value is WorkoutState.Error) load()
+            }
+        }
+    }
 
     fun init(clientId: Int) {
         viewModelScope.launch {
@@ -44,7 +55,7 @@ class WorkoutPlanViewModel : ViewModel() {
                     _state.value = WorkoutState.Error("Ошибка загрузки плана")
                 }
             } catch (e: Exception) {
-                _state.value = WorkoutState.Error("Нет подключения к серверу")
+                _state.value = WorkoutState.Error(e.toUserMessage())
             }
         }
     }

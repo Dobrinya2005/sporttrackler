@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Light mode ON (checked) -->
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="0"
+                android:startColor="#522ba7"
+                android:endColor="#7b4fd4"/>
+            <corners android:radius="30dp"/>
+        </shape>
+    </item>
+    <!-- Dark mode (unchecked) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#28096b"/>
+            <corners android:radius="30dp"/>
+        </shape>
+    </item>
+</selector>

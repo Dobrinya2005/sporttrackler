@@ -1,32 +1,57 @@
 package com.fitnesstrainer.app.ui
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.data.local.ThemeManager
 import com.fitnesstrainer.app.databinding.ActivityMainBinding
+import com.fitnesstrainer.app.ui.widget.GlassBottomNav
+import com.fitnesstrainer.app.util.SoundManager
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private var isTrainerMode = false
 
-    // Fragments where bottom nav is hidden
-    private val authDestinations = setOf(
+    private val noNavDestinations = setOf(
         R.id.loginFragment,
-        R.id.registerFragment
+        R.id.registerFragment,
+        R.id.pinFragment,
+        R.id.chatFragment,
+        R.id.emailVerificationFragment,
+        R.id.clientOnboardingFragment,
+        R.id.onboardingMeasurementsFragment,
+        R.id.onboardingPhotosFragment,
+        R.id.trainerSelectionFragment,
+        R.id.clientDetailFragment,
+        R.id.qrScanFragment,
+        R.id.adminDashboardFragment,
+        R.id.adminReviewsFragment,
+        R.id.adminSettingsFragment,
+        R.id.forgotPasswordFragment,
+        R.id.resetPasswordFragment
     )
+
+    // Время ухода в фон; PIN запрашивается если прошло > 30 сек
+    private var backgroundedAt = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
         super.onCreate(savedInstanceState)
+
+        enableHighRefreshRate()
+        SoundManager.init(this)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -36,21 +61,95 @@ class MainActivity : AppCompatActivity() {
 
         setupBottomNavigation()
         checkAutoLogin()
+        observeNetwork()
+    }
+
+    private fun enableHighRefreshRate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display?.supportedModes
+                ?.maxByOrNull { it.refreshRate }
+                ?.let { mode ->
+                    window.attributes = window.attributes.apply {
+                        preferredDisplayModeId = mode.modeId
+                    }
+                }
+        }
+    }
+
+    private fun configureNavForRole(role: String?) {
+        isTrainerMode = (role == "Trainer")
+        if (isTrainerMode) {
+            binding.bottomNav.setItems(listOf(
+                GlassBottomNav.NavItem("Главная",   R.drawable.ic_home),
+                GlassBottomNav.NavItem("QR-код",    R.drawable.ic_qr_code),
+                GlassBottomNav.NavItem("Настройки", R.drawable.ic_settings)
+            ))
+        } else {
+            binding.bottomNav.setItems(listOf(
+                GlassBottomNav.NavItem("Главная",    R.drawable.ic_home),
+                GlassBottomNav.NavItem("Питание",    R.drawable.ic_nutrition),
+                GlassBottomNav.NavItem("Тренировки", R.drawable.ic_dumbbell),
+                GlassBottomNav.NavItem("Настройки",  R.drawable.ic_settings)
+            ))
+        }
     }
 
     private fun setupBottomNavigation() {
-        binding.bottomNav.setupWithNavController(navController)
-
-        // Show / hide bottom nav based on destination
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id in authDestinations) {
+            if (destination.id in noNavDestinations) {
                 hideBottomNav()
             } else {
                 showBottomNav()
+                val idx = if (isTrainerMode) {
+                    when (destination.id) {
+                        R.id.trainerDashboardFragment -> 0
+                        R.id.trainerQrFragment -> 1
+                        R.id.settingsFragment -> 2
+                        else -> -1
+                    }
+                } else {
+                    when (destination.id) {
+                        R.id.clientDashboardFragment -> 0
+                        R.id.foodDiaryFragment -> 1
+                        R.id.workoutPlanFragment -> 2
+                        R.id.settingsFragment -> 3
+                        else -> -1
+                    }
+                }
+                if (idx >= 0) binding.bottomNav.setSelected(idx)
             }
+        }
 
-            // Apply slide animation between main tabs
-            binding.bottomNav.menu.findItem(destination.id)?.isChecked = true
+        binding.bottomNav.onItemSelected = { idx ->
+            val currentId = navController.currentDestination?.id
+            if (isTrainerMode) {
+                when (idx) {
+                    0 -> if (currentId != R.id.trainerDashboardFragment)
+                        navController.navigate(R.id.trainerDashboardFragment, null,
+                            NavOptions.Builder().setLaunchSingleTop(true).build())
+                    1 -> if (currentId != R.id.trainerQrFragment)
+                        navController.navigate(R.id.trainerQrFragment, null,
+                            NavOptions.Builder().setLaunchSingleTop(true).build())
+                    2 -> if (currentId != R.id.settingsFragment)
+                        navController.navigate(R.id.settingsFragment, null,
+                            NavOptions.Builder().setLaunchSingleTop(true).build())
+                }
+            } else {
+                when (idx) {
+                    0 -> if (currentId != R.id.clientDashboardFragment)
+                        navController.navigate(R.id.clientDashboardFragment, null,
+                            NavOptions.Builder().setLaunchSingleTop(true).build())
+                    1 -> if (currentId != R.id.foodDiaryFragment)
+                        navController.navigate(R.id.foodDiaryFragment, null,
+                            NavOptions.Builder().setLaunchSingleTop(true).build())
+                    2 -> if (currentId != R.id.workoutPlanFragment)
+                        navController.navigate(R.id.workoutPlanFragment, null,
+                            NavOptions.Builder().setLaunchSingleTop(true).build())
+                    3 -> if (currentId != R.id.settingsFragment)
+                        navController.navigate(R.id.settingsFragment, null,
+                            NavOptions.Builder().setLaunchSingleTop(true).build())
+                }
+            }
         }
     }
 
@@ -60,7 +159,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNav.animate()
             .translationY(0f)
             .alpha(1f)
-            .setDuration(250)
+            .setDuration(220)
             .start()
     }
 
@@ -68,23 +167,113 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNav.animate()
             .translationY(binding.bottomNav.height.toFloat())
             .alpha(0f)
-            .setDuration(200)
+            .setDuration(180)
             .withEndAction { binding.bottomNav.visibility = View.GONE }
             .start()
     }
 
     private fun checkAutoLogin() {
         lifecycleScope.launch {
-            val tokenStorage = App.instance.tokenStorage
-            if (tokenStorage.isLoggedIn()) {
-                val role = tokenStorage.getUserRole()
-                val dest = if (role == "Trainer")
-                    R.id.trainerDashboardFragment
-                else
-                    R.id.clientDashboardFragment
-                navController.navigate(dest)
+            val storage = App.instance.tokenStorage
+            if (!storage.isLoggedIn()) return@launch
+            val role = storage.getUserRole()
+            configureNavForRole(role)
+            when {
+                // PIN установлен → всегда спрашиваем при старте
+                storage.hasPinSet() -> navController.navigate(R.id.pinFragment)
+                // PIN ещё не предлагали → предложим (первый вход после авторизации)
+                !storage.isPinOffered() -> navController.navigate(R.id.pinFragment)
+                // PIN пропущен/отключён → сразу на дашборд
+                else -> {
+                    val dest = when (role) {
+                        "Trainer" -> R.id.trainerDashboardFragment
+                        "Admin"   -> R.id.adminDashboardFragment
+                        else      -> R.id.clientDashboardFragment
+                    }
+                    navController.navigate(dest)
+                }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        backgroundedAt = System.currentTimeMillis()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val elapsed = System.currentTimeMillis() - backgroundedAt
+        // Если прошло > 30 сек с момента ухода в фон — снова спрашиваем PIN
+        if (backgroundedAt > 0 && elapsed > 30_000) {
+            val current = navController.currentDestination?.id
+            val dashboards = setOf(
+                R.id.clientDashboardFragment, R.id.trainerDashboardFragment,
+                R.id.adminDashboardFragment, R.id.foodDiaryFragment,
+                R.id.workoutPlanFragment, R.id.settingsFragment,
+                R.id.measurementsFragment, R.id.photosFragment,
+                R.id.chatFragment, R.id.goalsFragment
+            )
+            if (current != null && current in dashboards) {
+                lifecycleScope.launch {
+                    val tokenStorage = App.instance.tokenStorage
+                    if (tokenStorage.isLoggedIn() && tokenStorage.hasPinSet()) {  // только если PIN реально установлен
+                        try { navController.navigate(R.id.action_global_to_pinFragment) } catch (_: Exception) {}
+                    }
+                }
+            }
+        }
+        backgroundedAt = 0L
+    }
+
+    private fun observeNetwork() {
+        lifecycleScope.launch {
+            App.instance.networkMonitor.isOnline.collectLatest { online ->
+                if (online) {
+                    showOnlineBanner()
+                } else {
+                    showOfflineBanner()
+                }
+            }
+        }
+    }
+
+    private fun showOfflineBanner() {
+        val banner = binding.offlineBanner
+        banner.visibility = View.VISIBLE
+        banner.animate()
+            .translationY(0f)
+            .alpha(1f)
+            .setDuration(300)
+            .start()
+        binding.bannerText.text = getString(R.string.offline_message)
+        binding.bannerText.setTextColor(android.graphics.Color.WHITE)
+        banner.setBackgroundColor(android.graphics.Color.parseColor("#EEF14054"))
+        binding.bannerIcon.setImageResource(R.drawable.ic_no_wifi)
+    }
+
+    private fun showOnlineBanner() {
+        val banner = binding.offlineBanner
+        if (banner.visibility == View.GONE) return
+        binding.bannerText.text = getString(R.string.online_message)
+        banner.setBackgroundColor(android.graphics.Color.parseColor("#EE00C853"))
+        binding.bannerIcon.setImageResource(R.drawable.ic_check_circle)
+        banner.postDelayed({
+            banner.animate()
+                .translationY(banner.height.toFloat())
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction {
+                    banner.visibility = View.GONE
+                    banner.translationY = 200f * resources.displayMetrics.density
+                    banner.alpha = 1f
+                }
+                .start()
+        }, 1800)
+    }
+
+    fun onUserLoggedIn(role: String) {
+        configureNavForRole(role)
     }
 
     fun restartForThemeChange() {

@@ -1,5 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preloaded-fonts xmlns:android="http://schemas.android.com/apk/res/android">
-    <font android:fontFamily="@font/montserrat"/>
-    <font android:fontFamily="@font/montserrat_medium"/>
 </preloaded-fonts>

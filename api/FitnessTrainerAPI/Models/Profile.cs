@@ -8,6 +8,7 @@ public class TrainerProfile
     public int? Experience { get; set; }
     public string? Description { get; set; }
     public string? CertificateUrl { get; set; }
+    public string TrainerCode { get; set; } = string.Empty;
 
     public User User { get; set; } = null!;
 }
