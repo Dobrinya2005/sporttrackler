@@ -53,7 +53,7 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                               <table width="100%" cellpadding="0" cellspacing="0"><tr>
                                 <td style="vertical-align:middle;">
                                   <img src="http://185.185.71.46:5001/icon.png" width="36" height="36" alt="SportTrackler" style="vertical-align:middle;border-radius:8px;margin-right:10px;"/>
-                                  <span style="color:#89b4fa;font-size:20px;font-weight:bold;letter-spacing:0.5px;vertical-align:middle;">SportTrackler</span>
+                                  <span style="color:#89b4fa;font-size:20px;font-weight:bold;letter-spacing:0.5px;vertical-align:middle;">Спорт-трекер</span>
                                 </td>
                               </tr></table>
                             </td>
