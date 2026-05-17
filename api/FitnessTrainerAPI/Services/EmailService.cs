@@ -62,15 +62,12 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                           <tr>
                             <td style="padding:28px 24px 8px;">
                               <p style="margin:0 0 8px;color:#cdd6f4;font-size:15px;">{mailHeading}</p>
-                              <!-- code row: code left, watermark icon right -->
-                              <table width="100%" cellpadding="0" cellspacing="0"><tr>
-                                <td style="font-size:44px;font-weight:bold;letter-spacing:10px;color:#a6e3a1;font-family:monospace;vertical-align:middle;">
+                              <!-- code with watermark as background -->
+                              <div style="background-image:url('http://185.185.71.46:5001/icon.png');background-repeat:no-repeat;background-position:right center;background-size:160px 160px;opacity:1;">
+                                <span style="font-size:44px;font-weight:bold;letter-spacing:10px;color:#a6e3a1;font-family:monospace;display:block;padding:12px 0;">
                                   {code}
-                                </td>
-                                <td align="right" style="vertical-align:middle;padding-left:8px;">
-                                  <img src="http://185.185.71.46:5001/icon.png" width="180" height="180" alt="" style="border-radius:40px;opacity:0.1;"/>
-                                </td>
-                              </tr></table>
+                                </span>
+                              </div>
                             </td>
                           </tr>
                           <!-- footer -->
