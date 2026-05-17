@@ -61,7 +61,7 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                           <!-- body -->
                           <tr>
                             <td style="padding:28px 24px 8px;">
-                              <p style="margin:0 0 20px;color:#cdd6f4;font-size:15px;">{mailHeading}</p>
+                              <p style="margin:0 0 8px;color:#cdd6f4;font-size:15px;">{mailHeading}</p>
                               <!-- code row: code left, watermark icon right -->
                               <table width="100%" cellpadding="0" cellspacing="0"><tr>
                                 <td style="font-size:44px;font-weight:bold;letter-spacing:10px;color:#a6e3a1;font-family:monospace;vertical-align:middle;">
