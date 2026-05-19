@@ -1,18 +1,22 @@
 package com.fitnesstrainer.app.ui.photos
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
 import com.fitnesstrainer.app.databinding.FragmentPhotosBinding
 
 class PhotosFragment : Fragment() {
@@ -41,7 +45,7 @@ class PhotosFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = PhotosAdapter { /* full-screen preview placeholder */ }
+        adapter = PhotosAdapter { photo -> showFullScreen(photo.photoUrl) }
         binding.rvPhotos.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvPhotos.adapter       = adapter
 
@@ -88,6 +92,21 @@ class PhotosFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showFullScreen(url: String) {
+        val dialog = Dialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        val imageView = ImageView(requireContext()).apply {
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            setOnClickListener { dialog.dismiss() }
+        }
+        dialog.setContentView(imageView)
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT
+        )
+        Glide.with(this).load(url).into(imageView)
+        dialog.show()
     }
 
     override fun onDestroyView() {

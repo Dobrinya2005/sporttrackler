@@ -1,5 +1,6 @@
 package com.fitnesstrainer.app.ui
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -63,6 +64,36 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
         checkAutoLogin()
         observeNetwork()
+        requestNotificationPermission()
+
+        if (intent.getBooleanExtra("session_expired", false)) {
+            android.widget.Toast.makeText(this, "Сессия истекла, войдите снова", android.widget.Toast.LENGTH_LONG).show()
+            navController.navigate(R.id.loginFragment)
+        }
+
+        handleNotificationIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleNotificationIntent(intent)
+    }
+
+    private fun handleNotificationIntent(intent: Intent) {
+        val userId = intent.getIntExtra("open_chat_user_id", -1)
+        val userName = intent.getStringExtra("open_chat_user_name") ?: return
+        if (userId == -1) return
+        lifecycleScope.launch {
+            // Ждём пока nav граф будет готов
+            navController.currentDestination ?: return@launch
+            val args = android.os.Bundle().apply {
+                putInt("contactId", userId)
+                putString("contactName", userName)
+            }
+            try {
+                navController.navigate(R.id.chatFragment, args)
+            } catch (_: Exception) {}
+        }
     }
 
     private fun enableHighRefreshRate() {
@@ -177,6 +208,11 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val storage = App.instance.tokenStorage
             if (!storage.isLoggedIn()) return@launch
+            // Если "запомнить меня" не выбрано — выходим из аккаунта при перезапуске
+            if (!storage.isRememberMe()) {
+                storage.clearAuth()
+                return@launch
+            }
             val role = storage.getUserRole()
             configureNavForRole(role)
             when {
@@ -275,6 +311,15 @@ class MainActivity : AppCompatActivity() {
 
     fun onUserLoggedIn(role: String) {
         configureNavForRole(role)
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
     }
 
     fun restartForThemeChange() {

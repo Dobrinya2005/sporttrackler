@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Иконка "круглое видеосообщение":
+    Внешний круг — намёк на формат круглого видео.
+    Внутри — мини-видеокамера (корпус + треугольник).
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
+
+    <!-- Outer circle -->
     <path
         android:fillColor="@android:color/transparent"
         android:strokeColor="#FFFFFF"
         android:strokeWidth="2"
         android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M23,7l-7,5 7,5V7z"/>
+        android:pathData="M12,22 A10,10 0,1,0 12,2 A10,10 0,1,0 12,22 Z"/>
+
+    <!-- Camera body -->
     <path
         android:fillColor="@android:color/transparent"
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="2"
+        android:strokeWidth="1.6"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:pathData="M1,5a2,2 0,0 1,2 -2h11a2,2 0,0 1,2 2v14a2,2 0,0 1,-2 2H3a2,2 0,0 1,-2 -2z"/>
+        android:pathData="M7,10.5 a1,1 0,0 1,1,-1 h4 a1,1 0,0 1,1,1 v3 a1,1 0,0 1,-1,1 H8 a1,1 0,0 1,-1,-1 Z"/>
+
+    <!-- Camera lens triangle -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M16,11.2 L13.2,12.5 L16,13.8 Z"/>
+
 </vector>

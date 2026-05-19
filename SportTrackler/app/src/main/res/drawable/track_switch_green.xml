@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Checked: зелёный фон, без рамки -->
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#5fdd54"/>
+            <corners android:radius="30dp"/>
+        </shape>
+    </item>
+    <!-- Unchecked: белый фон с серой рамкой 1dp -->
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#CCCCCC"/>
+                    <corners android:radius="30dp"/>
+                </shape>
+            </item>
+            <item android:left="1dp" android:top="1dp" android:right="1dp" android:bottom="1dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#FFFFFF"/>
+                    <corners android:radius="30dp"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

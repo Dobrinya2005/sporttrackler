@@ -36,6 +36,9 @@ class ChatViewModel : ViewModel() {
     private val _myUserId = MutableLiveData(-1)
     val myUserId: LiveData<Int> = _myUserId
 
+    private val _accessToken = MutableLiveData<String?>(null)
+    val accessToken: LiveData<String?> = _accessToken
+
     private val _contactProfile = MutableLiveData<com.fitnesstrainer.app.data.model.ClientProfile?>(null)
     val contactProfile: LiveData<com.fitnesstrainer.app.data.model.ClientProfile?> = _contactProfile
 
@@ -64,6 +67,7 @@ class ChatViewModel : ViewModel() {
         this.contactId = contactId
         viewModelScope.launch {
             _myUserId.value = tokenStorage.getUserId()
+            _accessToken.value = tokenStorage.getAccessToken()
             loadMessages()
             loadContactProfile()
             connectSignalR()
@@ -218,22 +222,52 @@ class ChatViewModel : ViewModel() {
         }
     }
 
+    private val _recordingError = MutableLiveData<String?>(null)
+    val recordingError: LiveData<String?> = _recordingError
+
+    private val _amplitudes = MutableLiveData<FloatArray>(floatArrayOf())
+    val amplitudes: LiveData<FloatArray> = _amplitudes
+    private val amplitudeList = mutableListOf<Float>()
+    private val amplitudeHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val amplitudeSampler = object : Runnable {
+        override fun run() {
+            val amp = mediaRecorder?.maxAmplitude ?: 0
+            amplitudeList.add((amp / 32767f).coerceIn(0f, 1f))
+            _amplitudes.postValue(amplitudeList.toFloatArray())
+            amplitudeHandler.postDelayed(this, 80)
+        }
+    }
+
     fun startVoiceRecording(outputFile: File) {
         audioFile = outputFile
-        mediaRecorder = (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-            MediaRecorder(App.instance)
-        else
-            @Suppress("DEPRECATION") MediaRecorder()).apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile(outputFile.absolutePath)
-            prepare()
-            start()
+        try {
+            mediaRecorder = (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                MediaRecorder(App.instance)
+            else
+                @Suppress("DEPRECATION") MediaRecorder()).apply {
+                setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                setAudioEncodingBitRate(128_000)
+                setAudioSamplingRate(44_100)
+                setOutputFile(outputFile.absolutePath)
+                prepare()
+                start()
+            }
+            amplitudeList.clear()
+            _amplitudes.postValue(floatArrayOf())
+            amplitudeHandler.postDelayed(amplitudeSampler, 150)
+        } catch (e: Exception) {
+            mediaRecorder?.release()
+            mediaRecorder = null
+            audioFile?.delete()
+            audioFile = null
+            _recordingError.postValue("Ошибка записи: ${e.message}")
         }
     }
 
     fun stopVoiceRecordingAndSend() {
+        amplitudeHandler.removeCallbacks(amplitudeSampler)
         try {
             mediaRecorder?.stop()
             mediaRecorder?.release()
@@ -247,14 +281,17 @@ class ChatViewModel : ViewModel() {
     }
 
     fun pauseVoiceRecording() {
+        amplitudeHandler.removeCallbacks(amplitudeSampler)
         try { mediaRecorder?.pause() } catch (_: Exception) {}
     }
 
     fun resumeVoiceRecording() {
         try { mediaRecorder?.resume() } catch (_: Exception) {}
+        amplitudeHandler.postDelayed(amplitudeSampler, 150)
     }
 
     fun cancelVoiceRecording() {
+        amplitudeHandler.removeCallbacks(amplitudeSampler)
         try {
             mediaRecorder?.stop()
             mediaRecorder?.release()
@@ -262,6 +299,8 @@ class ChatViewModel : ViewModel() {
         mediaRecorder = null
         audioFile?.delete()
         audioFile = null
+        amplitudeList.clear()
+        _amplitudes.postValue(floatArrayOf())
     }
 
     private fun appendMessage(dto: MessageDto?) {
@@ -290,6 +329,7 @@ class ChatViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         typingClearHandler.removeCallbacks(typingClearRunnable)
+        amplitudeHandler.removeCallbacks(amplitudeSampler)
         try { hubConnection?.stop() } catch (_: Exception) {}
         mediaRecorder?.release()
     }

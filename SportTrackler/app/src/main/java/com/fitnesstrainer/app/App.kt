@@ -1,10 +1,12 @@
 package com.fitnesstrainer.app
 
 import android.app.Application
+import android.content.Intent
 import com.fitnesstrainer.app.data.local.TokenStorage
 import com.fitnesstrainer.app.data.local.db.AppDatabase
 import com.fitnesstrainer.app.data.network.ApiService
 import com.fitnesstrainer.app.data.network.RetrofitClient
+import com.fitnesstrainer.app.ui.MainActivity
 import com.fitnesstrainer.app.util.NetworkMonitor
 
 class App : Application() {
@@ -28,6 +30,14 @@ class App : Application() {
         apiService     = RetrofitClient.create(tokenStorage)
         networkMonitor = NetworkMonitor(this)
         database       = AppDatabase.getInstance(this)
+
+        RetrofitClient.onSessionExpired = {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra("session_expired", true)
+            }
+            startActivity(intent)
+        }
     }
 
     companion object {

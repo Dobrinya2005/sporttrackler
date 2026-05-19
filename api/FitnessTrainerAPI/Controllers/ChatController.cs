@@ -10,7 +10,7 @@ namespace FitnessTrainerAPI.Controllers;
 [ApiController]
 [Route("api/messages")]
 [Authorize]
-public class ChatController(IChatService chatService, IWebHostEnvironment env, IHubContext<ChatHub> hubContext) : ControllerBase
+public class ChatController(IChatService chatService, IWebHostEnvironment env, IHubContext<ChatHub> hubContext, IFcmService fcmService) : ControllerBase
 {
     [HttpGet("conversations")]
     public async Task<IActionResult> GetConversations()
@@ -30,10 +30,27 @@ public class ChatController(IChatService chatService, IWebHostEnvironment env, I
     [HttpPost("send")]
     public async Task<IActionResult> Send([FromBody] SendMessageRequest request)
     {
-        var result = await chatService.SendMessageAsync(GetUserId(), request);
+        var senderId = GetUserId();
+        var result   = await chatService.SendMessageAsync(senderId, request);
+
         // Отправить получателю через SignalR в реальном времени
         await hubContext.Clients.Group($"user_{request.ReceiverId}")
             .SendAsync("ReceiveMessage", result);
+
+        // FCM пуш если получатель офлайн (SignalR не доставит)
+        var isOnline = ChatHub.IsOnline(request.ReceiverId);
+        if (!isOnline)
+        {
+            var preview = request.Text ?? (request.AttachmentType switch {
+                "audio"      => "🎤 Голосовое сообщение",
+                "video_note" => "🎥 Видеосообщение",
+                "image"      => "🖼 Фото",
+                "video"      => "🎬 Видео",
+                _            => "📎 Файл"
+            });
+            await fcmService.SendMessageNotificationAsync(request.ReceiverId, result.SenderName, preview);
+        }
+
         return Ok(result);
     }
 

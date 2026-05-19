@@ -3,7 +3,13 @@ package com.fitnesstrainer.app.ui.chat
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentResolver
+import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -42,6 +48,22 @@ class ChatFragment : Fragment() {
 
     private val typingStopHandler = Handler(Looper.getMainLooper())
     private val typingStopRunnable = Runnable { viewModel.stopTyping() }
+
+    private var sensorManager: SensorManager? = null
+    private var proximitySensor: Sensor? = null
+    private val proximityListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            val audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            if (event.values[0] < (proximitySensor?.maximumRange ?: 5f)) {
+                audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                audioManager.isSpeakerphoneOn = false
+            } else {
+                audioManager.mode = AudioManager.MODE_NORMAL
+                audioManager.isSpeakerphoneOn = false
+            }
+        }
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
+    }
 
     private var recordingSeconds = 0
     private var isRecordingLocked = false
@@ -83,11 +105,13 @@ class ChatFragment : Fragment() {
         pendingVideoUri = null
     }
 
+    private var pendingCameraAction: (() -> Unit)? = null
     private val requestCameraPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) launchVideoCapture()
+        if (granted) pendingCameraAction?.invoke()
         else Toast.makeText(requireContext(), "Нет разрешения на камеру", Toast.LENGTH_SHORT).show()
+        pendingCameraAction = null
     }
 
     private val requestAudioPermission = registerForActivityResult(
@@ -120,7 +144,7 @@ class ChatFragment : Fragment() {
 
         viewModel.myUserId.observe(viewLifecycleOwner) { myId ->
             if (myId != -1) {
-                adapter = ChatAdapter(myId)
+                adapter = ChatAdapter(myId, viewModel.accessToken.value)
                 binding.rvMessages.adapter = adapter
             }
         }
@@ -176,6 +200,17 @@ class ChatFragment : Fragment() {
         viewModel.uploadError.observe(viewLifecycleOwner) { err ->
             if (!err.isNullOrBlank())
                 Toast.makeText(requireContext(), err, Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.recordingError.observe(viewLifecycleOwner) { err ->
+            if (!err.isNullOrBlank()) {
+                recordingHandler.removeCallbacks(recordingTicker)
+                isRecordingLocked = false
+                isPaused = false
+                binding.recordingPanel.visibility = View.GONE
+                binding.inputPanel.visibility = View.VISIBLE
+                Toast.makeText(requireContext(), err, Toast.LENGTH_SHORT).show()
+            }
         }
 
         viewModel.typingStatus.observe(viewLifecycleOwner) { typing ->
@@ -272,6 +307,17 @@ class ChatFragment : Fragment() {
         binding.btnRecordSend.setOnClickListener   { stopRecordingAndSend() }
         binding.btnRecordPause.setOnClickListener  { togglePause() }
 
+        viewModel.amplitudes.observe(viewLifecycleOwner) { amps ->
+            if (amps.isNotEmpty()) {
+                binding.waveformRecording.amplitudes = amps
+                binding.waveformRecordingLocked.amplitudes = amps
+            }
+        }
+
+        sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        proximitySensor = sensorManager?.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+        sensorManager?.registerListener(proximityListener, proximitySensor, SensorManager.SENSOR_DELAY_UI)
+
         viewModel.init(args.contactId)
     }
 
@@ -298,6 +344,7 @@ class ChatFragment : Fragment() {
     private fun checkCameraAndRecord() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
+            pendingCameraAction = { launchVideoCapture() }
             requestCameraPermission.launch(Manifest.permission.CAMERA)
         } else {
             launchVideoCapture()
@@ -307,6 +354,7 @@ class ChatFragment : Fragment() {
     private fun openVideoNoteRecorder() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
+            pendingCameraAction = { openVideoNoteRecorder() }
             requestCameraPermission.launch(Manifest.permission.CAMERA)
             return
         }
@@ -429,6 +477,9 @@ class ChatFragment : Fragment() {
     override fun onDestroyView() {
         recordingHandler.removeCallbacks(recordingTicker)
         typingStopHandler.removeCallbacks(typingStopRunnable)
+        sensorManager?.unregisterListener(proximityListener)
+        val audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        if (audioManager.mode != AudioManager.MODE_NORMAL) audioManager.mode = AudioManager.MODE_NORMAL
         super.onDestroyView()
         _binding = null
     }

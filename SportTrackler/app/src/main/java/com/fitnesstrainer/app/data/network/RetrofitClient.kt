@@ -2,8 +2,13 @@ package com.fitnesstrainer.app.data.network
 
 import com.fitnesstrainer.app.BuildConfig
 import com.fitnesstrainer.app.data.local.TokenStorage
+import com.fitnesstrainer.app.data.model.RefreshTokenRequest
 import kotlinx.coroutines.runBlocking
+import okhttp3.Authenticator
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.Route
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,10 +20,46 @@ import javax.net.ssl.X509TrustManager
 
 object RetrofitClient {
 
+    var onSessionExpired: (() -> Unit)? = null
+
     fun create(tokenStorage: TokenStorage): ApiService {
-        val client = OkHttpClient.Builder()
+        val authenticator = object : Authenticator {
+            override fun authenticate(route: Route?, response: Response): Request? {
+                // Не перехватываем 401 с auth-эндпоинтов — там это просто неверный пароль/код
+                val url = response.request.url.encodedPath
+                if (url.contains("/auth/") || url.contains("/fcm/")) return null
+                if (response.request.header("X-No-Retry") != null) return null
+                val refreshToken = runBlocking { tokenStorage.getRefreshToken() } ?: run {
+                    onSessionExpired?.invoke(); return null
+                }
+                val refreshResponse = runBlocking {
+                    try {
+                        val tempApi = buildRetrofit(buildBaseClient().build()).create(ApiService::class.java)
+                        tempApi.refreshToken(RefreshTokenRequest(refreshToken))
+                    } catch (_: Exception) { null }
+                }
+                if (refreshResponse?.isSuccessful == true) {
+                    val body = refreshResponse.body()!!
+                    runBlocking { tokenStorage.saveAuth(
+                        body.accessToken, body.refreshToken,
+                        tokenStorage.getUserId(), tokenStorage.getUserRole() ?: "",
+                        tokenStorage.getFirstName() ?: "", tokenStorage.getLastName() ?: "",
+                        tokenStorage.getEmail() ?: "", tokenStorage.getAvatarUrl()
+                    ) }
+                    return response.request.newBuilder()
+                        .header("Authorization", "Bearer ${body.accessToken}")
+                        .build()
+                } else {
+                    runBlocking { tokenStorage.clearAuth() }
+                    onSessionExpired?.invoke()
+                    return null
+                }
+            }
+        }
+
+        val client = buildBaseClient()
+            .authenticator(authenticator)
             .addInterceptor { chain ->
-                // Добавляем JWT токен к каждому запросу
                 val token = runBlocking { tokenStorage.getAccessToken() }
                 val request = if (token != null) {
                     chain.request().newBuilder()
@@ -35,20 +76,23 @@ object RetrofitClient {
                 else
                     HttpLoggingInterceptor.Level.NONE
             })
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            // Доверяем self-signed сертификату для локальной разработки
             .apply { trustAllCertificates() }
             .build()
 
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
+        return buildRetrofit(client).create(ApiService::class.java)
     }
+
+    private fun buildBaseClient() = OkHttpClient.Builder()
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .apply { trustAllCertificates() }
+
+    private fun buildRetrofit(client: OkHttpClient) = Retrofit.Builder()
+        .baseUrl(BuildConfig.BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     // Только для DEV — принимает любой SSL сертификат
     private fun OkHttpClient.Builder.trustAllCertificates(): OkHttpClient.Builder {

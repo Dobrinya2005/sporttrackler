@@ -15,15 +15,23 @@ data class GoalProgress(
     val label: String,
     val unit: String,
     val target: Double,
-    val current: Double?
+    val current: Double?,
+    val startValue: Double = 0.0
 ) {
-    val percent: Int get() = if (current == null || target <= 0) 0 else
-        (current / target * 100).toInt().coerceIn(0, 100)
+    // Направление: true = цель на увеличение (набор), false = на уменьшение (сброс)
+    private val isIncreasing: Boolean get() = target > startValue
 
-    val isDone: Boolean get() = current != null && when (type) {
-        GoalType.WEIGHT, GoalType.WAIST, GoalType.HIPS, GoalType.BODY_FAT -> current <= target
-        else -> current >= target
+    val percent: Int get() {
+        if (current == null || startValue == target) return 0
+        return if (isIncreasing) {
+            ((current - startValue) / (target - startValue) * 100).toInt().coerceIn(0, 100)
+        } else {
+            ((startValue - current) / (startValue - target) * 100).toInt().coerceIn(0, 100)
+        }
     }
+
+    val isDone: Boolean get() = current != null &&
+        if (isIncreasing) current >= target else current <= target
 }
 
 class GoalsViewModel : ViewModel() {
@@ -53,11 +61,12 @@ class GoalsViewModel : ViewModel() {
                     GoalType.BICEP     -> m.bicepCm
                 }}
                 GoalProgress(
-                    type    = type,
-                    label   = labelFor(type),
-                    unit    = unitFor(type),
-                    target  = entity.targetValue,
-                    current = cur
+                    type       = type,
+                    label      = labelFor(type),
+                    unit       = unitFor(type),
+                    target     = entity.targetValue,
+                    current    = cur,
+                    startValue = entity.startValue
                 )
             }
         }
@@ -65,11 +74,21 @@ class GoalsViewModel : ViewModel() {
 
     fun setGoal(type: GoalType, value: Double) {
         viewModelScope.launch {
+            val latest = measureDao.getAll(userId).firstOrNull()
+            val currentValue = latest?.let { m -> when (type) {
+                GoalType.WEIGHT   -> m.weightKg
+                GoalType.BODY_FAT -> m.bodyFatPercent
+                GoalType.CHEST    -> m.chestCm
+                GoalType.WAIST    -> m.waistCm
+                GoalType.HIPS     -> m.hipsCm
+                GoalType.BICEP    -> m.bicepCm
+            }} ?: 0.0
             dao.insert(GoalEntity(
                 type        = type.name,
                 userId      = userId,
                 targetValue = value,
-                createdAt   = LocalDate.now().toString()
+                createdAt   = LocalDate.now().toString(),
+                startValue  = currentValue
             ))
             load()
         }

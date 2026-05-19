@@ -104,6 +104,8 @@ public class ChatHub(IChatService chatService, IFcmService fcmService) : Hub
         catch { /* не критично */ }
     }
 
+    public static bool IsOnline(int userId) => _online.ContainsKey(userId);
+
     private int GetUserId() =>
         int.Parse(Context.User!.FindFirstValue(ClaimTypes.NameIdentifier)!);
 }

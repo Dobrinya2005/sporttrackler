@@ -11,7 +11,8 @@ data class GoalEntity(
     @PrimaryKey val type: String,
     val userId: Int,
     val targetValue: Double,
-    val createdAt: String
+    val createdAt: String,
+    val startValue: Double = 0.0
 )
 
 @Dao

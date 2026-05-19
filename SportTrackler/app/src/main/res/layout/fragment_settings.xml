@@ -342,7 +342,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="4dp">
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp">
 
                 <!-- Divider -->
                 <View android:layout_width="match_parent" android:layout_height="1dp"
@@ -379,7 +380,11 @@
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switch_biometric"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:thumb="@drawable/thumb_switch_white"
+                        android:track="@drawable/track_switch_green"
+                        app:thumbTint="@null"
+                        app:trackTint="@null"/>
                 </LinearLayout>
 
                 <!-- PIN-код -->
@@ -415,7 +420,11 @@
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switch_pin"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:thumb="@drawable/thumb_switch_white"
+                        android:track="@drawable/track_switch_green"
+                        app:thumbTint="@null"
+                        app:trackTint="@null"/>
                 </LinearLayout>
 
                 <!-- Шагомер -->
@@ -449,7 +458,11 @@
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switch_steps"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:thumb="@drawable/thumb_switch_white"
+                        android:track="@drawable/track_switch_green"
+                        app:thumbTint="@null"
+                        app:trackTint="@null"/>
                 </LinearLayout>
 
                 <!-- Напоминания -->
@@ -488,7 +501,11 @@
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switch_reminder"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:thumb="@drawable/thumb_switch_white"
+                        android:track="@drawable/track_switch_green"
+                        app:thumbTint="@null"
+                        app:trackTint="@null"/>
                 </LinearLayout>
 
                 <!-- Logout row -->

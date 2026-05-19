@@ -298,18 +298,6 @@
                 android:background="#3A3B43"
                 android:layout_marginHorizontal="4dp"/>
 
-            <!-- Video note button (shown when text is empty) -->
-            <ImageButton
-                android:id="@+id/btn_video_note"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_video_note"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:tint="@color/text_hint"
-                android:scaleType="center"
-                android:padding="6dp"
-                android:contentDescription="Видеосообщение"/>
-
             <!-- Mic button (shown when text is empty, hold to record) -->
             <ImageButton
                 android:id="@+id/btn_mic"
@@ -321,6 +309,18 @@
                 android:scaleType="center"
                 android:padding="6dp"
                 android:contentDescription="Голосовое сообщение"/>
+
+            <!-- Video note button (shown when text is empty, right of mic) -->
+            <ImageButton
+                android:id="@+id/btn_video_note"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_video_note"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/text_hint"
+                android:scaleType="center"
+                android:padding="6dp"
+                android:contentDescription="Видеосообщение"/>
 
             <!-- Send button (shown when text is not empty) -->
             <ImageButton
@@ -357,7 +357,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="20dp"
+            android:paddingHorizontal="14dp"
             android:paddingTop="6dp"
             android:paddingBottom="2dp"
             android:gravity="center_vertical">
@@ -366,35 +366,41 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="🔴"
-                android:textSize="14sp"/>
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/tv_recording_time"
-                android:layout_width="0dp"
+                android:layout_width="36dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="6dp"
                 android:text="0:00"
                 android:textColor="@color/accent_rose"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:fontFamily="sans-serif-medium"/>
+
+            <com.fitnesstrainer.app.ui.chat.WaveformView
+                android:id="@+id/waveform_recording"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="8dp"/>
 
             <TextView
                 android:id="@+id/tv_swipe_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="← отменить"
+                android:text="← отмена"
                 android:textColor="@color/text_hint"
-                android:textSize="12sp"
-                android:layout_marginEnd="16dp"/>
+                android:textSize="11sp"
+                android:layout_marginEnd="10dp"/>
 
             <TextView
                 android:id="@+id/tv_swipe_lock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="↑ зафиксировать"
+                android:text="↑ фикс"
                 android:textColor="@color/accent_cyan"
-                android:textSize="12sp"/>
+                android:textSize="11sp"/>
 
         </LinearLayout>
 
@@ -436,25 +442,32 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:paddingHorizontal="8dp">
+                android:gravity="center_vertical"
+                android:paddingHorizontal="6dp">
 
                 <TextView
                     android:id="@+id/tv_record_dot_locked"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🔴"
-                    android:textSize="12sp"
-                    android:layout_marginEnd="8dp"/>
+                    android:textSize="11sp"
+                    android:layout_marginEnd="4dp"/>
 
                 <TextView
                     android:id="@+id/tv_recording_time_locked"
-                    android:layout_width="wrap_content"
+                    android:layout_width="36dp"
                     android:layout_height="wrap_content"
                     android:text="0:00"
                     android:textColor="@color/accent_rose"
-                    android:textSize="16sp"
+                    android:textSize="13sp"
                     android:fontFamily="sans-serif-medium"/>
+
+                <com.fitnesstrainer.app.ui.chat.WaveformView
+                    android:id="@+id/waveform_recording_locked"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"/>
 
             </LinearLayout>
 

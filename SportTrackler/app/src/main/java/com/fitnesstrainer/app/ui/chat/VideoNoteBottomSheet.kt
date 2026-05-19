@@ -15,6 +15,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FileOutputOptions
+import androidx.camera.video.FallbackStrategy
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
@@ -40,6 +41,8 @@ class VideoNoteBottomSheet : BottomSheetDialogFragment() {
     private var outputFile: File? = null
     private var isRecording = false
 
+    private var useFrontCamera = true
+
     private var recordingSeconds = 0
     private val handler = Handler(Looper.getMainLooper())
     private val ticker = object : Runnable {
@@ -63,7 +66,6 @@ class VideoNoteBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         isCancelable = true
 
-        // Круговая обрезка превью через ViewOutlineProvider (надёжнее чем clipToOutline в XML)
         binding.previewView.outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
                 outline.setOval(0, 0, view.width, view.height)
@@ -72,6 +74,10 @@ class VideoNoteBottomSheet : BottomSheetDialogFragment() {
         binding.previewView.clipToOutline = true
 
         startCamera()
+
+        binding.btnFlipCamera.setOnClickListener {
+            if (!isRecording) flipCamera()
+        }
 
         binding.btnRecord.setOnTouchListener { _, event ->
             when (event.action) {
@@ -88,54 +94,113 @@ class VideoNoteBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    private fun buildCameraSelector(): CameraSelector {
+        val hasFront = cameraProvider?.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) == true
+        val hasBack  = cameraProvider?.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA) == true
+        return when {
+            useFrontCamera && hasFront -> CameraSelector.DEFAULT_FRONT_CAMERA
+            hasBack -> CameraSelector.DEFAULT_BACK_CAMERA
+            hasFront -> CameraSelector.DEFAULT_FRONT_CAMERA
+            else -> CameraSelector.DEFAULT_BACK_CAMERA
+        }
+    }
+
     private fun startCamera() {
         val future = ProcessCameraProvider.getInstance(requireContext())
         future.addListener({
             cameraProvider = future.get()
-            val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(binding.previewView.surfaceProvider)
-            }
-            val recorder = Recorder.Builder()
-                .setQualitySelector(QualitySelector.from(Quality.HD))
-                .build()
-            videoCapture = VideoCapture.withOutput(recorder)
-
-            cameraProvider?.unbindAll()
-            val selector = try {
-                CameraSelector.DEFAULT_FRONT_CAMERA
-            } catch (_: Exception) {
-                CameraSelector.DEFAULT_BACK_CAMERA
-            }
-            try {
-                cameraProvider?.bindToLifecycle(viewLifecycleOwner, selector, preview, videoCapture)
-            } catch (_: Exception) {
-                try {
-                    cameraProvider?.bindToLifecycle(
-                        viewLifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, videoCapture
-                    )
-                } catch (_: Exception) {}
-            }
+            bindCamera()
         }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun bindCamera() {
+        val provider = cameraProvider ?: return
+        val preview = Preview.Builder().build().also {
+            it.setSurfaceProvider(binding.previewView.surfaceProvider)
+        }
+
+        val selector = buildCameraSelector()
+
+        // Правильный способ получить CameraInfo для выбранного селектора
+        val cameraInfo = try {
+            selector.filter(provider.availableCameraInfos).firstOrNull()
+        } catch (_: Exception) { null } ?: provider.availableCameraInfos.firstOrNull()
+
+        val supportedQualities = cameraInfo?.let {
+            QualitySelector.getSupportedQualities(it)
+        } ?: emptyList()
+
+        // SD/LOWEST предпочитаем — они обычно используют AVC (H.264), не HEVC.
+        // Если ни одно не поддерживается — берём что есть (HD/HIGHEST).
+        val preferAvc = listOf(Quality.SD, Quality.LOWEST, Quality.HD, Quality.HIGHEST)
+            .filter { it in supportedQualities }
+            .ifEmpty { supportedQualities.ifEmpty { listOf(Quality.LOWEST) } }
+
+        android.util.Log.d("VideoNote", "supported=$supportedQualities chosen=${preferAvc.firstOrNull()}")
+
+        val recorder = Recorder.Builder()
+            .setQualitySelector(
+                QualitySelector.fromOrderedList(
+                    preferAvc,
+                    FallbackStrategy.lowerQualityOrHigherThan(Quality.LOWEST)
+                )
+            )
+            .build()
+        videoCapture = VideoCapture.withOutput(recorder)
+
+        provider.unbindAll()
+        try {
+            provider.bindToLifecycle(viewLifecycleOwner, selector, preview, videoCapture)
+        } catch (_: Exception) {
+            try {
+                provider.bindToLifecycle(
+                    viewLifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, videoCapture
+                )
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun flipCamera() {
+        useFrontCamera = !useFrontCamera
+        binding.btnFlipCamera.animate().rotationBy(180f).setDuration(300).start()
+        bindCamera()
     }
 
     @SuppressLint("MissingPermission")
     private fun startRecording() {
         if (isRecording) return
+        val vc = videoCapture ?: run {
+            android.widget.Toast.makeText(requireContext(), "Камера не готова", android.widget.Toast.LENGTH_SHORT).show()
+            return
+        }
         val file = File(requireContext().cacheDir, "vidnote_${System.currentTimeMillis()}.mp4")
         outputFile = file
-        recording = videoCapture?.output
-            ?.prepareRecording(requireContext(), FileOutputOptions.Builder(file).build())
-            ?.withAudioEnabled()
-            ?.start(ContextCompat.getMainExecutor(requireContext())) { event ->
-                if (event is VideoRecordEvent.Finalize && !event.hasError()) {
-                    outputFile?.let { onVideoReady?.invoke(it) }
+        try {
+            recording = vc.output
+                .prepareRecording(requireContext(), FileOutputOptions.Builder(file).build())
+                .withAudioEnabled()
+                .start(ContextCompat.getMainExecutor(requireContext())) { event ->
+                    if (event is VideoRecordEvent.Finalize) {
+                        if (!event.hasError()) {
+                            outputFile?.let { onVideoReady?.invoke(it) }
+                        } else {
+                            outputFile?.delete()
+                            outputFile = null
+                        }
+                    }
                 }
-            }
+        } catch (e: Exception) {
+            file.delete()
+            outputFile = null
+            android.widget.Toast.makeText(requireContext(), "Ошибка записи видео", android.widget.Toast.LENGTH_SHORT).show()
+            return
+        }
         isRecording = true
         recordingSeconds = 0
         binding.tvTimer.visibility = View.VISIBLE
         binding.tvTimer.text = "0:00"
         binding.tvHint.visibility = View.GONE
+        binding.btnFlipCamera.visibility = View.GONE
         binding.btnRecord.setBackgroundResource(R.drawable.bg_record_btn_active)
         pulseRing()
         handler.postDelayed(ticker, 1000)
