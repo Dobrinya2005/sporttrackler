@@ -104,6 +104,6 @@ class FcmTokenService : FirebaseMessagingService() {
     }
 
     companion object {
-        const val CHANNEL_ID = "chat_messages"
+        const val CHANNEL_ID = "chat_messages_v2"
     }
 }

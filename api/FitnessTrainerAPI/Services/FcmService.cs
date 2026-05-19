@@ -93,7 +93,7 @@ public class FcmService(AppDbContext db, IConfiguration config, ILogger<FcmServi
                         Priority = Priority.High,
                         Notification = new AndroidNotification
                         {
-                            ChannelId = "chat_messages",
+                            ChannelId = "chat_messages_v2",
                             Sound     = "default"
                         }
                     }
