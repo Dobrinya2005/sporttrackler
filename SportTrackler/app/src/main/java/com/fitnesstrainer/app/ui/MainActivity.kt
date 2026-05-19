@@ -116,12 +116,14 @@ class MainActivity : AppCompatActivity() {
         if (isTrainerMode) {
             binding.bottomNav.setItems(listOf(
                 GlassBottomNav.NavItem("Главная",   R.drawable.ic_home),
+                GlassBottomNav.NavItem("Чаты",      R.drawable.ic_chat),
                 GlassBottomNav.NavItem("QR-код",    R.drawable.ic_qr_code),
                 GlassBottomNav.NavItem("Настройки", R.drawable.ic_settings)
             ))
         } else {
             binding.bottomNav.setItems(listOf(
                 GlassBottomNav.NavItem("Главная",    R.drawable.ic_home),
+                GlassBottomNav.NavItem("Чаты",       R.drawable.ic_chat),
                 GlassBottomNav.NavItem("Питание",    R.drawable.ic_nutrition),
                 GlassBottomNav.NavItem("Тренировки", R.drawable.ic_dumbbell),
                 GlassBottomNav.NavItem("Настройки",  R.drawable.ic_settings)
@@ -138,16 +140,18 @@ class MainActivity : AppCompatActivity() {
                 val idx = if (isTrainerMode) {
                     when (destination.id) {
                         R.id.trainerDashboardFragment -> 0
-                        R.id.trainerQrFragment -> 1
-                        R.id.settingsFragment -> 2
+                        R.id.chatsFragment -> 1
+                        R.id.trainerQrFragment -> 2
+                        R.id.settingsFragment -> 3
                         else -> -1
                     }
                 } else {
                     when (destination.id) {
                         R.id.clientDashboardFragment -> 0
-                        R.id.foodDiaryFragment -> 1
-                        R.id.workoutPlanFragment -> 2
-                        R.id.settingsFragment -> 3
+                        R.id.chatsFragment -> 1
+                        R.id.foodDiaryFragment -> 2
+                        R.id.workoutPlanFragment -> 3
+                        R.id.settingsFragment -> 4
                         else -> -1
                     }
                 }
@@ -162,10 +166,13 @@ class MainActivity : AppCompatActivity() {
                     0 -> if (currentId != R.id.trainerDashboardFragment)
                         navController.navigate(R.id.trainerDashboardFragment, null,
                             NavOptions.Builder().setLaunchSingleTop(true).build())
-                    1 -> if (currentId != R.id.trainerQrFragment)
+                    1 -> if (currentId != R.id.chatsFragment)
+                        navController.navigate(R.id.chatsFragment, null,
+                            NavOptions.Builder().setLaunchSingleTop(true).build())
+                    2 -> if (currentId != R.id.trainerQrFragment)
                         navController.navigate(R.id.trainerQrFragment, null,
                             NavOptions.Builder().setLaunchSingleTop(true).build())
-                    2 -> if (currentId != R.id.settingsFragment)
+                    3 -> if (currentId != R.id.settingsFragment)
                         navController.navigate(R.id.settingsFragment, null,
                             NavOptions.Builder().setLaunchSingleTop(true).build())
                 }
@@ -174,13 +181,16 @@ class MainActivity : AppCompatActivity() {
                     0 -> if (currentId != R.id.clientDashboardFragment)
                         navController.navigate(R.id.clientDashboardFragment, null,
                             NavOptions.Builder().setLaunchSingleTop(true).build())
-                    1 -> if (currentId != R.id.foodDiaryFragment)
+                    1 -> if (currentId != R.id.chatsFragment)
+                        navController.navigate(R.id.chatsFragment, null,
+                            NavOptions.Builder().setLaunchSingleTop(true).build())
+                    2 -> if (currentId != R.id.foodDiaryFragment)
                         navController.navigate(R.id.foodDiaryFragment, null,
                             NavOptions.Builder().setLaunchSingleTop(true).build())
-                    2 -> if (currentId != R.id.workoutPlanFragment)
+                    3 -> if (currentId != R.id.workoutPlanFragment)
                         navController.navigate(R.id.workoutPlanFragment, null,
                             NavOptions.Builder().setLaunchSingleTop(true).build())
-                    3 -> if (currentId != R.id.settingsFragment)
+                    4 -> if (currentId != R.id.settingsFragment)
                         navController.navigate(R.id.settingsFragment, null,
                             NavOptions.Builder().setLaunchSingleTop(true).build())
                 }

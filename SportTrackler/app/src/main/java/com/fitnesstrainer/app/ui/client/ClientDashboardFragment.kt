@@ -52,33 +52,11 @@ class ClientDashboardFragment : Fragment() {
                 ClientDashboardFragmentDirections.actionClientDashboardToWorkout(-1)
             )
         }
-        binding.cardChat.setOnClickListener { viewModel.openChat() }
-        binding.cardCreateGroup.setOnClickListener {
-            findNavController().navigate(R.id.action_clientDashboard_to_createGroup)
-        }
         binding.btnScanQr.setOnClickListener {
             findNavController().navigate(R.id.action_clientDashboard_to_qrScan)
         }
         binding.cardGoals.setOnClickListener {
             findNavController().navigate(R.id.action_clientDashboard_to_goals)
-        }
-
-        viewModel.navigateToChat.observe(viewLifecycleOwner) { pair ->
-            if (pair != null) {
-                val action = ClientDashboardFragmentDirections.actionClientDashboardToChat(
-                    contactId   = pair.first,
-                    contactName = pair.second
-                )
-                findNavController().navigate(action)
-                viewModel.clearNavigation()
-            }
-        }
-
-        viewModel.chatError.observe(viewLifecycleOwner) { msg ->
-            if (msg != null) {
-                android.widget.Toast.makeText(requireContext(), msg, android.widget.Toast.LENGTH_LONG).show()
-                viewModel.clearChatError()
-            }
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->

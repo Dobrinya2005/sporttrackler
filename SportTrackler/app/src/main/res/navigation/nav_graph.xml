@@ -519,4 +519,32 @@
         <argument android:name="trainerName"  app:argType="string"/>
     </fragment>
 
+    <!-- ── Экран чатов ─────────────────────────── -->
+    <fragment
+        android:id="@+id/chatsFragment"
+        android:name="com.fitnesstrainer.app.ui.chat.ChatsFragment"
+        android:label="Чаты">
+        <action
+            android:id="@+id/action_chats_to_chat"
+            app:destination="@id/chatFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_chats_to_groupChat"
+            app:destination="@id/groupChatFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_chats_to_createGroup"
+            app:destination="@id/createGroupFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
 </navigation>

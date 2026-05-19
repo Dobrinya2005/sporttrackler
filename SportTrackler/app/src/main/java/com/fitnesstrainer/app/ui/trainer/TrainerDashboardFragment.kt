@@ -53,10 +53,6 @@ class TrainerDashboardFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener { viewModel.loadClients() }
         binding.btnRetry.setOnClickListener { viewModel.loadClients() }
 
-        binding.btnCreateGroup.setOnClickListener {
-            findNavController().navigate(R.id.action_trainerDashboard_to_createGroup)
-        }
-
         binding.btnLogout.onClick = {
             viewModel.logout()
             findNavController().navigate(
