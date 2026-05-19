@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace FitnessTrainerAPI.Hubs;
 
 [Authorize]
-public class ChatHub(IChatService chatService, IFcmService fcmService) : Hub
+public class ChatHub(IChatService chatService, IFcmService fcmService, IGroupChatService groupChatService) : Hub
 {
     private static readonly ConcurrentDictionary<int, HashSet<string>> _online   = new();
     private static readonly ConcurrentDictionary<int, DateTime>        _lastSeen = new();
@@ -52,6 +52,18 @@ public class ChatHub(IChatService chatService, IFcmService fcmService) : Hub
         await Clients.Caller.SendAsync("UserStatusChanged", targetUserId, isOnline, lastSeen);
     }
 
+    public async Task JoinGroup(int groupId)
+    {
+        var userId = GetUserId();
+        if (await groupChatService.IsMemberAsync(groupId, userId))
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"group_{groupId}");
+    }
+
+    public async Task LeaveGroup(int groupId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"group_{groupId}");
+    }
+
     public override async Task OnConnectedAsync()
     {
         var userId = GetUserId();
@@ -60,6 +72,11 @@ public class ChatHub(IChatService chatService, IFcmService fcmService) : Hub
             (_, set) => { lock (set) { set.Add(Context.ConnectionId); } return set; });
 
         await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{userId}");
+
+        // Подписать на все группы пользователя
+        var userGroups = await groupChatService.GetUserGroupsAsync(userId);
+        foreach (var g in userGroups)
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"group_{g.GroupId}");
 
         // Уведомить контакты что пользователь онлайн
         await NotifyContactsStatusAsync(userId, isOnline: true, lastSeen: "");

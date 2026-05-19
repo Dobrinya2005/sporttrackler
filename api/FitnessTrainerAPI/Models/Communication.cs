@@ -48,6 +48,46 @@ public class TrainerReview
     public User Trainer { get; set; } = null!;
 }
 
+public class ChatGroup
+{
+    public int GroupId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? AvatarUrl { get; set; }
+    public int CreatedBy { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public User Creator { get; set; } = null!;
+    public List<GroupMember> Members { get; set; } = [];
+    public List<GroupMessage> Messages { get; set; } = [];
+}
+
+public class GroupMember
+{
+    public int Id { get; set; }
+    public int GroupId { get; set; }
+    public int UserId { get; set; }
+    public bool IsAdmin { get; set; }
+    public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
+
+    public ChatGroup Group { get; set; } = null!;
+    public User User { get; set; } = null!;
+}
+
+public class GroupMessage
+{
+    public int MessageId { get; set; }
+    public int GroupId { get; set; }
+    public int SenderId { get; set; }
+    public string? MessageText { get; set; }
+    public string? AttachmentUrl { get; set; }
+    public string? AttachmentType { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime SentAt { get; set; } = DateTime.UtcNow;
+
+    public ChatGroup Group { get; set; } = null!;
+    public User Sender { get; set; } = null!;
+}
+
 public class FcmToken
 {
     [Key]

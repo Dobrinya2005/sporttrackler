@@ -24,6 +24,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Notification>    Notifications    => Set<Notification>();
     public DbSet<FcmToken>        FcmTokens        => Set<FcmToken>();
     public DbSet<TrainerReview>   TrainerReviews   => Set<TrainerReview>();
+    public DbSet<ChatGroup>       ChatGroups       => Set<ChatGroup>();
+    public DbSet<GroupMember>     GroupMembers     => Set<GroupMember>();
+    public DbSet<GroupMessage>    GroupMessages    => Set<GroupMessage>();
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
@@ -147,6 +150,40 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(r => r.Trainer)
             .WithMany()
             .HasForeignKey(r => r.TrainerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        mb.Entity<ChatGroup>().ToTable("ChatGroups").HasKey(e => e.GroupId);
+        mb.Entity<ChatGroup>()
+            .HasOne(g => g.Creator)
+            .WithMany()
+            .HasForeignKey(g => g.CreatedBy)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        mb.Entity<GroupMember>().ToTable("GroupMembers").HasKey(e => e.Id);
+        mb.Entity<GroupMember>()
+            .HasOne(gm => gm.Group)
+            .WithMany(g => g.Members)
+            .HasForeignKey(gm => gm.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+        mb.Entity<GroupMember>()
+            .HasOne(gm => gm.User)
+            .WithMany()
+            .HasForeignKey(gm => gm.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+        mb.Entity<GroupMember>()
+            .HasIndex(gm => new { gm.GroupId, gm.UserId })
+            .IsUnique();
+
+        mb.Entity<GroupMessage>().ToTable("GroupMessages").HasKey(e => e.MessageId);
+        mb.Entity<GroupMessage>()
+            .HasOne(gm => gm.Group)
+            .WithMany(g => g.Messages)
+            .HasForeignKey(gm => gm.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+        mb.Entity<GroupMessage>()
+            .HasOne(gm => gm.Sender)
+            .WithMany()
+            .HasForeignKey(gm => gm.SenderId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -55,6 +55,7 @@ builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IFcmService, FcmService>();
+builder.Services.AddScoped<IGroupChatService, GroupChatService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 
