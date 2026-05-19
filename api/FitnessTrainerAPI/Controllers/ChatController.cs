@@ -48,7 +48,7 @@ public class ChatController(IChatService chatService, IWebHostEnvironment env, I
                 "video"      => "🎬 Видео",
                 _            => "📎 Файл"
             });
-            await fcmService.SendMessageNotificationAsync(request.ReceiverId, result.SenderName, preview);
+            await fcmService.SendMessageNotificationAsync(request.ReceiverId, senderId, result.SenderName, preview);
         }
 
         return Ok(result);

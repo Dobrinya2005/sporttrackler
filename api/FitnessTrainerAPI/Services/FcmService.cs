@@ -9,7 +9,7 @@ namespace FitnessTrainerAPI.Services;
 public interface IFcmService
 {
     Task RegisterTokenAsync(int userId, string deviceToken);
-    Task SendMessageNotificationAsync(int receiverId, string senderName, string messageText);
+    Task SendMessageNotificationAsync(int receiverId, int senderId, string senderName, string messageText);
 }
 
 public class FcmService(AppDbContext db, IConfiguration config, ILogger<FcmService> logger) : IFcmService
@@ -53,10 +53,14 @@ public class FcmService(AppDbContext db, IConfiguration config, ILogger<FcmServi
         await db.SaveChangesAsync();
     }
 
-    public async Task SendMessageNotificationAsync(int receiverId, string senderName, string messageText)
+    public async Task SendMessageNotificationAsync(int receiverId, int senderId, string senderName, string messageText)
     {
         EnsureInitialized();
-        if (!_initialized) return;
+        if (!_initialized)
+        {
+            logger.LogWarning("FCM not initialized — firebase-credentials.json missing or invalid");
+            return;
+        }
 
         var tokens = await db.FcmTokens
             .Where(t => t.UserId == receiverId)
@@ -79,6 +83,11 @@ public class FcmService(AppDbContext db, IConfiguration config, ILogger<FcmServi
                         Title = senderName,
                         Body  = preview
                     },
+                    Data = new Dictionary<string, string>
+                    {
+                        ["senderId"]   = senderId.ToString(),
+                        ["senderName"] = senderName
+                    },
                     Android = new AndroidConfig
                     {
                         Priority = Priority.High,
@@ -89,6 +98,7 @@ public class FcmService(AppDbContext db, IConfiguration config, ILogger<FcmServi
                         }
                     }
                 });
+                logger.LogInformation("FCM sent to user {ReceiverId} from {SenderId}", receiverId, senderId);
             }
             catch (Exception ex)
             {

@@ -22,7 +22,7 @@ public class ChatHub(IChatService chatService, IFcmService fcmService) : Hub
         await Clients.Caller.SendAsync("MessageSent", msg);
 
         if (!_online.ContainsKey(receiverId))
-            await fcmService.SendMessageNotificationAsync(receiverId, senderName, text);
+            await fcmService.SendMessageNotificationAsync(receiverId, senderId, senderName, text);
     }
 
     public async Task MarkRead(int senderId)

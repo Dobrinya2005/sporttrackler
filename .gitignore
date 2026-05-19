@@ -1,6 +1,7 @@
 # ===== .NET / ASP.NET Core =====
 bin/
 obj/
+publish/
 *.user
 *.suo
 .vs/
