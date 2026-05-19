@@ -81,7 +81,7 @@ class FcmTokenService : FirebaseMessagingService() {
         val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_round)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_send)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .setLargeIcon(largeIcon)
             .setContentTitle(title)
             .setContentText(body)
