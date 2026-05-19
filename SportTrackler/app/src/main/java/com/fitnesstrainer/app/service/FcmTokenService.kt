@@ -88,11 +88,12 @@ class FcmTokenService : FirebaseMessagingService() {
             .setName(senderName)
             .build()
 
-        val messagingStyle = NotificationCompat.MessagingStyle(
-            Person.Builder().setName("Вы").build()
-        )
+        val me = Person.Builder().setName("Вы").build()
+        val messagingStyle = NotificationCompat.MessagingStyle(me)
             .setConversationTitle(null)
-            .addMessage(body, System.currentTimeMillis(), sender)
+            .addMessage(
+                NotificationCompat.MessagingStyle.Message(body, System.currentTimeMillis(), sender)
+            )
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_send)
