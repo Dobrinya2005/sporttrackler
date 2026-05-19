@@ -3,7 +3,6 @@ package com.fitnesstrainer.app.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Person
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -46,9 +45,7 @@ class FcmTokenService : FirebaseMessagingService() {
     private fun showNotification(title: String, body: String, senderId: Int?, senderName: String) {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val soundUri = Uri.parse(
-            "android.resource://${packageName}/${R.raw.notification_chat}"
-        )
+        val soundUri = Uri.parse("android.resource://${packageName}/${R.raw.notification_chat}")
 
         val audioAttr = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
@@ -60,11 +57,11 @@ class FcmTokenService : FirebaseMessagingService() {
             "Сообщения чата",
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description       = "Уведомления о новых сообщениях"
+            description      = "Уведомления о новых сообщениях"
             enableVibration(true)
-            vibrationPattern  = longArrayOf(0, 150, 80, 150)
+            vibrationPattern = longArrayOf(0, 150, 80, 150)
             enableLights(true)
-            lightColor        = Color.parseColor("#4CAF50")
+            lightColor       = Color.parseColor("#4CAF50")
             setSound(soundUri, audioAttr)
         }
         manager.createNotificationChannel(channel)
@@ -83,24 +80,16 @@ class FcmTokenService : FirebaseMessagingService() {
 
         val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_round)
 
-        // MessagingStyle — Telegram-like look
-        val sender = Person.Builder()
-            .setName(senderName)
-            .build()
-
-        val me = Person.Builder().setName("Вы").build()
-        val messagingStyle = NotificationCompat.MessagingStyle(me)
-            .setConversationTitle(null)
-            .addMessage(
-                NotificationCompat.MessagingStyle.Message(body, System.currentTimeMillis(), sender)
-            )
-
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_send)
             .setLargeIcon(largeIcon)
-            .setStyle(messagingStyle)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText(body)
+                .setBigContentTitle(title)
+                .setSummaryText("Спорт-трекер"))
             .setColor(Color.parseColor("#4CAF50"))
-            .setColorized(false)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setAutoCancel(true)
