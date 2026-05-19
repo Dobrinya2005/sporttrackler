@@ -94,6 +94,42 @@ interface ApiService {
         @Part file: MultipartBody.Part
     ): Response<Map<String, String>>
 
+    // ── Group chat ───────────────────────────────────────────
+    @POST("api/groups")
+    suspend fun createGroup(@Body request: CreateGroupRequest): Response<GroupDto>
+
+    @GET("api/groups")
+    suspend fun getMyGroups(): Response<List<GroupDto>>
+
+    @GET("api/groups/{groupId}/messages")
+    suspend fun getGroupMessages(
+        @Path("groupId") groupId: Int,
+        @Query("page") page: Int = 1,
+        @Query("pageSize") pageSize: Int = 50
+    ): Response<List<GroupMessageDto>>
+
+    @POST("api/groups/{groupId}/messages")
+    suspend fun sendGroupMessage(
+        @Path("groupId") groupId: Int,
+        @Body request: SendGroupMessageRequest
+    ): Response<GroupMessageDto>
+
+    @POST("api/groups/{groupId}/members/{userId}")
+    suspend fun addGroupMember(
+        @Path("groupId") groupId: Int,
+        @Path("userId") userId: Int
+    ): Response<Unit>
+
+    @DELETE("api/groups/{groupId}/members/{userId}")
+    suspend fun removeGroupMember(
+        @Path("groupId") groupId: Int,
+        @Path("userId") userId: Int
+    ): Response<Unit>
+
+    @Multipart
+    @POST("api/groups/upload-avatar")
+    suspend fun uploadGroupAvatar(@Part file: MultipartBody.Part): Response<Map<String, String>>
+
     // ── FCM ──────────────────────────────────────────────────
     @POST("api/fcm/token")
     suspend fun registerFcmToken(@Body body: Map<String, String>): Response<Unit>

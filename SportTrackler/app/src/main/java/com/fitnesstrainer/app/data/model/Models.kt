@@ -251,6 +251,49 @@ data class SendMessageRequest(
     val attachmentType: String? = null
 )
 
+// ── Group chat ───────────────────────────────────────────────
+
+data class GroupMemberDto(
+    val userId: Int,
+    val name: String,
+    val avatar: String?,
+    val isAdmin: Boolean
+)
+
+data class GroupDto(
+    val groupId: Int,
+    val name: String,
+    val avatarUrl: String?,
+    val createdBy: Int,
+    val members: List<GroupMemberDto>,
+    val lastMessage: String?,
+    val lastMessageAt: String?,
+    val unreadCount: Int
+)
+
+data class GroupMessageDto(
+    val messageId: Int,
+    val groupId: Int,
+    val senderId: Int,
+    val senderName: String,
+    val senderAvatar: String?,
+    val messageText: String?,
+    val attachmentUrl: String?,
+    val attachmentType: String?,
+    val sentAt: String
+)
+
+data class CreateGroupRequest(
+    val name: String,
+    val memberIds: List<Int>
+)
+
+data class SendGroupMessageRequest(
+    val text: String?,
+    val attachmentUrl: String? = null,
+    val attachmentType: String? = null
+)
+
 // ── Trainer / Client ─────────────────────────────────────────
 
 data class ClientProfile(

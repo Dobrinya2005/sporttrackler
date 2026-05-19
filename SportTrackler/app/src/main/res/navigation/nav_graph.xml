@@ -264,6 +264,20 @@
             app:popEnterAnim="@anim/nav_slide_in_left"
             app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
+            android:id="@+id/action_trainerDashboard_to_createGroup"
+            app:destination="@id/createGroupFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_trainerDashboard_to_groupChat"
+            app:destination="@id/groupChatFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
             android:id="@+id/action_trainerDashboard_to_qr"
             app:destination="@id/trainerQrFragment"
             app:enterAnim="@anim/nav_slide_in_right"
@@ -349,6 +363,20 @@
             app:popEnterAnim="@anim/nav_slide_in_left"
             app:popExitAnim="@anim/nav_slide_out_right"/>
         <action
+            android:id="@+id/action_clientDashboard_to_createGroup"
+            app:destination="@id/createGroupFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_clientDashboard_to_groupChat"
+            app:destination="@id/groupChatFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
             android:id="@+id/action_clientDashboard_to_goals"
             app:destination="@id/goalsFragment"
             app:enterAnim="@anim/nav_slide_in_right"
@@ -411,6 +439,27 @@
         android:label="Чат">
         <argument android:name="contactId" app:argType="integer"/>
         <argument android:name="contactName" app:argType="string"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/createGroupFragment"
+        android:name="com.fitnesstrainer.app.ui.chat.CreateGroupFragment"
+        android:label="Новая группа"/>
+
+    <fragment
+        android:id="@+id/createGroupNameFragment"
+        android:name="com.fitnesstrainer.app.ui.chat.CreateGroupNameFragment"
+        android:label="Название группы">
+        <argument android:name="memberIds" app:argType="integer[]"/>
+        <argument android:name="memberNames" app:argType="string[]"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/groupChatFragment"
+        android:name="com.fitnesstrainer.app.ui.chat.GroupChatFragment"
+        android:label="Групповой чат">
+        <argument android:name="groupId" app:argType="integer"/>
+        <argument android:name="groupName" app:argType="string"/>
     </fragment>
 
     <fragment

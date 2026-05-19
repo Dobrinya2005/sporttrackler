@@ -53,6 +53,9 @@ class ClientDashboardFragment : Fragment() {
             )
         }
         binding.cardChat.setOnClickListener { viewModel.openChat() }
+        binding.cardCreateGroup.setOnClickListener {
+            findNavController().navigate(R.id.action_clientDashboard_to_createGroup)
+        }
         binding.btnScanQr.setOnClickListener {
             findNavController().navigate(R.id.action_clientDashboard_to_qrScan)
         }

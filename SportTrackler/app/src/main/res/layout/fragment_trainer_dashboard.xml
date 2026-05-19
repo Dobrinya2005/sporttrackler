@@ -265,6 +265,18 @@
                     android:textSize="15sp"
                     android:fontFamily="sans-serif-medium"/>
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_create_group"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="+ Группа"
+                    android:textSize="12sp"
+                    android:textColor="@color/accent_cyan"
+                    android:strokeColor="@color/accent_cyan"
+                    android:paddingHorizontal="10dp"
+                    android:minWidth="0dp"/>
+
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
