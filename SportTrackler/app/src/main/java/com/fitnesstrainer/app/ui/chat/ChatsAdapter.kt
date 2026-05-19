@@ -11,14 +11,14 @@ import com.fitnesstrainer.app.databinding.ItemChatPreviewBinding
 import com.fitnesstrainer.app.BuildConfig
 
 class ChatsAdapter(
-    private val onTrainerClick: (Int, String) -> Unit,
+    private val onPersonClick: (Int, String) -> Unit,
     private val onGroupClick: (Int, String) -> Unit
 ) : ListAdapter<ChatListItem, ChatsAdapter.ViewHolder>(DIFF) {
 
     companion object {
         private val DIFF = object : DiffUtil.ItemCallback<ChatListItem>() {
             override fun areItemsTheSame(a: ChatListItem, b: ChatListItem) = when {
-                a is ChatListItem.TrainerItem && b is ChatListItem.TrainerItem -> a.userId == b.userId
+                a is ChatListItem.PersonItem && b is ChatListItem.PersonItem -> a.userId == b.userId
                 a is ChatListItem.GroupItem && b is ChatListItem.GroupItem -> a.groupId == b.groupId
                 else -> false
             }
@@ -34,14 +34,14 @@ class ChatsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val b = holder.binding
         when (val item = getItem(position)) {
-            is ChatListItem.TrainerItem -> {
+            is ChatListItem.PersonItem -> {
                 b.tvName.text = item.name
                 b.tvLastMessage.text = "Личный чат"
                 b.ivBadge.setImageResource(R.drawable.ic_person)
                 val avatarUrl = item.avatar?.let { BuildConfig.BASE_URL.trimEnd('/') + it }
                 Glide.with(b.ivAvatar).load(avatarUrl).placeholder(R.drawable.ic_person)
                     .circleCrop().into(b.ivAvatar)
-                b.root.setOnClickListener { onTrainerClick(item.userId, item.name) }
+                b.root.setOnClickListener { onPersonClick(item.userId, item.name) }
             }
             is ChatListItem.GroupItem -> {
                 b.tvName.text = item.name

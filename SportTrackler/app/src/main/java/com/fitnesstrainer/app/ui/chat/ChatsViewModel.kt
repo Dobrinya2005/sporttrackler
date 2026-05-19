@@ -5,11 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
-import com.fitnesstrainer.app.data.network.RetrofitClient
 import kotlinx.coroutines.launch
 
 sealed class ChatListItem {
-    data class TrainerItem(val userId: Int, val name: String, val avatar: String?) : ChatListItem()
+    data class PersonItem(val userId: Int, val name: String, val avatar: String?) : ChatListItem()
     data class GroupItem(val groupId: Int, val name: String, val avatar: String?, val lastMessage: String?) : ChatListItem()
 }
 
@@ -22,18 +21,16 @@ class ChatsViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val storage = App.instance.tokenStorage
-                val token = storage.getToken() ?: return@launch
                 val role = storage.getUserRole()
-                val api = RetrofitClient.getApi(token)
+                val api = App.instance.apiService
                 val list = mutableListOf<ChatListItem>()
 
                 if (role == "Client") {
-                    // Клиент видит своего тренера
                     try {
                         val resp = api.getMyTrainer()
                         if (resp.isSuccessful) {
                             resp.body()?.let { t ->
-                                list.add(ChatListItem.TrainerItem(
+                                list.add(ChatListItem.PersonItem(
                                     userId = t.userId,
                                     name = "${t.firstName} ${t.lastName}",
                                     avatar = t.avatarUrl
@@ -42,12 +39,11 @@ class ChatsViewModel : ViewModel() {
                         }
                     } catch (_: Exception) {}
                 } else if (role == "Trainer") {
-                    // Тренер видит своих клиентов
                     try {
                         val resp = api.getMyClients()
                         if (resp.isSuccessful) {
                             resp.body()?.forEach { c ->
-                                list.add(ChatListItem.TrainerItem(
+                                list.add(ChatListItem.PersonItem(
                                     userId = c.userId,
                                     name = "${c.firstName} ${c.lastName}",
                                     avatar = c.avatarUrl
@@ -57,7 +53,6 @@ class ChatsViewModel : ViewModel() {
                     } catch (_: Exception) {}
                 }
 
-                // Группы (для всех)
                 try {
                     val resp = api.getMyGroups()
                     if (resp.isSuccessful) {

@@ -29,7 +29,7 @@ class ChatsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = ChatsAdapter(
-            onTrainerClick = { contactId, contactName ->
+            onPersonClick = { contactId, contactName ->
                 val action = ChatsFragmentDirections.actionChatsToChat(
                     contactId = contactId,
                     contactName = contactName
