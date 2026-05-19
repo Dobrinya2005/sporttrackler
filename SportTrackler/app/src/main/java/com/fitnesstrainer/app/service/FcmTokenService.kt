@@ -3,8 +3,13 @@ package com.fitnesstrainer.app.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Person
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.media.AudioAttributes
+import android.net.Uri
 import androidx.core.app.NotificationCompat
 import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.R
@@ -31,9 +36,9 @@ class FcmTokenService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        val title = message.notification?.title ?: message.data["title"] ?: return
-        val body  = message.notification?.body  ?: message.data["body"]  ?: return
-        val senderId = message.data["senderId"]?.toIntOrNull()
+        val title      = message.notification?.title ?: message.data["title"] ?: return
+        val body       = message.notification?.body  ?: message.data["body"]  ?: return
+        val senderId   = message.data["senderId"]?.toIntOrNull()
         val senderName = message.data["senderName"] ?: title
         showNotification(title, body, senderId, senderName)
     }
@@ -41,14 +46,26 @@ class FcmTokenService : FirebaseMessagingService() {
     private fun showNotification(title: String, body: String, senderId: Int?, senderName: String) {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        val soundUri = Uri.parse(
+            "android.resource://${packageName}/${R.raw.notification_chat}"
+        )
+
+        val audioAttr = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+
         val channel = NotificationChannel(
             CHANNEL_ID,
             "Сообщения чата",
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = "Уведомления о новых сообщениях"
+            description       = "Уведомления о новых сообщениях"
             enableVibration(true)
+            vibrationPattern  = longArrayOf(0, 150, 80, 150)
             enableLights(true)
+            lightColor        = Color.parseColor("#4CAF50")
+            setSound(soundUri, audioAttr)
         }
         manager.createNotificationChannel(channel)
 
@@ -64,15 +81,33 @@ class FcmTokenService : FirebaseMessagingService() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_round)
+
+        // MessagingStyle — Telegram-like look
+        val sender = Person.Builder()
+            .setName(senderName)
+            .build()
+
+        val messagingStyle = NotificationCompat.MessagingStyle(
+            Person.Builder().setName("Вы").build()
+        )
+            .setConversationTitle(null)
+            .addMessage(body, System.currentTimeMillis(), sender)
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_send)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setLargeIcon(largeIcon)
+            .setStyle(messagingStyle)
+            .setColor(Color.parseColor("#4CAF50"))
+            .setColorized(false)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
-            .setVibrate(longArrayOf(0, 250, 100, 250))
+            .setSound(soundUri)
+            .setVibrate(longArrayOf(0, 150, 80, 150))
+            .setShowWhen(true)
+            .setWhen(System.currentTimeMillis())
             .build()
 
         manager.notify(senderId ?: System.currentTimeMillis().toInt(), notification)
