@@ -13,9 +13,10 @@ import com.fitnesstrainer.app.ui.MainActivity
 class WorkoutReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
+        // Show notification
         val channel = NotificationChannel(
             CHANNEL_ID, "Напоминания о тренировке",
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         )
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.createNotificationChannel(channel)
@@ -32,9 +33,16 @@ class WorkoutReminderReceiver : BroadcastReceiver() {
             .setContentText("Не забудь про тренировку сегодня")
             .setContentIntent(tapIntent)
             .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
         nm.notify(NOTIFICATION_ID, notification)
+
+        // Reschedule for next day
+        val prefs = context.getSharedPreferences("reminder_prefs", Context.MODE_PRIVATE)
+        val hour   = prefs.getInt("reminder_hour", 8)
+        val minute = prefs.getInt("reminder_minute", 0)
+        schedule(context, hour, minute)
     }
 
     companion object {
@@ -52,16 +60,24 @@ class WorkoutReminderReceiver : BroadcastReceiver() {
                 set(java.util.Calendar.HOUR_OF_DAY, hour)
                 set(java.util.Calendar.MINUTE, minute)
                 set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
                 if (timeInMillis <= System.currentTimeMillis()) {
                     add(java.util.Calendar.DAY_OF_YEAR, 1)
                 }
             }
-            am.setRepeating(
-                android.app.AlarmManager.RTC_WAKEUP,
-                cal.timeInMillis,
-                android.app.AlarmManager.INTERVAL_DAY,
-                intent
-            )
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                am.setExactAndAllowWhileIdle(
+                    android.app.AlarmManager.RTC_WAKEUP,
+                    cal.timeInMillis,
+                    intent
+                )
+            } else {
+                am.setExact(
+                    android.app.AlarmManager.RTC_WAKEUP,
+                    cal.timeInMillis,
+                    intent
+                )
+            }
         }
 
         fun cancel(context: Context) {

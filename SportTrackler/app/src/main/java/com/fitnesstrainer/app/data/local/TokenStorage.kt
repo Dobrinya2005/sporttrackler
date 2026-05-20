@@ -104,6 +104,12 @@ class TokenStorage(private val context: Context) {
             it[KEY_REMINDER_HOUR]    = hour
             it[KEY_REMINDER_MINUTE]  = minute
         }
+        // Mirror to SharedPreferences so BroadcastReceiver can read without coroutines
+        context.getSharedPreferences("reminder_prefs", android.content.Context.MODE_PRIVATE)
+            .edit()
+            .putInt("reminder_hour", hour)
+            .putInt("reminder_minute", minute)
+            .apply()
     }
     suspend fun setPinOffered(offered: Boolean) {
         context.dataStore.edit { it[KEY_PIN_OFFERED] = offered }

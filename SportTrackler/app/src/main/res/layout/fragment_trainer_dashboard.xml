@@ -6,348 +6,348 @@
     android:layout_height="match_parent"
     android:background="?attr/bgPrimary">
 
-    <!-- Header -->
-    <LinearLayout
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/gradient_header_hero"
-        android:paddingTop="52dp"
-        android:paddingBottom="24dp"
-        android:paddingHorizontal="20dp">
-
-        <!-- Top row: avatar + name + buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <!-- Avatar circle -->
-            <FrameLayout
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:layout_marginEnd="14dp">
-
-                <View
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_avatar_circle"/>
-
-                <TextView
-                    android:id="@+id/tv_avatar_initials"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="АС"/>
-
-            </FrameLayout>
-
-            <!-- Name block -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ТРЕНЕР"
-                    android:textColor="@color/accent_indigo"
-                    android:textSize="10sp"
-                    android:letterSpacing="0.18"
-                    android:fontFamily="sans-serif-medium"/>
-
-                <TextView
-                    android:id="@+id/tv_trainer_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textColor="@color/text_primary"
-                    android:textSize="20sp"
-                    android:fontFamily="sans-serif-medium"/>
-
-            </LinearLayout>
-
-            <!-- Logout -->
-            <com.fitnesstrainer.app.ui.widget.LogoutButton
-                android:id="@+id/btn_logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        </LinearLayout>
-
-        <!-- Stats row -->
-        <LinearLayout
-            android:id="@+id/stats_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp">
-
-            <!-- Clients -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#1A3A7A"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/accent_indigo"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="14dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="👥"
-                        android:textSize="20sp"/>
-
-                    <TextView
-                        android:id="@+id/tv_client_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="0"
-                        android:textColor="@color/text_primary"
-                        android:textSize="26sp"
-                        android:fontFamily="sans-serif-medium"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Клиентов"
-                        android:textColor="@color/text_hint"
-                        android:textSize="11sp"/>
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Rating -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#1A2A10"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/accent_emerald"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="14dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⭐"
-                        android:textSize="20sp"/>
-
-                    <TextView
-                        android:id="@+id/tv_rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="—"
-                        android:textColor="@color/accent_amber"
-                        android:textSize="26sp"
-                        android:fontFamily="sans-serif-medium"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Рейтинг"
-                        android:textColor="@color/text_hint"
-                        android:textSize="11sp"/>
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Reviews -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#1A1030"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/accent_violet"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="14dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💬"
-                        android:textSize="20sp"/>
-
-                    <TextView
-                        android:id="@+id/tv_review_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="0"
-                        android:textColor="@color/text_primary"
-                        android:textSize="26sp"
-                        android:fontFamily="sans-serif-medium"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Отзывов"
-                        android:textColor="@color/text_hint"
-                        android:textSize="11sp"/>
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-        <!-- News section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="📰 Новости спорта"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp"
-            android:fontFamily="sans-serif-medium"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_news"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:paddingHorizontal="0dp"
-            android:overScrollMode="never"/>
-
-    </LinearLayout>
-
-    <!-- Client list section -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="460dp">
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:overScrollMode="never">
 
-            <!-- Section header -->
             <LinearLayout
-                android:id="@+id/section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="20dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="8dp">
+                android:orientation="vertical">
 
-                <View
-                    android:layout_width="4dp"
-                    android:layout_height="18dp"
-                    android:background="@drawable/bg_accent_bar"
-                    android:layout_marginEnd="10dp"/>
-
-                <TextView
-                    android:layout_width="0dp"
+                <!-- Header -->
+                <LinearLayout
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Мои клиенты"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp"
-                    android:fontFamily="sans-serif-medium"/>
+                    android:orientation="vertical"
+                    android:background="@drawable/gradient_header_hero"
+                    android:paddingTop="52dp"
+                    android:paddingBottom="20dp"
+                    android:paddingHorizontal="20dp">
 
+                    <!-- Top row: avatar + name + buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-            </LinearLayout>
+                        <FrameLayout
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:layout_marginEnd="14dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_clients"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="52dp"
-                android:paddingBottom="24dp"
-                android:clipToPadding="false"/>
+                            <View
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:background="@drawable/bg_avatar_circle"/>
 
-            <!-- Empty state -->
-            <LinearLayout
-                android:id="@+id/empty_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:visibility="gone">
+                            <TextView
+                                android:id="@+id/tv_avatar_initials"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="#FFFFFF"
+                                android:textSize="18sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="АС"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ТРЕНЕР"
+                                android:textColor="@color/accent_indigo"
+                                android:textSize="10sp"
+                                android:letterSpacing="0.18"
+                                android:fontFamily="sans-serif-medium"/>
+
+                            <TextView
+                                android:id="@+id/tv_trainer_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textColor="@color/text_primary"
+                                android:textSize="20sp"
+                                android:fontFamily="sans-serif-medium"/>
+
+                        </LinearLayout>
+
+                        <com.fitnesstrainer.app.ui.widget.LogoutButton
+                            android:id="@+id/btn_logout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+                    <!-- Stats row -->
+                    <LinearLayout
+                        android:id="@+id/stats_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="20dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="8dp"
+                            app:cardBackgroundColor="#1A3A7A"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/accent_indigo"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="14dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="👥"
+                                    android:textSize="20sp"/>
+
+                                <TextView
+                                    android:id="@+id/tv_client_count"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="0"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="26sp"
+                                    android:fontFamily="sans-serif-medium"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="Клиентов"
+                                    android:textColor="@color/text_hint"
+                                    android:textSize="11sp"/>
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="8dp"
+                            app:cardBackgroundColor="#1A2A10"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/accent_emerald"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="14dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="⭐"
+                                    android:textSize="20sp"/>
+
+                                <TextView
+                                    android:id="@+id/tv_rating"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="—"
+                                    android:textColor="@color/accent_amber"
+                                    android:textSize="26sp"
+                                    android:fontFamily="sans-serif-medium"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="Рейтинг"
+                                    android:textColor="@color/text_hint"
+                                    android:textSize="11sp"/>
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="#1A1030"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/accent_violet"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="14dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="💬"
+                                    android:textSize="20sp"/>
+
+                                <TextView
+                                    android:id="@+id/tv_review_count"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="0"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="26sp"
+                                    android:fontFamily="sans-serif-medium"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="Отзывов"
+                                    android:textColor="@color/text_hint"
+                                    android:textSize="11sp"/>
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </LinearLayout>
+
+                    <!-- News label -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="📰 Новости спорта"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_news"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:nestedScrollingEnabled="false"/>
+
+                </LinearLayout>
+
+                <!-- Clients section -->
+                <LinearLayout
+                    android:id="@+id/section_header"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="🏋️"
-                    android:textSize="56sp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="8dp">
 
-                <TextView
-                    android:id="@+id/tv_empty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Клиентов пока нет"
-                    android:textColor="@color/text_primary"
-                    android:textSize="17sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"/>
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="18dp"
+                        android:background="@drawable/bg_accent_bar"
+                        android:layout_marginEnd="10dp"/>
 
-                <TextView
-                    android:id="@+id/tv_empty_sub"
-                    android:layout_width="220dp"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Мои клиенты"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:fontFamily="sans-serif-medium"/>
+
+                </LinearLayout>
+
+                <!-- Empty state -->
+                <LinearLayout
+                    android:id="@+id/empty_state"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Поделитесь QR-кодом, чтобы клиенты могли к вам присоединиться"
-                    android:textColor="@color/text_hint"
-                    android:textSize="13sp"
+                    android:orientation="vertical"
                     android:gravity="center"
-                    android:lineSpacingMultiplier="1.3"/>
+                    android:paddingVertical="40dp"
+                    android:visibility="gone">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_retry"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🏋️"
+                        android:textSize="56sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_empty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Клиентов пока нет"
+                        android:textColor="@color/text_primary"
+                        android:textSize="17sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/tv_empty_sub"
+                        android:layout_width="220dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Поделитесь QR-кодом, чтобы клиенты могли к вам присоединиться"
+                        android:textColor="@color/text_hint"
+                        android:textSize="13sp"
+                        android:gravity="center"
+                        android:lineSpacingMultiplier="1.3"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_retry"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="Повторить"
+                        android:textColor="@color/accent_cyan"
+                        app:strokeColor="@color/accent_cyan"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_clients"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="Повторить"
-                    android:textColor="@color/accent_cyan"
-                    app:strokeColor="@color/accent_cyan"
-                    android:visibility="gone"/>
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="24dp"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"/>
 
             </LinearLayout>
 
-        </FrameLayout>
+        </androidx.core.widget.NestedScrollView>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

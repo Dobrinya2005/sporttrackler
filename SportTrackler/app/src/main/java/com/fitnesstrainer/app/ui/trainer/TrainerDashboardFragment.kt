@@ -50,6 +50,7 @@ class TrainerDashboardFragment : Fragment() {
         )
         binding.rvClients.layoutManager = LinearLayoutManager(requireContext())
         binding.rvClients.adapter       = adapter
+        binding.rvClients.isNestedScrollingEnabled = false
 
         binding.swipeRefresh.setOnRefreshListener { viewModel.loadClients() }
         binding.btnRetry.setOnClickListener { viewModel.loadClients() }

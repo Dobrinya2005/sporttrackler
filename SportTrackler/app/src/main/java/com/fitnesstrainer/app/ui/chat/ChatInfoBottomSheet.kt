@@ -38,7 +38,7 @@ class ChatInfoBottomSheet(
         val urlRegex = Regex("https?://\\S+")
         val photoCount = messages.count { it.attachmentType == "image" }
         val videoCount = messages.count { it.attachmentType == "video" }
-        val voiceCount = messages.count { it.attachmentType == "voice" }
+        val voiceCount = messages.count { it.attachmentType == "audio" || it.attachmentType == "voice" }
         val linkCount  = messages.count { it.messageText?.let { t -> urlRegex.containsMatchIn(t) } == true }
 
         view.findViewById<TextView>(R.id.tv_count_photos).text = photoCount.toString()

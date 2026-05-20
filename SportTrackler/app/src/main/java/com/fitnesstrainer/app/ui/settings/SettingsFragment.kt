@@ -2,7 +2,8 @@ package com.fitnesstrainer.app.ui.settings
 
 import com.fitnesstrainer.app.ui.chat.ChatThemeManager
 import android.Manifest
-import android.app.TimePickerDialog
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.fitnesstrainer.app.databinding.BottomSheetReminderBinding
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -238,17 +239,90 @@ class SettingsFragment : Fragment() {
 
     private fun showTimePicker() {
         lifecycleScope.launch {
-            val h = App.instance.tokenStorage.getReminderHour()
-            val m = App.instance.tokenStorage.getReminderMinute()
-            TimePickerDialog(requireContext(), { _, hour, minute ->
+            val initH = App.instance.tokenStorage.getReminderHour()
+            val initM = App.instance.tokenStorage.getReminderMinute()
+
+            val sheet = BottomSheetDialog(requireContext())
+            val sb = BottomSheetReminderBinding.inflate(layoutInflater)
+            sheet.setContentView(sb.root)
+
+            // State: editing hours (true) or minutes (false)
+            var editingHour = true
+            var hourStr = "%02d".format(initH)
+            var minStr  = "%02d".format(initM)
+
+            fun refresh() {
+                sb.tvHour.text   = hourStr
+                sb.tvMinute.text = minStr
+                sb.tvHour.setTextColor(
+                    if (editingHour) requireContext().getColor(R.color.accent_cyan)
+                    else requireContext().getColor(R.color.text_primary)
+                )
+                sb.tvMinute.setTextColor(
+                    if (!editingHour) requireContext().getColor(R.color.accent_cyan)
+                    else requireContext().getColor(R.color.text_primary)
+                )
+            }
+
+            // digit buffer for current field (up to 2 chars)
+            var buf = hourStr
+
+            fun commitBuf() {
+                val v = buf.toIntOrNull() ?: 0
+                if (editingHour) hourStr = "%02d".format(v.coerceIn(0, 23))
+                else             minStr  = "%02d".format(v.coerceIn(0, 59))
+            }
+
+            fun switchField(toHour: Boolean) {
+                commitBuf()
+                editingHour = toHour
+                buf = if (toHour) hourStr else minStr
+                refresh()
+            }
+
+            fun appendDigit(d: String) {
+                buf = if (buf == "00") d else (buf + d).takeLast(2)
+                // validate range without committing permanently
+                val v = buf.toIntOrNull() ?: 0
+                val max = if (editingHour) 23 else 59
+                if (v > max) buf = d  // reset to single digit if over max
+                if (editingHour) hourStr = buf.padStart(2, '0')
+                else             minStr  = buf.padStart(2, '0')
+                refresh()
+            }
+
+            fun backspace() {
+                buf = if (buf.length > 1) buf.dropLast(1) else "0"
+                if (editingHour) hourStr = buf.padStart(2, '0')
+                else             minStr  = buf.padStart(2, '0')
+                refresh()
+            }
+
+            refresh()
+            sb.tvHour.setOnClickListener   { switchField(true) }
+            sb.tvMinute.setOnClickListener { switchField(false) }
+
+            listOf(sb.key0, sb.key1, sb.key2, sb.key3, sb.key4,
+                   sb.key5, sb.key6, sb.key7, sb.key8, sb.key9)
+                .forEachIndexed { i, tv -> tv.setOnClickListener { appendDigit(i.toString()) } }
+            sb.keyBack.setOnClickListener { backspace() }
+
+            sb.btnCancel.setOnClickListener { sheet.dismiss() }
+            sb.btnSave.setOnClickListener {
+                val hour   = hourStr.toInt().coerceIn(0, 23)
+                val minute = minStr.toInt().coerceIn(0, 59)
                 lifecycleScope.launch {
                     App.instance.tokenStorage.setWorkoutReminder(true, hour, minute)
                     b.switchReminder.isChecked = true
                     b.tvReminderTime.text = "%02d:%02d".format(hour, minute)
                     WorkoutReminderReceiver.schedule(requireContext(), hour, minute)
-                    Toast.makeText(requireContext(), "Напоминание установлено на %02d:%02d".format(hour, minute), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(),
+                        "Напоминание установлено на %02d:%02d".format(hour, minute),
+                        Toast.LENGTH_SHORT).show()
                 }
-            }, h, m, true).show()
+                sheet.dismiss()
+            }
+            sheet.show()
         }
     }
 
