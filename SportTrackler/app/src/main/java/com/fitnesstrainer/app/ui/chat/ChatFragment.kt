@@ -134,6 +134,7 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        applyTheme()
         binding.tvContactName.text = args.contactName
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
 
@@ -566,6 +567,18 @@ class ChatFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         viewModel.disconnectHub()
+    }
+
+    private fun applyTheme() {
+        val bg = when (ChatThemeManager.load(requireContext())) {
+            ChatThemeManager.Theme.NAVY   -> R.drawable.chat_bg_navy
+            ChatThemeManager.Theme.FOREST -> R.drawable.chat_bg_forest
+            ChatThemeManager.Theme.SUNSET -> R.drawable.chat_bg_sunset
+            ChatThemeManager.Theme.GALAXY -> R.drawable.chat_bg_galaxy
+            ChatThemeManager.Theme.OCEAN  -> R.drawable.chat_bg_ocean
+            else                          -> R.drawable.chat_bg_default
+        }
+        binding.chatRoot.setBackgroundResource(bg)
     }
 
     override fun onDestroyView() {

@@ -101,6 +101,7 @@ class GroupChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        applyTheme()
         val groupId   = arguments?.getInt("groupId") ?: 0
         val groupName = arguments?.getString("groupName") ?: "Группа"
         val myUserId  = runBlocking { App.instance.tokenStorage.getUserId() }
@@ -374,6 +375,18 @@ class GroupChatFragment : Fragment() {
             if (idx >= 0 && cursor.moveToFirst()) return cursor.getString(idx)
         }
         return uri.lastPathSegment
+    }
+
+    private fun applyTheme() {
+        val bg = when (ChatThemeManager.load(requireContext())) {
+            ChatThemeManager.Theme.NAVY   -> R.drawable.chat_bg_navy
+            ChatThemeManager.Theme.FOREST -> R.drawable.chat_bg_forest
+            ChatThemeManager.Theme.SUNSET -> R.drawable.chat_bg_sunset
+            ChatThemeManager.Theme.GALAXY -> R.drawable.chat_bg_galaxy
+            ChatThemeManager.Theme.OCEAN  -> R.drawable.chat_bg_ocean
+            else                          -> R.drawable.chat_bg_default
+        }
+        binding.chatRoot.setBackgroundResource(bg)
     }
 
     override fun onDestroyView() {

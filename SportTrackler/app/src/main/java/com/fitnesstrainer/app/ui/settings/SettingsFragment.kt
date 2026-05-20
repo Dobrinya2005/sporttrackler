@@ -1,5 +1,6 @@
 package com.fitnesstrainer.app.ui.settings
 
+import com.fitnesstrainer.app.ui.chat.ChatThemeManager
 import android.Manifest
 import android.app.TimePickerDialog
 import android.content.pm.PackageManager
@@ -163,6 +164,9 @@ class SettingsFragment : Fragment() {
             else b.switchReminder.toggle()
         }
 
+        // Тема чата
+        setupChatThemePicker()
+
         // Выход
         b.rowLogout.setOnClickListener {
             SoundManager.playClick(it)
@@ -179,6 +183,23 @@ class SettingsFragment : Fragment() {
                 )
             }
         }
+    }
+
+    private fun setupChatThemePicker() {
+        val ctx = requireContext()
+        fun applyTheme(t: ChatThemeManager.Theme) {
+            ChatThemeManager.save(ctx, t)
+            b.tvCurrentTheme.text = t.label
+        }
+        // show current
+        b.tvCurrentTheme.text = ChatThemeManager.load(ctx).label
+
+        b.themeDefault.setOnClickListener { applyTheme(ChatThemeManager.Theme.DEFAULT) }
+        b.themeNavy.setOnClickListener   { applyTheme(ChatThemeManager.Theme.NAVY) }
+        b.themeForest.setOnClickListener { applyTheme(ChatThemeManager.Theme.FOREST) }
+        b.themeSunset.setOnClickListener { applyTheme(ChatThemeManager.Theme.SUNSET) }
+        b.themeGalaxy.setOnClickListener { applyTheme(ChatThemeManager.Theme.GALAXY) }
+        b.themeOcean.setOnClickListener  { applyTheme(ChatThemeManager.Theme.OCEAN) }
     }
 
     private fun setupTrainerSections() {

@@ -14,7 +14,7 @@
         android:paddingHorizontal="8dp"
         android:paddingTop="52dp"
         android:paddingBottom="14dp"
-        android:background="@drawable/gradient_header"
+        android:background="@drawable/gradient_header_hero"
         android:gravity="center_vertical">
 
         <com.google.android.material.button.MaterialButton

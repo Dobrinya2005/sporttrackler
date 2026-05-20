@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/gradient_header"
+            android:background="@drawable/gradient_header_hero"
             android:paddingTop="52dp"
             android:paddingBottom="24dp"
             android:paddingHorizontal="20dp">

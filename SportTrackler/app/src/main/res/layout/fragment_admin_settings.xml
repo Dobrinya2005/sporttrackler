@@ -16,7 +16,7 @@
         android:paddingTop="52dp"
         android:paddingBottom="14dp"
         android:paddingHorizontal="8dp"
-        android:background="@drawable/gradient_header">
+        android:background="@drawable/gradient_header_hero">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_back"
