@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -19,6 +20,8 @@ import com.fitnesstrainer.app.ui.news.NewsAdapter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class ClientDashboardFragment : Fragment() {
 
@@ -36,6 +39,36 @@ class ClientDashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupDate()
+        setupClicks()
+        setupObservers()
+
+        viewModel.load()
+        viewModel.loadTrainer()
+        loadStepsAndGoals()
+
+        val newsAdapter = NewsAdapter { item ->
+            findNavController().navigate(
+                ClientDashboardFragmentDirections.actionClientDashboardToNewsWebView(
+                    url = item.url, title = item.title
+                )
+            )
+        }
+        binding.rvNews.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rvNews.adapter = newsAdapter
+        viewModel.news.observe(viewLifecycleOwner) { newsAdapter.submitList(it) }
+        viewModel.loadNews()
+
+        animateEntrance()
+    }
+
+    private fun setupDate() {
+        val today = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale("ru"))
+        binding.tvDate.text = today.format(formatter).replaceFirstChar { it.uppercase() }
+    }
+
+    private fun setupClicks() {
         binding.cardMeasurements.setOnClickListener {
             findNavController().navigate(
                 ClientDashboardFragmentDirections.actionClientDashboardToMeasurements(-1)
@@ -60,14 +93,21 @@ class ClientDashboardFragment : Fragment() {
         binding.cardGoals.setOnClickListener {
             findNavController().navigate(R.id.action_clientDashboard_to_goals)
         }
+    }
 
+    private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is DashboardState.Loading -> binding.progressBar.visibility = View.VISIBLE
                 is DashboardState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     val d = state.data
-                    binding.tvWelcome.text = "Привет, ${d.firstName}!"
+                    val firstName = d.firstName
+                    binding.tvWelcome.text = "Привет, $firstName!"
+                    val initials = firstName.trim().split(" ")
+                        .filter { it.isNotEmpty() }.take(2)
+                        .joinToString("") { it.first().uppercaseChar().toString() }
+                    binding.tvAvatarInitials.text = initials.ifEmpty { firstName.take(1).uppercase() }
 
                     d.latest?.let { m ->
                         binding.tvWeight.text = m.weightKg?.let { "%.1f кг".format(it) } ?: "—"
@@ -82,14 +122,14 @@ class ClientDashboardFragment : Fragment() {
                         binding.progressCalories.progress = ((s.totalCalories / goal) * 100).toInt().coerceIn(0, 100)
 
                         binding.tvProteinDash.text = if (s.proteinGoal != null)
-                            "%.0f/%.0f г".format(s.totalProtein, s.proteinGoal)
-                        else "%.0f г".format(s.totalProtein)
+                            "%.0f/%.0fг".format(s.totalProtein, s.proteinGoal)
+                        else "%.0fг".format(s.totalProtein)
                         binding.tvFatDash.text = if (s.fatGoal != null)
-                            "%.0f/%.0f г".format(s.totalFat, s.fatGoal)
-                        else "%.0f г".format(s.totalFat)
+                            "%.0f/%.0fг".format(s.totalFat, s.fatGoal)
+                        else "%.0fг".format(s.totalFat)
                         binding.tvCarbsDash.text = if (s.carbGoal != null)
-                            "%.0f/%.0f г".format(s.totalCarbs, s.carbGoal)
-                        else "%.0f г".format(s.totalCarbs)
+                            "%.0f/%.0fг".format(s.totalCarbs, s.carbGoal)
+                        else "%.0fг".format(s.totalCarbs)
                     }
                 }
                 is DashboardState.Error -> {
@@ -111,22 +151,27 @@ class ClientDashboardFragment : Fragment() {
                 binding.cardReview.visibility = View.GONE
             }
         }
+    }
 
-        viewModel.load()
-        viewModel.loadTrainer()
-        loadStepsAndGoals()
-
-        val newsAdapter = NewsAdapter { item ->
-            findNavController().navigate(
-                ClientDashboardFragmentDirections.actionClientDashboardToNewsWebView(
-                    url = item.url, title = item.title
-                )
-            )
+    private fun animateEntrance() {
+        val interp = DecelerateInterpolator(1.5f)
+        val views = listOf(
+            binding.header,
+            binding.sectionNews,
+            binding.labelSections,
+            binding.navGrid
+        )
+        views.forEachIndexed { i, v ->
+            v.alpha = 0f
+            v.translationY = 32f
+            v.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(450)
+                .setStartDelay(i * 70L)
+                .setInterpolator(interp)
+                .start()
         }
-        binding.rvNews.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.rvNews.adapter = newsAdapter
-        viewModel.news.observe(viewLifecycleOwner) { newsAdapter.submitList(it) }
-        viewModel.loadNews()
     }
 
     private fun loadStepsAndGoals() {
