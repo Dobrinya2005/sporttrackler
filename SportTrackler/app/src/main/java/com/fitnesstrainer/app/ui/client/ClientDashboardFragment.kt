@@ -51,8 +51,11 @@ class ClientDashboardFragment : Fragment() {
         loadStepsAndGoals()
 
         val newsAdapter = NewsAdapter { item ->
-            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(item.url))
-            startActivity(intent)
+            findNavController().navigate(
+                ClientDashboardFragmentDirections.actionClientDashboardToNewsWebView(
+                    url = item.url, title = item.title
+                )
+            )
         }
         binding.rvNews.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvNews.adapter = newsAdapter

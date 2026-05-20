@@ -20,13 +20,12 @@ public record NewsItem(
 [Authorize]
 public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) : ControllerBase
 {
-    private const string CacheKey = "fitness_news_v1";
+    private const string CacheKey = "fitness_news_v2";
 
     private static readonly (string Url, string Name)[] RssFeeds =
     [
-        ("https://www.sports.ru/rss/fitness.xml", "Sports.ru Фитнес"),
-        ("https://health.mail.ru/rss/news/", "Health Mail.ru"),
-        ("https://www.championat.com/lifestyle/rss.xml", "Чемпионат Лайфстайл"),
+        ("https://lenta.ru/rss/news/wellness/", "Lenta.ru Забота о себе"),
+        ("https://lenta.ru/rss/news/sport/", "Lenta.ru Спорт"),
     ];
 
     [HttpGet]
@@ -97,18 +96,18 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
             "https://www.sports.ru/fitness/", "Sports.ru Фитнес", DateTime.UtcNow.ToString("o")),
         new("Как правильно питаться при похудении", "Советы нутрициологов по составлению рациона для снижения веса",
             "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80",
-            "https://health.mail.ru/news/kak_pravilno_pitatsya/", "Health Mail.ru", DateTime.UtcNow.AddHours(-2).ToString("o")),
+            "https://lenta.ru/wellness/", "Lenta.ru", DateTime.UtcNow.AddHours(-2).ToString("o")),
         new("5 причин начать бегать по утрам", "Утренние пробежки улучшают метаболизм и повышают тонус",
             "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&q=80",
-            "https://health.mail.ru/news/prichinyi_dlya_bega/", "Health Mail.ru", DateTime.UtcNow.AddHours(-4).ToString("o")),
+            "https://lenta.ru/sport/", "Lenta.ru", DateTime.UtcNow.AddHours(-4).ToString("o")),
         new("Протеин: всё что нужно знать", "Нормы потребления белка для спортсменов и обычных людей",
             "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&q=80",
-            "https://www.sports.ru/fitness/", "Sports.ru Фитнес", DateTime.UtcNow.AddHours(-6).ToString("o")),
+            "https://lenta.ru/wellness/", "Lenta.ru", DateTime.UtcNow.AddHours(-6).ToString("o")),
         new("Восстановление после тренировки", "Почему отдых так же важен, как и сама тренировка",
             "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80",
-            "https://health.mail.ru/news/vosstanovlenie_posle_trenirovki/", "Health Mail.ru", DateTime.UtcNow.AddHours(-8).ToString("o")),
+            "https://lenta.ru/wellness/", "Lenta.ru", DateTime.UtcNow.AddHours(-8).ToString("o")),
         new("Плавание: польза для всего тела", "Как водные тренировки развивают выносливость и сжигают калории",
             "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=400&q=80",
-            "https://www.sports.ru/fitness/", "Sports.ru Фитнес", DateTime.UtcNow.AddHours(-10).ToString("o")),
+            "https://lenta.ru/sport/", "Lenta.ru", DateTime.UtcNow.AddHours(-10).ToString("o")),
     ];
 }
