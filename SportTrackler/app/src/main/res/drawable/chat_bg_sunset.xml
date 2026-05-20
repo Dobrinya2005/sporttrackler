@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <gradient android:type="linear" android:angle="160"
-        android:startColor="#2A0D14" android:centerColor="#1A080C" android:endColor="#0E0508"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Base: dark crimson → deep maroon -->
+    <item>
+        <shape>
+            <gradient android:type="linear" android:angle="145"
+                android:startColor="#2A0D14"
+                android:centerColor="#1E0A10"
+                android:endColor="#0E0508"/>
+        </shape>
+    </item>
+
+    <!-- Top-right warm orange blob -->
+    <item android:top="-200dp" android:right="-200dp" android:bottom="520dp" android:left="140dp">
+        <shape android:shape="oval">
+            <solid android:color="#4A1520"/>
+            <size android:width="380dp" android:height="380dp"/>
+        </shape>
+    </item>
+
+    <!-- Bottom-left deep red blob -->
+    <item android:top="500dp" android:right="220dp" android:bottom="-150dp" android:left="-150dp">
+        <shape android:shape="oval">
+            <solid android:color="#3D0E18"/>
+            <size android:width="330dp" android:height="330dp"/>
+        </shape>
+    </item>
+
+    <!-- Mid accent: warm glow -->
+    <item android:top="260dp" android:right="-60dp" android:bottom="340dp" android:left="230dp">
+        <shape android:shape="oval">
+            <solid android:color="#5C1A28"/>
+            <size android:width="190dp" android:height="190dp"/>
+        </shape>
+    </item>
+
+    <!-- Small top-left -->
+    <item android:top="-50dp" android:right="260dp" android:bottom="680dp" android:left="-50dp">
+        <shape android:shape="oval">
+            <solid android:color="#6B2030"/>
+            <size android:width="120dp" android:height="120dp"/>
+        </shape>
+    </item>
+
+</layer-list>

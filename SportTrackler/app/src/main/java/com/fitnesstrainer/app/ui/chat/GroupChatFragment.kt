@@ -113,6 +113,7 @@ class GroupChatFragment : Fragment() {
             stackFromEnd = true
         }
         binding.rvMessages.adapter = adapter
+        applyTheme()
 
         viewModel.init(groupId)
 
@@ -120,6 +121,7 @@ class GroupChatFragment : Fragment() {
             if (token != null) {
                 adapter = GroupChatAdapter(myUserId, token)
                 binding.rvMessages.adapter = adapter
+                applyTheme()
                 viewModel.messages.value?.let { msgs ->
                     adapter.submitList(msgs.toList())
                 }
@@ -378,15 +380,13 @@ class GroupChatFragment : Fragment() {
     }
 
     private fun applyTheme() {
-        val bg = when (ChatThemeManager.load(requireContext())) {
-            ChatThemeManager.Theme.NAVY   -> R.drawable.chat_bg_navy
-            ChatThemeManager.Theme.FOREST -> R.drawable.chat_bg_forest
-            ChatThemeManager.Theme.SUNSET -> R.drawable.chat_bg_sunset
-            ChatThemeManager.Theme.GALAXY -> R.drawable.chat_bg_galaxy
-            ChatThemeManager.Theme.OCEAN  -> R.drawable.chat_bg_ocean
-            else                          -> R.drawable.chat_bg_default
+        val groupId = arguments?.getInt("groupId") ?: 0
+        val theme = ChatThemeManager.load(requireContext(), groupId)
+        binding.chatRoot.setBackgroundResource(theme.bgRes)
+        if (::adapter.isInitialized) {
+            adapter.theme = theme
+            adapter.notifyDataSetChanged()
         }
-        binding.chatRoot.setBackgroundResource(bg)
     }
 
     override fun onDestroyView() {

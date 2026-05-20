@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import android.graphics.drawable.GradientDrawable
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.data.model.MessageDto
 import com.fitnesstrainer.app.databinding.ItemMessageReceivedBinding
@@ -45,6 +46,7 @@ class ChatAdapter(
 
     var searchQuery: String = ""
     var onReact: ((MessageDto, String) -> Unit)? = null
+    var theme: ChatThemeManager.Theme = ChatThemeManager.Theme.DEFAULT
 
     private fun showEmojiPickerForMessage(anchor: android.view.View, msg: MessageDto) {
         val ctx = anchor.context
@@ -166,8 +168,8 @@ class ChatAdapter(
         val msg  = getItem(position)
         val time = formatTime(msg.sentAt)
         when (holder) {
-            is SentVH     -> holder.bind(msg, time, searchQuery, onReact)
-            is ReceivedVH -> holder.bind(msg, time, searchQuery, onReact)
+            is SentVH     -> holder.bind(msg, time, searchQuery, onReact, theme)
+            is ReceivedVH -> holder.bind(msg, time, searchQuery, onReact, theme)
         }
         holder.itemView.setOnLongClickListener {
             showEmojiPickerForMessage(holder.itemView, msg)
@@ -184,7 +186,8 @@ class ChatAdapter(
         private var audioSpeed = 1.0f
         private var audioWaveform: FloatArray = floatArrayOf()
 
-        fun bind(msg: MessageDto, time: String, query: String = "", onReact: ((MessageDto, String) -> Unit)? = null) {
+        fun bind(msg: MessageDto, time: String, query: String = "", onReact: ((MessageDto, String) -> Unit)? = null, theme: ChatThemeManager.Theme = ChatThemeManager.Theme.DEFAULT) {
+            b.layoutBubble.background = bubbleDrawable(itemView.context, theme.sentColor, true)
             b.tvTime.text = time
             if (msg.isRead) {
                 b.tvReadStatus.text = "✓✓"
@@ -499,7 +502,8 @@ class ChatAdapter(
         private var audioSpeed = 1.0f
         private var audioWaveform: FloatArray = floatArrayOf()
 
-        fun bind(msg: MessageDto, time: String, query: String = "", onReact: ((MessageDto, String) -> Unit)? = null) {
+        fun bind(msg: MessageDto, time: String, query: String = "", onReact: ((MessageDto, String) -> Unit)? = null, theme: ChatThemeManager.Theme = ChatThemeManager.Theme.DEFAULT) {
+            b.layoutBubble.background = bubbleDrawable(itemView.context, theme.receivedColor, false)
             b.tvSenderName.text = msg.senderName
             b.tvTime.text = time
             if (!msg.replyToSenderName.isNullOrBlank()) {
@@ -847,6 +851,20 @@ class ChatAdapter(
                 index = lowerText.indexOf(lowerQuery, index + 1)
             }
             return spannable
+        }
+
+        fun bubbleDrawable(ctx: android.content.Context, color: Int, isSent: Boolean): GradientDrawable {
+            val dp = ctx.resources.displayMetrics.density
+            val r = 16f * dp
+            val small = 4f * dp
+            return GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                setColor(color)
+                cornerRadii = if (isSent)
+                    floatArrayOf(r, r, r, r, r, r, small, small)
+                else
+                    floatArrayOf(r, r, r, r, small, small, r, r)
+            }
         }
 
         private val DIFF = object : DiffUtil.ItemCallback<MessageDto>() {

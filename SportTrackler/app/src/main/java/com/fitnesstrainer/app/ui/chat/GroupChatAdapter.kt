@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import android.graphics.drawable.GradientDrawable
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.data.model.GroupMessageDto
 import com.fitnesstrainer.app.databinding.ItemMessageReceivedBinding
@@ -42,12 +43,14 @@ class GroupChatAdapter(
         else
             ReceivedVH(ItemMessageReceivedBinding.inflate(LayoutInflater.from(parent.context), parent, false), accessToken)
 
+    var theme: ChatThemeManager.Theme = ChatThemeManager.Theme.DEFAULT
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val msg  = getItem(position)
         val time = formatTime(msg.sentAt)
         when (holder) {
-            is SentVH     -> holder.bind(msg, time)
-            is ReceivedVH -> holder.bind(msg, time)
+            is SentVH     -> holder.bind(msg, time, theme)
+            is ReceivedVH -> holder.bind(msg, time, theme)
         }
     }
 
@@ -59,7 +62,8 @@ class GroupChatAdapter(
         private var isSeeking = false
         private var audioSpeed = 1.0f
 
-        fun bind(msg: GroupMessageDto, time: String) {
+        fun bind(msg: GroupMessageDto, time: String, theme: ChatThemeManager.Theme = ChatThemeManager.Theme.DEFAULT) {
+            b.layoutBubble.background = makeBubble(itemView.context, theme.sentColor, true)
             b.tvSenderName.visibility = View.VISIBLE
             b.tvSenderName.text = "Вы"
             b.tvTime.text = time
@@ -323,7 +327,8 @@ class GroupChatAdapter(
         private var isSeeking = false
         private var audioSpeed = 1.0f
 
-        fun bind(msg: GroupMessageDto, time: String) {
+        fun bind(msg: GroupMessageDto, time: String, theme: ChatThemeManager.Theme = ChatThemeManager.Theme.DEFAULT) {
+            b.layoutBubble.background = makeBubble(itemView.context, theme.receivedColor, false)
             b.tvSenderName.visibility = View.VISIBLE
             b.tvSenderName.text       = msg.senderName
             b.ivAvatar.visibility     = View.VISIBLE
@@ -587,6 +592,20 @@ class GroupChatAdapter(
     }
 
     companion object {
+        fun makeBubble(ctx: android.content.Context, color: Int, isSent: Boolean): GradientDrawable {
+            val dp = ctx.resources.displayMetrics.density
+            val r = 16f * dp
+            val small = 4f * dp
+            return GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                setColor(color)
+                cornerRadii = if (isSent)
+                    floatArrayOf(r, r, r, r, r, r, small, small)
+                else
+                    floatArrayOf(r, r, r, r, small, small, r, r)
+            }
+        }
+
         val DIFF = object : DiffUtil.ItemCallback<GroupMessageDto>() {
             override fun areItemsTheSame(a: GroupMessageDto, b: GroupMessageDto) = a.messageId == b.messageId
             override fun areContentsTheSame(a: GroupMessageDto, b: GroupMessageDto) = a == b

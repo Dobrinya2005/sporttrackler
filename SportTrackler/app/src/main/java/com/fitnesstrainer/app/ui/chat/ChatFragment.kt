@@ -157,6 +157,7 @@ class ChatFragment : Fragment() {
                 adapter.onReply = { msg -> showReplyPreview(msg) }
                 adapter.onReact = { msg, emoji -> viewModel.toggleReaction(msg.messageId, emoji) }
                 binding.rvMessages.adapter = adapter
+                applyTheme()
             }
         }
 
@@ -571,15 +572,12 @@ class ChatFragment : Fragment() {
     }
 
     private fun applyTheme() {
-        val bg = when (ChatThemeManager.load(requireContext())) {
-            ChatThemeManager.Theme.NAVY   -> R.drawable.chat_bg_navy
-            ChatThemeManager.Theme.FOREST -> R.drawable.chat_bg_forest
-            ChatThemeManager.Theme.SUNSET -> R.drawable.chat_bg_sunset
-            ChatThemeManager.Theme.GALAXY -> R.drawable.chat_bg_galaxy
-            ChatThemeManager.Theme.OCEAN  -> R.drawable.chat_bg_ocean
-            else                          -> R.drawable.chat_bg_default
+        val theme = ChatThemeManager.load(requireContext(), args.contactId)
+        binding.chatRoot.setBackgroundResource(theme.bgRes)
+        if (::adapter.isInitialized) {
+            adapter.theme = theme
+            adapter.notifyDataSetChanged()
         }
-        binding.chatRoot.setBackgroundResource(bg)
     }
 
     override fun onDestroyView() {

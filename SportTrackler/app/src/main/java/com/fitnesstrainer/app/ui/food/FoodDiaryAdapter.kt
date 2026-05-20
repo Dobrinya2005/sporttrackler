@@ -72,7 +72,7 @@ class FoodDiaryAdapter(
             b.tvEmoji.text    = FoodEmojiUtil.getEmoji(dto.product.name)
             b.tvFoodName.text = dto.product.name
             b.tvWeight.text   = "%.0f г".format(dto.weightG)
-            b.tvCalories.text = "%.0f ккал".format(dto.calories)
+            b.tvCalories.text = "%.0f".format(dto.calories)
             b.tvMacros.text   = "Б %.1f  Ж %.1f  У %.1f".format(dto.protein, dto.fat, dto.carbs)
             b.btnDelete.setOnClickListener {
                 SoundManager.playDelete()

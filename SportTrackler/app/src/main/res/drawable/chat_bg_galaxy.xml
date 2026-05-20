@@ -1,5 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <gradient android:type="linear" android:angle="160"
-        android:startColor="#18102A" android:centerColor="#0E0A1A" android:endColor="#080610"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Base: near-black purple -->
+    <item>
+        <shape>
+            <gradient android:type="linear" android:angle="140"
+                android:startColor="#18102A"
+                android:centerColor="#0E0A1E"
+                android:endColor="#07050F"/>
+        </shape>
+    </item>
+
+    <!-- Top-right purple nebula blob -->
+    <item android:top="-200dp" android:right="-200dp" android:bottom="500dp" android:left="130dp">
+        <shape android:shape="oval">
+            <solid android:color="#2D1454"/>
+            <size android:width="400dp" android:height="400dp"/>
+        </shape>
+    </item>
+
+    <!-- Bottom-left indigo blob -->
+    <item android:top="510dp" android:right="210dp" android:bottom="-160dp" android:left="-160dp">
+        <shape android:shape="oval">
+            <solid android:color="#1A0A3D"/>
+            <size android:width="340dp" android:height="340dp"/>
+        </shape>
+    </item>
+
+    <!-- Mid violet accent -->
+    <item android:top="250dp" android:right="-80dp" android:bottom="340dp" android:left="220dp">
+        <shape android:shape="oval">
+            <solid android:color="#3A1A66"/>
+            <size android:width="200dp" android:height="200dp"/>
+        </shape>
+    </item>
+
+    <!-- Top-left tiny glow -->
+    <item android:top="-50dp" android:right="260dp" android:bottom="670dp" android:left="-50dp">
+        <shape android:shape="oval">
+            <solid android:color="#4A20A0"/>
+            <size android:width="130dp" android:height="130dp"/>
+        </shape>
+    </item>
+
+    <!-- Bottom-right sparkle -->
+    <item android:top="580dp" android:right="-50dp" android:bottom="-50dp" android:left="240dp">
+        <shape android:shape="oval">
+            <solid android:color="#200E48"/>
+            <size android:width="150dp" android:height="150dp"/>
+        </shape>
+    </item>
+
+</layer-list>

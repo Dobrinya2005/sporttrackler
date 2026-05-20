@@ -4,94 +4,111 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="4dp"
-    android:paddingVertical="6dp">
+    android:paddingHorizontal="0dp"
+    android:paddingVertical="4dp">
 
-    <!-- Emoji circle -->
-    <FrameLayout
-        android:id="@+id/emoji_container"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:background="@drawable/bg_food_emoji_circle"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_diary_entry"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tv_emoji"
+        <!-- Emoji circle -->
+        <FrameLayout
+            android:id="@+id/emoji_container"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_food_emoji_circle"
+            android:layout_marginEnd="12dp">
+
+            <TextView
+                android:id="@+id/tv_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="🍽️"
+                android:textSize="18sp"/>
+
+        </FrameLayout>
+
+        <!-- Name + macros -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_food_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="-0.01"/>
+
+            <TextView
+                android:id="@+id/tv_macros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"/>
+
+            <TextView
+                android:id="@+id/tv_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:textColor="@color/text_hint"
+                android:textSize="11sp"/>
+
+        </LinearLayout>
+
+        <!-- Calories badge -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="🍽️"
-            android:textSize="20sp"/>
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="8dp">
 
-    </FrameLayout>
+            <TextView
+                android:id="@+id/tv_calories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#F97316"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"/>
 
-    <!-- Food name -->
-    <TextView
-        android:id="@+id/tv_food_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:textColor="@color/text_primary"
-        android:textSize="13sp"
-        android:fontFamily="sans-serif-medium"
-        app:layout_constraintStart_toEndOf="@id/emoji_container"
-        app:layout_constraintEnd_toStartOf="@id/tv_calories"
-        app:layout_constraintTop_toTopOf="@id/emoji_container"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ккал"
+                android:textColor="#66FFFFFF"
+                android:textSize="10sp"
+                android:gravity="center"/>
 
-    <!-- Macros -->
-    <TextView
-        android:id="@+id/tv_macros"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="2dp"
-        android:textColor="@color/text_secondary"
-        android:textSize="11sp"
-        app:layout_constraintStart_toEndOf="@id/emoji_container"
-        app:layout_constraintEnd_toStartOf="@id/tv_calories"
-        app:layout_constraintTop_toBottomOf="@id/tv_food_name"/>
+        </LinearLayout>
 
-    <!-- Weight -->
-    <TextView
-        android:id="@+id/tv_weight"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="1dp"
-        android:textColor="@color/text_hint"
-        android:textSize="11sp"
-        app:layout_constraintStart_toEndOf="@id/emoji_container"
-        app:layout_constraintEnd_toStartOf="@id/tv_calories"
-        app:layout_constraintTop_toBottomOf="@id/tv_macros"
-        app:layout_constraintBottom_toBottomOf="@id/emoji_container"/>
+        <!-- Delete -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:text="✕"
+            android:textColor="#44FFFFFF"
+            android:textSize="12sp"
+            android:padding="0dp"
+            android:minWidth="0dp"/>
 
-    <!-- Calories -->
-    <TextView
-        android:id="@+id/tv_calories"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/accent_rose"
-        android:textSize="13sp"
-        android:fontFamily="sans-serif-medium"
-        app:layout_constraintEnd_toStartOf="@id/btn_delete"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <!-- Delete -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_delete"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:text="✕"
-        android:textColor="@color/text_hint"
-        android:textSize="12sp"
-        android:padding="0dp"
-        android:minWidth="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <gradient android:type="linear" android:angle="160"
-        android:startColor="#0D1525" android:endColor="#080B14"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Base gradient -->
+    <item>
+        <shape>
+            <gradient android:type="linear" android:angle="150"
+                android:startColor="#0F1521"
+                android:centerColor="#0A1020"
+                android:endColor="#06080F"/>
+        </shape>
+    </item>
+
+    <!-- Top-right blob -->
+    <item android:top="-180dp" android:right="-180dp" android:bottom="600dp" android:left="200dp">
+        <shape android:shape="oval">
+            <solid android:color="#0D3B6E"/>
+            <size android:width="340dp" android:height="340dp"/>
+        </shape>
+    </item>
+
+    <!-- Bottom-left blob -->
+    <item android:top="500dp" android:right="250dp" android:bottom="-150dp" android:left="-150dp">
+        <shape android:shape="oval">
+            <solid android:color="#0A2E55"/>
+            <size android:width="300dp" android:height="300dp"/>
+        </shape>
+    </item>
+
+    <!-- Mid accent dot -->
+    <item android:top="300dp" android:right="-100dp" android:bottom="350dp" android:left="250dp">
+        <shape android:shape="oval">
+            <solid android:color="#0B2040"/>
+            <size android:width="200dp" android:height="200dp"/>
+        </shape>
+    </item>
+
+</layer-list>

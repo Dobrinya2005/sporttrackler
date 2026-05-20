@@ -188,11 +188,11 @@ class SettingsFragment : Fragment() {
     private fun setupChatThemePicker() {
         val ctx = requireContext()
         fun applyTheme(t: ChatThemeManager.Theme) {
-            ChatThemeManager.save(ctx, t)
+            ChatThemeManager.save(ctx, 0, t)
             b.tvCurrentTheme.text = t.label
         }
         // show current
-        b.tvCurrentTheme.text = ChatThemeManager.load(ctx).label
+        b.tvCurrentTheme.text = ChatThemeManager.load(ctx, 0).label
 
         b.themeDefault.setOnClickListener { applyTheme(ChatThemeManager.Theme.DEFAULT) }
         b.themeNavy.setOnClickListener   { applyTheme(ChatThemeManager.Theme.NAVY) }

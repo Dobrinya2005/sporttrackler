@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Base dark surface -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#141C2E"/>
+            <corners android:radius="24dp"/>
+        </shape>
+    </item>
+
+    <!-- Subtle top-right warm glow -->
+    <item android:top="-60dp" android:right="-60dp" android:bottom="60dp" android:left="160dp">
+        <shape android:shape="oval">
+            <solid android:color="#18F97316"/>
+        </shape>
+    </item>
+
+    <!-- Stroke -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#00000000"/>
+            <stroke android:width="1dp" android:color="#22FFFFFF"/>
+            <corners android:radius="24dp"/>
+        </shape>
+    </item>
+
+</layer-list>

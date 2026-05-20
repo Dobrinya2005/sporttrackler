@@ -98,12 +98,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="12dp"
-        app:cardBackgroundColor="@color/bg_surface"
-        app:cardCornerRadius="20dp"
+        android:layout_marginTop="14dp"
+        app:cardBackgroundColor="#00000000"
+        app:cardCornerRadius="24dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/accent_rose"
-        app:strokeWidth="1dp"
+        app:strokeWidth="0dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -112,52 +111,56 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="18dp">
+            android:background="@drawable/bg_calories_card"
+            android:padding="20dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="КАЛОРИИ"
-                android:textColor="@color/text_hint"
-                android:textSize="10sp"
-                android:letterSpacing="0.14"
-                android:fontFamily="sans-serif-medium"
-                android:layout_marginBottom="6dp"/>
-
+            <!-- Top row: label + fire -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:layout_marginBottom="4dp">
 
                 <TextView
-                    android:id="@+id/tv_total_calories"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0 ккал"
-                    android:textColor="@color/text_primary"
-                    android:textSize="22sp"
+                    android:text="КАЛОРИИ"
+                    android:textColor="#99FFFFFF"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.16"
                     android:fontFamily="sans-serif-medium"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🔥"
-                    android:textSize="20sp"/>
+                    android:textSize="18sp"/>
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_total_calories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 / 2000 ккал"
+                android:textColor="@color/text_primary"
+                android:textSize="26sp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="-0.02"
+                android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/progress_calories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="12dp"
-                app:indicatorColor="@color/accent_rose"
-                app:trackColor="@color/bg_elevated"
+                android:layout_marginBottom="16dp"
+                app:indicatorColor="#F97316"
+                app:trackColor="#33FFFFFF"
                 app:trackCornerRadius="4dp"/>
 
+            <!-- Macros row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -168,21 +171,23 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_macro_pill_protein"
+                    android:padding="10dp">
                     <TextView
                         android:id="@+id/tv_protein"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_protein"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:fontFamily="sans-serif-medium"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="белки"
-                        android:textColor="@color/text_hint"
+                        android:textColor="#66FFFFFF"
                         android:textSize="10sp"
-                        android:layout_marginTop="1dp"/>
+                        android:layout_marginTop="2dp"/>
                 </LinearLayout>
 
                 <!-- Fat -->
@@ -191,21 +196,23 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:background="@drawable/bg_macro_pill_fat"
+                    android:padding="10dp"
+                    android:layout_marginHorizontal="8dp">
                     <TextView
                         android:id="@+id/tv_fat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_fat"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:fontFamily="sans-serif-medium"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="жиры"
-                        android:textColor="@color/text_hint"
+                        android:textColor="#66FFFFFF"
                         android:textSize="10sp"
-                        android:layout_marginTop="1dp"/>
+                        android:layout_marginTop="2dp"/>
                 </LinearLayout>
 
                 <!-- Carbs -->
@@ -214,21 +221,22 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="end">
+                    android:background="@drawable/bg_macro_pill_carbs"
+                    android:padding="10dp">
                     <TextView
                         android:id="@+id/tv_carbs"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_carbs"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:fontFamily="sans-serif-medium"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="углеводы"
-                        android:textColor="@color/text_hint"
+                        android:textColor="#66FFFFFF"
                         android:textSize="10sp"
-                        android:layout_marginTop="1dp"/>
+                        android:layout_marginTop="2dp"/>
                 </LinearLayout>
 
             </LinearLayout>

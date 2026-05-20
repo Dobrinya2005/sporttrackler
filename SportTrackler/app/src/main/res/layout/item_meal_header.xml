@@ -6,17 +6,17 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingHorizontal="4dp"
-    android:paddingTop="22dp"
+    android:paddingTop="20dp"
     android:paddingBottom="8dp"
     android:gravity="center_vertical">
 
     <!-- Meal emoji badge -->
     <FrameLayout
         android:id="@+id/meal_icon_container"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@drawable/bg_food_emoji_circle"
-        android:layout_marginEnd="10dp">
+        android:layout_marginEnd="12dp">
 
         <TextView
             android:id="@+id/tv_meal_emoji"
@@ -24,11 +24,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="🍽️"
-            android:textSize="16sp"/>
+            android:textSize="18sp"/>
 
     </FrameLayout>
 
-    <!-- Meal name -->
+    <!-- Meal name + calories -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -40,33 +40,52 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_primary"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:fontFamily="sans-serif-medium"
-            android:letterSpacing="0.02"/>
+            android:letterSpacing="-0.01"/>
 
         <TextView
             android:id="@+id/tv_meal_calories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="2dp"
             android:textColor="@color/text_hint"
             android:textSize="12sp"/>
 
     </LinearLayout>
 
-    <!-- Add button -->
-    <com.google.android.material.button.MaterialButton
+    <!-- Add button: modern pill with gradient border -->
+    <LinearLayout
         android:id="@+id/btn_add_food"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:text="＋ Добавить"
-        android:textColor="@color/accent_cyan"
-        android:textSize="13sp"
-        android:textAllCaps="false"
-        android:paddingHorizontal="16dp"
-        android:minWidth="0dp"
-        app:strokeColor="@color/accent_cyan"
-        app:cornerRadius="10dp"/>
+        android:layout_height="34dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/bg_btn_add_food"
+        android:paddingHorizontal="14dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:textColor="@color/accent_cyan"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-light"
+            android:includeFontPadding="false"
+            android:paddingBottom="1dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Добавить"
+            android:textColor="@color/accent_cyan"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.01"
+            android:includeFontPadding="false"/>
+
+    </LinearLayout>
 
 </LinearLayout>
