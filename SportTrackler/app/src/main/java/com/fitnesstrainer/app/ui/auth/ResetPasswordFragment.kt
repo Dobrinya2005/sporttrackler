@@ -39,11 +39,20 @@ class ResetPasswordFragment : Fragment() {
     private fun attemptReset() {
         val password = b.etPassword.text?.toString() ?: ""
         val confirm  = b.etConfirm.text?.toString() ?: ""
+        val error = validatePassword(password)
         when {
-            password.length < 6 -> showError("Пароль должен содержать минимум 6 символов")
-            password != confirm  -> showError("Пароли не совпадают")
-            else -> resetPassword(password)
+            error != null       -> showError(error)
+            password != confirm -> showError("Пароли не совпадают")
+            else                -> resetPassword(password)
         }
+    }
+
+    private fun validatePassword(pwd: String): String? = when {
+        pwd.length < 8                     -> "Пароль должен содержать минимум 8 символов"
+        !pwd.any { it.isUpperCase() }      -> "Пароль должен содержать хотя бы одну заглавную букву"
+        !pwd.any { it.isLowerCase() }      -> "Пароль должен содержать хотя бы одну строчную букву"
+        !pwd.any { !it.isLetterOrDigit() } -> "Пароль должен содержать хотя бы один специальный символ (!@#\$...)"
+        else                               -> null
     }
 
     private fun resetPassword(newPassword: String) {

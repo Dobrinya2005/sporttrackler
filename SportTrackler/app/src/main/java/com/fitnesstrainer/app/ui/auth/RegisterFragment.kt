@@ -36,6 +36,18 @@ class RegisterFragment : Fragment() {
         }
 
         binding.btnRegister.setOnClickListener {
+            val password = binding.etPassword.text.toString()
+            val weight   = binding.etWeight.text?.toString()?.toDoubleOrNull()
+            val height   = binding.etHeight.text?.toString()?.toDoubleOrNull()
+
+            val error = validatePassword(password)
+                ?: validateBody(weight, height)
+            if (error != null) {
+                binding.tvError.text = error
+                binding.tvError.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+
             val role = if (binding.rbTrainer.isChecked) "Trainer" else "Client"
             val trainerCode = if (role == "Trainer")
                 binding.etTrainerCode.text?.toString()?.trim()
@@ -46,12 +58,12 @@ class RegisterFragment : Fragment() {
                 firstName   = binding.etFirstName.text.toString(),
                 lastName    = binding.etLastName.text.toString(),
                 email       = binding.etEmail.text.toString(),
-                password    = binding.etPassword.text.toString(),
+                password    = password,
                 role        = role,
                 phone       = null,
                 trainerCode = trainerCode,
-                weightKg    = binding.etWeight.text?.toString()?.toDoubleOrNull(),
-                heightCm    = binding.etHeight.text?.toString()?.toDoubleOrNull(),
+                weightKg    = weight,
+                heightCm    = height,
                 gender      = gender
             )
         }
@@ -99,6 +111,20 @@ class RegisterFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun validatePassword(pwd: String): String? = when {
+        pwd.length < 8                          -> "Пароль должен содержать минимум 8 символов"
+        !pwd.any { it.isUpperCase() }           -> "Пароль должен содержать хотя бы одну заглавную букву"
+        !pwd.any { it.isLowerCase() }           -> "Пароль должен содержать хотя бы одну строчную букву"
+        !pwd.any { !it.isLetterOrDigit() }      -> "Пароль должен содержать хотя бы один специальный символ (!@#\$...)"
+        else                                    -> null
+    }
+
+    private fun validateBody(weight: Double?, height: Double?): String? = when {
+        weight != null && (weight < 20 || weight > 300) -> "Вес должен быть от 20 до 300 кг"
+        height != null && (height < 50 || height > 250) -> "Рост должен быть от 50 до 250 см"
+        else -> null
     }
 
     override fun onDestroyView() {

@@ -153,25 +153,58 @@ class MeasurementsFragment : Fragment() {
 
     private fun showAddDialog() {
         val dialogBinding = DialogAddMeasurementBinding.inflate(layoutInflater)
-        AlertDialog.Builder(requireContext())
+        val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Новый замер")
             .setView(dialogBinding.root)
-            .setPositiveButton("Сохранить") { _, _ ->
-                fun d(s: String) = s.trim().toDoubleOrNull()
-                val request = MeasurementRequest(
-                    weightKg      = d(dialogBinding.etWeight.text.toString()),
-                    heightCm      = d(dialogBinding.etHeight.text.toString()),
-                    chestCm       = d(dialogBinding.etChest.text.toString()),
-                    waistCm       = d(dialogBinding.etWaist.text.toString()),
-                    hipsCm        = d(dialogBinding.etHips.text.toString()),
-                    bicepCm       = d(dialogBinding.etBicep.text.toString()),
-                    bodyFatPercent = d(dialogBinding.etBodyFat.text.toString()),
-                    notes         = dialogBinding.etNotes.text.toString().trim().ifBlank { null }
-                )
-                viewModel.addMeasurement(request)
-            }
+            .setPositiveButton("Сохранить", null)
             .setNegativeButton("Отмена", null)
-            .show()
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                fun d(s: String) = s.trim().toDoubleOrNull()
+                val weight     = d(dialogBinding.etWeight.text.toString())
+                val height     = d(dialogBinding.etHeight.text.toString())
+                val chest      = d(dialogBinding.etChest.text.toString())
+                val waist      = d(dialogBinding.etWaist.text.toString())
+                val hips       = d(dialogBinding.etHips.text.toString())
+                val bicep      = d(dialogBinding.etBicep.text.toString())
+                val bodyFat    = d(dialogBinding.etBodyFat.text.toString())
+
+                val error = validateMeasurements(weight, height, chest, waist, hips, bicep, bodyFat)
+                if (error != null) {
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+
+                viewModel.addMeasurement(MeasurementRequest(
+                    weightKg       = weight,
+                    heightCm       = height,
+                    chestCm        = chest,
+                    waistCm        = waist,
+                    hipsCm         = hips,
+                    bicepCm        = bicep,
+                    bodyFatPercent = bodyFat,
+                    notes          = dialogBinding.etNotes.text.toString().trim().ifBlank { null }
+                ))
+                dialog.dismiss()
+            }
+        }
+        dialog.show()
+    }
+
+    private fun validateMeasurements(
+        weight: Double?, height: Double?, chest: Double?,
+        waist: Double?, hips: Double?, bicep: Double?, bodyFat: Double?
+    ): String? = when {
+        weight != null && (weight < 20 || weight > 300)   -> "Вес должен быть от 20 до 300 кг"
+        height != null && (height < 50 || height > 250)   -> "Рост должен быть от 50 до 250 см"
+        chest  != null && (chest  < 40 || chest  > 200)   -> "Обхват груди должен быть от 40 до 200 см"
+        waist  != null && (waist  < 30 || waist  > 200)   -> "Обхват талии должен быть от 30 до 200 см"
+        hips   != null && (hips   < 40 || hips   > 200)   -> "Обхват бёдер должен быть от 40 до 200 см"
+        bicep  != null && (bicep  < 10 || bicep  > 80)    -> "Обхват бицепса должен быть от 10 до 80 см"
+        bodyFat != null && (bodyFat < 1 || bodyFat > 60)  -> "Процент жира должен быть от 1 до 60%"
+        else -> null
     }
 
     override fun onDestroyView() {

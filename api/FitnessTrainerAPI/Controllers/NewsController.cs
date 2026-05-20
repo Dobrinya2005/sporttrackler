@@ -20,7 +20,16 @@ public record NewsItem(
 [Authorize]
 public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) : ControllerBase
 {
-    private const string CacheKey = "fitness_news_v2";
+    private const string CacheKey = "fitness_news_v3";
+
+    private static readonly string[] FitnessKeywords =
+    [
+        "тренировк", "фитнес", "упражнени", "мышц", "бег", "бега", "бегать",
+        "питани", "калори", "белок", "протеин", "похудени", "вес", "жир",
+        "спортзал", "зал", "кардио", "силовой", "растяжк", "йога", "плавани",
+        "здоровь", "иммунитет", "витамин", "сон", "восстановлени", "выносливост",
+        "диет", "рацион", "спортивн", "атлет", "марафон", "велосипед", "ходьб"
+    ];
 
     private static readonly (string Url, string Name)[] RssFeeds =
     [
@@ -49,7 +58,7 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
                 XNamespace media = "http://search.yahoo.com/mrss/";
 
                 var items = doc.Descendants("item")
-                    .Take(8)
+                    .Take(50)
                     .Select(item =>
                     {
                         var title = item.Element("title")?.Value?.Trim() ?? "";
@@ -72,7 +81,10 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
 
                         return new NewsItem(title, desc, img, link, sourceName, pub);
                     })
-                    .Where(n => !string.IsNullOrWhiteSpace(n.Title) && !string.IsNullOrWhiteSpace(n.Url))
+                    .Where(n => !string.IsNullOrWhiteSpace(n.Title) && !string.IsNullOrWhiteSpace(n.Url)
+                                && FitnessKeywords.Any(kw => n.Title.Contains(kw, StringComparison.OrdinalIgnoreCase)
+                                                          || (n.Description?.Contains(kw, StringComparison.OrdinalIgnoreCase) ?? false)))
+                    .Take(8)
                     .ToList();
 
                 all.AddRange(items);
