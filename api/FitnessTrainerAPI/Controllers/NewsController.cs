@@ -20,21 +20,32 @@ public record NewsItem(
 [Authorize]
 public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) : ControllerBase
 {
-    private const string CacheKey = "fitness_news_v4";
+    private const string CacheKey = "fitness_news_v7";
 
     private static readonly string[] FitnessKeywords =
     [
         "тренировк", "фитнес", "упражнени", "мышц", "бег", "бега", "бегать",
-        "питани", "калори", "белок", "протеин", "похудени", "вес", "жир",
-        "спортзал", "зал", "кардио", "силовой", "растяжк", "йога", "плавани",
+        "питани", "калори", "белок", "протеин", "похудени", "жир",
+        "кардио", "силовой", "растяжк", "йога", "плавани",
         "здоровь", "иммунитет", "витамин", "сон", "восстановлени", "выносливост",
-        "диет", "рацион", "спортивн", "атлет", "марафон", "велосипед", "ходьб"
+        "диет", "рацион", "бодибилдинг", "пауэрлифтинг", "кроссфит", "crossfit",
+        "атлетик", "марафон", "триатлон", "гимнастик", "аэробик", "пилатес",
+        "ходьб", "скандинавск"
+    ];
+
+    private static readonly string[] ExcludeKeywords =
+    [
+        "футбол", "хоккей", "баскетбол", "волейбол", "теннис", "гольф",
+        "ufc", "мма", "бокс", "единоборств", "борьб", "дзюдо", "карате",
+        "фигурн", "лыж", "биатлон", "санн", "бобслей", "прыжк",
+        "клуб", "лига", "чемпионат", "кубок", "матч", "турнир", "сборн",
+        "трансфер", "контракт", "зарплат", "стадион", "фанат", "болельщик",
+        "гол", "очко", "победа над", "поражение", "ничья", "счёт"
     ];
 
     private static readonly (string Url, string Name)[] RssFeeds =
     [
-        ("https://lenta.ru/rss/news/wellness/", "Lenta.ru"),
-        ("https://lenta.ru/rss/news/sport/", "Lenta.ru"),
+        ("https://lenta.ru/rss/news/sport/", "Lenta.ru Спорт"),
     ];
 
     [HttpGet]
@@ -53,7 +64,7 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
         try
         {
             var json = await client.GetStringAsync(
-                "https://instructorpro.ru/wp-json/wp/v2/posts?per_page=15&_fields=title,link,excerpt,date&_embed=1");
+                "https://instructorpro.ru/wp-json/wp/v2/posts?per_page=15&_embed=1");
             using var doc = JsonDocument.Parse(json);
             foreach (var post in doc.RootElement.EnumerateArray())
             {
@@ -124,7 +135,9 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
                     .Where(n => !string.IsNullOrWhiteSpace(n.Title) && !string.IsNullOrWhiteSpace(n.Url)
                                 && FitnessKeywords.Any(kw =>
                                     n.Title.Contains(kw, StringComparison.OrdinalIgnoreCase) ||
-                                    (n.Description?.Contains(kw, StringComparison.OrdinalIgnoreCase) ?? false)))
+                                    (n.Description?.Contains(kw, StringComparison.OrdinalIgnoreCase) ?? false))
+                                && !ExcludeKeywords.Any(kw =>
+                                    n.Title.Contains(kw, StringComparison.OrdinalIgnoreCase)))
                     .Take(6)
                     .ToList();
 
