@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardBackgroundColor="@color/bg_surface"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="0dp"
-    app:strokeColor="@color/accent_emerald"
-    app:strokeWidth="1dp">
+    android:orientation="vertical"
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/bg_workout_plan_card"
+    android:padding="20dp">
 
+    <!-- Top row: icon + title + dates -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- Emoji badge -->
+        <!-- Trophy badge -->
         <FrameLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_food_emoji_circle">
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_workout_icon_badge"
+            android:layout_marginEnd="14dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="🏋️"
-                android:textSize="22sp"/>
+                android:text="🏆"
+                android:textSize="24sp"/>
 
         </FrameLayout>
 
@@ -37,35 +35,69 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="14dp"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="АКТИВНЫЙ ПЛАН"
+                android:textColor="#99FFFFFF"
+                android:textSize="9sp"
+                android:letterSpacing="0.18"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="4dp"/>
 
             <TextView
                 android:id="@+id/tv_plan_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                android:fontFamily="sans-serif-medium"/>
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="-0.01"/>
 
             <TextView
                 android:id="@+id/tv_plan_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="3dp"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp"/>
-
-            <TextView
-                android:id="@+id/tv_dates"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/accent_emerald"
-                android:textSize="11sp"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#18FFFFFF"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="14dp"/>
+
+    <!-- Dates row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📅"
+            android:textSize="14sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_dates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/accent_emerald"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-medium"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -4,24 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingHorizontal="4dp"
+    android:paddingHorizontal="2dp"
     android:paddingTop="20dp"
-    android:paddingBottom="6dp"
+    android:paddingBottom="8dp"
     android:gravity="center_vertical">
 
+    <!-- Accent bar -->
     <View
         android:layout_width="3dp"
-        android:layout_height="18dp"
-        android:background="@color/accent_emerald"
-        android:layout_marginEnd="10dp"/>
+        android:layout_height="20dp"
+        android:background="@drawable/bg_day_accent_bar"
+        android:layout_marginEnd="12dp"/>
 
     <TextView
         android:id="@+id/tv_day_name"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:textColor="@color/accent_emerald"
-        android:textSize="13sp"
-        android:letterSpacing="0.06"
+        android:textSize="14sp"
+        android:letterSpacing="0.04"
         android:fontFamily="sans-serif-medium"/>
 
 </LinearLayout>
