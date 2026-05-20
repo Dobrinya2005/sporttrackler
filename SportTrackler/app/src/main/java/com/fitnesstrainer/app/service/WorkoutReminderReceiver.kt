@@ -79,10 +79,14 @@ class WorkoutReminderReceiver : BroadcastReceiver() {
                         add(java.util.Calendar.WEEK_OF_YEAR, 1)
                     }
                 }
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, cal.timeInMillis, intent)
-                } else {
-                    am.setExact(android.app.AlarmManager.RTC_WAKEUP, cal.timeInMillis, intent)
+                when {
+                    android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+                            && am.canScheduleExactAlarms() ->
+                        am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, cal.timeInMillis, intent)
+                    android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M ->
+                        am.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, cal.timeInMillis, intent)
+                    else ->
+                        am.set(android.app.AlarmManager.RTC_WAKEUP, cal.timeInMillis, intent)
                 }
             }
         }

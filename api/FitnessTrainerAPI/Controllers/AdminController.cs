@@ -137,6 +137,37 @@ public class AdminController(AppDbContext db) : ControllerBase
         var clients = await db.ClientProfiles.Where(cp => cp.TrainerId == id).ToListAsync();
         foreach (var c in clients) c.TrainerId = null;
 
+        // Удаляем планы тренировок тренера
+        var plans = await db.WorkoutPlans.Where(wp => wp.TrainerId == id).ToListAsync();
+        db.WorkoutPlans.RemoveRange(plans);
+
+        // Удаляем отзывы о тренере
+        var reviews = await db.TrainerReviews.Where(r => r.TrainerId == id).ToListAsync();
+        db.TrainerReviews.RemoveRange(reviews);
+
+        // Удаляем реакции на сообщения тренера
+        var reactions = await db.MessageReactions.Where(r => r.UserId == id).ToListAsync();
+        db.MessageReactions.RemoveRange(reactions);
+
+        // Удаляем сообщения (личные)
+        var messages = await db.Messages
+            .Where(m => m.SenderId == id || m.ReceiverId == id).ToListAsync();
+        db.Messages.RemoveRange(messages);
+
+        // Удаляем участие в группах и групповые сообщения
+        var groupMessages = await db.GroupMessages.Where(gm => gm.SenderId == id).ToListAsync();
+        db.GroupMessages.RemoveRange(groupMessages);
+        var groupMembers = await db.GroupMembers.Where(gm => gm.UserId == id).ToListAsync();
+        db.GroupMembers.RemoveRange(groupMembers);
+
+        // Удаляем уведомления и токены
+        var notifications = await db.Notifications.Where(n => n.UserId == id).ToListAsync();
+        db.Notifications.RemoveRange(notifications);
+        var fcmTokens = await db.FcmTokens.Where(t => t.UserId == id).ToListAsync();
+        db.FcmTokens.RemoveRange(fcmTokens);
+        var refreshTokens = await db.RefreshTokens.Where(t => t.UserId == id).ToListAsync();
+        db.RefreshTokens.RemoveRange(refreshTokens);
+
         db.Users.Remove(user);
         await db.SaveChangesAsync();
         return Ok(new { message = "Тренер удалён" });
@@ -192,6 +223,38 @@ public class AdminController(AppDbContext db) : ControllerBase
             .FirstOrDefaultAsync(u => u.UserId == id);
         if (user is null || user.Role.RoleName != "Client")
             return NotFound(new { message = "Клиент не найден" });
+
+        // Удаляем отзывы клиента
+        var reviews = await db.TrainerReviews.Where(r => r.ClientId == id).ToListAsync();
+        db.TrainerReviews.RemoveRange(reviews);
+
+        // Удаляем планы тренировок клиента
+        var plans = await db.WorkoutPlans.Where(wp => wp.ClientId == id).ToListAsync();
+        db.WorkoutPlans.RemoveRange(plans);
+
+        // Удаляем реакции на сообщения
+        var reactions = await db.MessageReactions.Where(r => r.UserId == id).ToListAsync();
+        db.MessageReactions.RemoveRange(reactions);
+
+        // Удаляем личные сообщения
+        var messages = await db.Messages
+            .Where(m => m.SenderId == id || m.ReceiverId == id).ToListAsync();
+        db.Messages.RemoveRange(messages);
+
+        // Удаляем групповые сообщения и участие в группах
+        var groupMessages = await db.GroupMessages.Where(gm => gm.SenderId == id).ToListAsync();
+        db.GroupMessages.RemoveRange(groupMessages);
+        var groupMembers = await db.GroupMembers.Where(gm => gm.UserId == id).ToListAsync();
+        db.GroupMembers.RemoveRange(groupMembers);
+
+        // Удаляем уведомления и токены
+        var notifications = await db.Notifications.Where(n => n.UserId == id).ToListAsync();
+        db.Notifications.RemoveRange(notifications);
+        var fcmTokens = await db.FcmTokens.Where(t => t.UserId == id).ToListAsync();
+        db.FcmTokens.RemoveRange(fcmTokens);
+        var refreshTokens = await db.RefreshTokens.Where(t => t.UserId == id).ToListAsync();
+        db.RefreshTokens.RemoveRange(refreshTokens);
+
         db.Users.Remove(user);
         await db.SaveChangesAsync();
         return Ok(new { message = "Клиент удалён" });

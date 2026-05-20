@@ -31,6 +31,9 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import android.app.AlarmManager
+import android.content.Intent
+import android.provider.Settings
 import java.io.File
 import java.io.FileOutputStream
 
@@ -347,12 +350,22 @@ class SettingsFragment : Fragment() {
             sb.btnSave.setOnClickListener {
                 val hour   = hourStr.toInt().coerceIn(0, 23)
                 val minute = minStr.toInt().coerceIn(0, 59)
+                val ctx = requireContext()
+                val am = ctx.getSystemService(AlarmManager::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) {
+                    Toast.makeText(ctx,
+                        "Разрешите точные будильники в настройках приложения",
+                        Toast.LENGTH_LONG).show()
+                    startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                        Uri.parse("package:${ctx.packageName}")))
+                    return@setOnClickListener
+                }
                 lifecycleScope.launch {
                     App.instance.tokenStorage.setWorkoutReminder(true, hour, minute, selectedDays)
                     b.switchReminder.isChecked = true
                     b.tvReminderTime.text = "%02d:%02d".format(hour, minute)
-                    WorkoutReminderReceiver.scheduleForDays(requireContext(), hour, minute, selectedDays)
-                    Toast.makeText(requireContext(),
+                    WorkoutReminderReceiver.scheduleForDays(ctx, hour, minute, selectedDays)
+                    Toast.makeText(ctx,
                         "Напоминание установлено на %02d:%02d".format(hour, minute),
                         Toast.LENGTH_SHORT).show()
                 }
