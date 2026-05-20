@@ -222,6 +222,12 @@ data class Exercise(
 
 // ── Chat ─────────────────────────────────────────────────────
 
+data class ReactionDto(
+    val emoji: String,
+    val count: Int,
+    val myReaction: Boolean
+)
+
 data class MessageDto(
     val messageId: Int,
     val senderId: Int,
@@ -232,7 +238,12 @@ data class MessageDto(
     val attachmentUrl: String?,
     val attachmentType: String?,
     val isRead: Boolean,
-    val sentAt: String
+    val readAt: String? = null,
+    val sentAt: String,
+    val replyToMessageId: Int? = null,
+    val replyToSenderName: String? = null,
+    val replyToText: String? = null,
+    val reactions: List<ReactionDto>? = null
 )
 
 data class ConversationPreview(
@@ -248,7 +259,8 @@ data class SendMessageRequest(
     val receiverId: Int,
     val text: String?,
     val attachmentUrl: String? = null,
-    val attachmentType: String? = null
+    val attachmentType: String? = null,
+    val replyToMessageId: Int? = null
 )
 
 // ── Group chat ───────────────────────────────────────────────

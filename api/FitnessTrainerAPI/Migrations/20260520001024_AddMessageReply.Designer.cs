@@ -4,6 +4,7 @@ using FitnessTrainerAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTrainerAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260520001024_AddMessageReply")]
+    partial class AddMessageReply
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -554,37 +557,6 @@ namespace FitnessTrainerAPI.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("Messages", (string)null);
-                });
-
-            modelBuilder.Entity("FitnessTrainerAPI.Models.MessageReaction", b =>
-                {
-                    b.Property<int>("ReactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReactionId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Emoji")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("MessageId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ReactionId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("MessageId", "UserId", "Emoji")
-                        .IsUnique();
-
-                    b.ToTable("MessageReactions", (string)null);
                 });
 
             modelBuilder.Entity("FitnessTrainerAPI.Models.Notification", b =>
@@ -1128,25 +1100,6 @@ namespace FitnessTrainerAPI.Migrations
                     b.Navigation("ReplyToMessage");
 
                     b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("FitnessTrainerAPI.Models.MessageReaction", b =>
-                {
-                    b.HasOne("FitnessTrainerAPI.Models.Message", "Message")
-                        .WithMany()
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FitnessTrainerAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Message");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FitnessTrainerAPI.Models.Notification", b =>

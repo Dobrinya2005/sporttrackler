@@ -1,8 +1,11 @@
 package com.fitnesstrainer.app.ui.chat
 
 import android.app.Dialog
+import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.SurfaceTexture
+import android.text.SpannableString
+import android.text.style.BackgroundColorSpan
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -23,6 +26,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.data.model.MessageDto
 import com.fitnesstrainer.app.databinding.ItemMessageReceivedBinding
 import com.fitnesstrainer.app.databinding.ItemMessageSentBinding
@@ -35,8 +39,119 @@ private const val TYPE_RECEIVED = 1
 
 class ChatAdapter(
     private val myUserId: Int,
-    private val accessToken: String? = null
+    private val accessToken: String? = null,
+    var onReply: ((MessageDto) -> Unit)? = null
 ) : ListAdapter<MessageDto, RecyclerView.ViewHolder>(DIFF) {
+
+    var searchQuery: String = ""
+    var onReact: ((MessageDto, String) -> Unit)? = null
+
+    private fun showEmojiPickerForMessage(anchor: android.view.View, msg: MessageDto) {
+        val ctx = anchor.context
+        val emojis = listOf("👍","❤️","😂","😮","😢","🔥","👏","🎉","🥗","🗿","💪")
+        val density = ctx.resources.displayMetrics.density
+        val dp4  = (4  * density).toInt()
+        val dp8  = (8  * density).toInt()
+        val dp12 = (12 * density).toInt()
+        val dp44 = (44 * density).toInt()
+        val dp16 = (16 * density).toInt()
+        val screenW = ctx.resources.displayMetrics.widthPixels
+
+        // ── Popup content ──────────────────────────────────────
+        val root = android.widget.LinearLayout(ctx).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            background = android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+                cornerRadius = 20 * density
+                setColor(Color.parseColor("#1E2235"))
+            }
+            elevation = 24 * density
+        }
+
+        // Emoji row (horizontal scroll)
+        val scroll = android.widget.HorizontalScrollView(ctx).apply {
+            isHorizontalScrollBarEnabled = false
+            setPadding(dp8, dp8, dp8, dp4)
+        }
+        val emojiRow = android.widget.LinearLayout(ctx).apply {
+            orientation = android.widget.LinearLayout.HORIZONTAL
+        }
+        var popup: android.widget.PopupWindow? = null
+        emojis.forEach { emoji ->
+            emojiRow.addView(android.widget.TextView(ctx).apply {
+                text = emoji
+                textSize = 28f
+                gravity = android.view.Gravity.CENTER
+                layoutParams = android.widget.LinearLayout.LayoutParams(dp44, dp44).also {
+                    it.marginEnd = dp4
+                }
+                setOnClickListener {
+                    onReact?.invoke(msg, emoji)
+                    popup?.dismiss()
+                }
+            })
+        }
+        scroll.addView(emojiRow)
+        root.addView(scroll)
+
+        // Divider
+        root.addView(android.view.View(ctx).apply {
+            setBackgroundColor(Color.parseColor("#2A2D3E"))
+            layoutParams = android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 1)
+        })
+
+        // Reply button
+        root.addView(android.widget.TextView(ctx).apply {
+            text = "↩  Ответить"
+            textSize = 14f
+            setTextColor(Color.parseColor("#CCCCCC"))
+            setPadding(dp16, dp12, dp16, dp12)
+            setOnClickListener { onReply?.invoke(msg); popup?.dismiss() }
+        })
+
+        // ── Measure & position ─────────────────────────────────
+        root.measure(
+            android.view.View.MeasureSpec.makeMeasureSpec(screenW - dp8 * 4, android.view.View.MeasureSpec.AT_MOST),
+            android.view.View.MeasureSpec.makeMeasureSpec(0, android.view.View.MeasureSpec.UNSPECIFIED)
+        )
+        val popW = root.measuredWidth
+        val popH = root.measuredHeight
+
+        val loc = IntArray(2)
+        anchor.getLocationOnScreen(loc)
+        val anchorX = loc[0]
+        val anchorY = loc[1]
+
+        // x: center above message, clamp to screen
+        var xOff = (anchor.width - popW) / 2
+        val absX = (anchorX + xOff).coerceIn(dp8, screenW - popW - dp8)
+        xOff = absX - anchorX
+
+        // y: above the anchor
+        val yOff = -(popH + anchor.height)
+
+        popup = android.widget.PopupWindow(root, android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT, true).apply {
+            isOutsideTouchable = true
+            isFocusable = true
+        }
+
+        // Animate: scale from bottom-center
+        root.pivotX = popW / 2f
+        root.pivotY = popH.toFloat()
+        root.scaleX = 0.5f
+        root.scaleY = 0.5f
+        root.alpha = 0f
+
+        popup.showAsDropDown(anchor, xOff, yOff)
+
+        root.animate()
+            .scaleX(1f).scaleY(1f).alpha(1f)
+            .setDuration(180)
+            .setInterpolator(android.view.animation.OvershootInterpolator(1.2f))
+            .start()
+    }
 
     override fun getItemViewType(position: Int) =
         if (getItem(position).senderId == myUserId) TYPE_SENT else TYPE_RECEIVED
@@ -51,8 +166,12 @@ class ChatAdapter(
         val msg  = getItem(position)
         val time = formatTime(msg.sentAt)
         when (holder) {
-            is SentVH     -> holder.bind(msg, time)
-            is ReceivedVH -> holder.bind(msg, time)
+            is SentVH     -> holder.bind(msg, time, searchQuery)
+            is ReceivedVH -> holder.bind(msg, time, searchQuery)
+        }
+        holder.itemView.setOnLongClickListener {
+            showEmojiPickerForMessage(holder.itemView, msg)
+            true
         }
     }
 
@@ -65,12 +184,27 @@ class ChatAdapter(
         private var audioSpeed = 1.0f
         private var audioWaveform: FloatArray = floatArrayOf()
 
-        fun bind(msg: MessageDto, time: String) {
+        fun bind(msg: MessageDto, time: String, query: String = "") {
             b.tvTime.text = time
-            bindContent(msg, time)
+            if (msg.isRead) {
+                b.tvReadStatus.text = "✓✓"
+                b.tvReadStatus.setTextColor(itemView.context.getColor(R.color.accent_cyan))
+            } else {
+                b.tvReadStatus.text = "✓"
+                b.tvReadStatus.setTextColor(0x99FFFFFF.toInt())
+            }
+            if (!msg.replyToSenderName.isNullOrBlank()) {
+                b.layoutReply.visibility = View.VISIBLE
+                b.tvReplySender.text = msg.replyToSenderName
+                b.tvReplyText.text = msg.replyToText ?: "📎 Вложение"
+            } else {
+                b.layoutReply.visibility = View.GONE
+            }
+            bindReactions(b.layoutReactions, msg.reactions)
+            bindContent(msg, time, query)
         }
 
-        private fun bindContent(msg: MessageDto, time: String) {
+        private fun bindContent(msg: MessageDto, time: String, query: String = "") {
             val type = msg.attachmentType
             val url  = msg.attachmentUrl
 
@@ -129,13 +263,13 @@ class ChatAdapter(
                 }
                 else -> {
                     b.tvMessage.visibility = View.VISIBLE
-                    b.tvMessage.text = msg.messageText ?: ""
+                    b.tvMessage.text = highlightQuery(msg.messageText ?: "", query)
                 }
             }
 
             if (!msg.messageText.isNullOrBlank() && type != null && type != "video_note") {
                 b.tvMessage.visibility = View.VISIBLE
-                b.tvMessage.text = msg.messageText
+                b.tvMessage.text = highlightQuery(msg.messageText, query)
             }
         }
 
@@ -364,13 +498,21 @@ class ChatAdapter(
         private var audioSpeed = 1.0f
         private var audioWaveform: FloatArray = floatArrayOf()
 
-        fun bind(msg: MessageDto, time: String) {
+        fun bind(msg: MessageDto, time: String, query: String = "") {
             b.tvSenderName.text = msg.senderName
             b.tvTime.text = time
-            bindContent(msg, time)
+            if (!msg.replyToSenderName.isNullOrBlank()) {
+                b.layoutReply.visibility = View.VISIBLE
+                b.tvReplySender.text = msg.replyToSenderName
+                b.tvReplyText.text = msg.replyToText ?: "📎 Вложение"
+            } else {
+                b.layoutReply.visibility = View.GONE
+            }
+            bindReactions(b.layoutReactions, msg.reactions)
+            bindContent(msg, time, query)
         }
 
-        private fun bindContent(msg: MessageDto, time: String) {
+        private fun bindContent(msg: MessageDto, time: String, query: String = "") {
             val type = msg.attachmentType
             val url  = msg.attachmentUrl
 
@@ -429,13 +571,13 @@ class ChatAdapter(
                 }
                 else -> {
                     b.tvMessage.visibility = View.VISIBLE
-                    b.tvMessage.text = msg.messageText ?: ""
+                    b.tvMessage.text = highlightQuery(msg.messageText ?: "", query)
                 }
             }
 
             if (!msg.messageText.isNullOrBlank() && type != null && type != "video_note") {
                 b.tvMessage.visibility = View.VISIBLE
-                b.tvMessage.text = msg.messageText
+                b.tvMessage.text = highlightQuery(msg.messageText, query)
             }
         }
 
@@ -656,6 +798,54 @@ class ChatAdapter(
     }
 
     companion object {
+
+        fun bindReactions(container: android.widget.LinearLayout, reactions: List<com.fitnesstrainer.app.data.model.ReactionDto>?) {
+            container.removeAllViews()
+            if (reactions.isNullOrEmpty()) { container.visibility = View.GONE; return }
+            container.visibility = View.VISIBLE
+            val ctx = container.context
+            val dp4 = (4 * ctx.resources.displayMetrics.density).toInt()
+            val dp8 = (8 * ctx.resources.displayMetrics.density).toInt()
+            reactions.forEach { r ->
+                val tv = android.widget.TextView(ctx).apply {
+                    text = "${r.emoji} ${r.count}"
+                    textSize = 12f
+                    setTextColor(if (r.myReaction) Color.parseColor("#89b4fa") else Color.parseColor("#CCCCCC"))
+                    setPadding(dp8, dp4, dp8, dp4)
+                    background = android.graphics.drawable.GradientDrawable().apply {
+                        shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+                        cornerRadius = 40f
+                        setColor(if (r.myReaction) Color.parseColor("#1A2A4A") else Color.parseColor("#1A1A2E"))
+                        setStroke(2, if (r.myReaction) Color.parseColor("#4488FF") else Color.parseColor("#2A2D3E"))
+                    }
+                    val lp = android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    lp.marginEnd = dp4
+                    layoutParams = lp
+                }
+                container.addView(tv)
+            }
+        }
+
+        fun highlightQuery(text: String, query: String): CharSequence {
+            if (query.isBlank() || text.isBlank()) return text
+            val spannable = SpannableString(text)
+            val lowerText = text.lowercase()
+            val lowerQuery = query.lowercase()
+            var index = lowerText.indexOf(lowerQuery)
+            while (index >= 0) {
+                spannable.setSpan(
+                    BackgroundColorSpan(Color.parseColor("#4D7EB0FF")),
+                    index, index + query.length,
+                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                index = lowerText.indexOf(lowerQuery, index + 1)
+            }
+            return spannable
+        }
+
         private val DIFF = object : DiffUtil.ItemCallback<MessageDto>() {
             override fun areItemsTheSame(a: MessageDto, b: MessageDto) = a.messageId == b.messageId
             override fun areContentsTheSame(a: MessageDto, b: MessageDto) = a == b

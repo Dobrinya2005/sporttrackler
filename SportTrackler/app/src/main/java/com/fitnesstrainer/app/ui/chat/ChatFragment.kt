@@ -45,6 +45,9 @@ class ChatFragment : Fragment() {
     private val viewModel: ChatViewModel by viewModels()
     private lateinit var adapter: ChatAdapter
     private var infoVisible = false
+    private var replyToMessage: com.fitnesstrainer.app.data.model.MessageDto? = null
+    private var searchMatchPositions: List<Int> = emptyList()
+    private var searchMatchIndex: Int = 0
 
     private val typingStopHandler = Handler(Looper.getMainLooper())
     private val typingStopRunnable = Runnable { viewModel.stopTyping() }
@@ -134,6 +137,10 @@ class ChatFragment : Fragment() {
         binding.tvContactName.text = args.contactName
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
 
+        // Set initials placeholder in toolbar avatar immediately
+        val placeholder = AvatarHelper.forName(args.contactName)
+        binding.ivToolbarAvatar.setImageDrawable(placeholder)
+
         binding.btnInfo.setOnClickListener {
             infoVisible = !infoVisible
             binding.cardContactInfo.visibility = if (infoVisible) View.VISIBLE else View.GONE
@@ -145,6 +152,8 @@ class ChatFragment : Fragment() {
         viewModel.myUserId.observe(viewLifecycleOwner) { myId ->
             if (myId != -1) {
                 adapter = ChatAdapter(myId, viewModel.accessToken.value)
+                adapter.onReply = { msg -> showReplyPreview(msg) }
+                adapter.onReact = { msg, emoji -> viewModel.toggleReaction(msg.messageId, emoji) }
                 binding.rvMessages.adapter = adapter
             }
         }
@@ -160,17 +169,23 @@ class ChatFragment : Fragment() {
 
         viewModel.contactProfile.observe(viewLifecycleOwner) { profile ->
             if (profile != null) {
-                binding.btnInfo.visibility = View.VISIBLE
-                binding.tvInfoName.text = "${profile.firstName} ${profile.lastName}"
+                val fullName = "${profile.firstName} ${profile.lastName}".trim()
+                val avatarPlaceholder = AvatarHelper.forName(fullName.ifBlank { args.contactName })
+                binding.tvInfoName.text = fullName
                 binding.tvInfoEmail.text = profile.email
                 binding.tvInfoEmailShort.text = profile.email
                 binding.tvInfoPhone.text = profile.phone ?: "—"
                 if (!profile.avatarUrl.isNullOrBlank()) {
                     Glide.with(this).load(profile.avatarUrl)
-                        .placeholder(R.drawable.ic_person).circleCrop().into(binding.ivContactAvatar)
+                        .placeholder(avatarPlaceholder).error(avatarPlaceholder)
+                        .circleCrop().into(binding.ivContactAvatar)
+                    Glide.with(this).load(profile.avatarUrl)
+                        .placeholder(avatarPlaceholder).error(avatarPlaceholder)
+                        .circleCrop().into(binding.ivToolbarAvatar)
+                } else {
+                    binding.ivContactAvatar.setImageDrawable(avatarPlaceholder)
+                    binding.ivToolbarAvatar.setImageDrawable(avatarPlaceholder)
                 }
-            } else {
-                binding.btnInfo.visibility = View.GONE
             }
         }
 
@@ -260,10 +275,23 @@ class ChatFragment : Fragment() {
             if (text.isNotEmpty()) {
                 typingStopHandler.removeCallbacks(typingStopRunnable)
                 viewModel.stopTyping()
-                viewModel.sendMessage(text)
+                viewModel.sendMessage(text, replyToMessage?.messageId)
                 binding.etMessage.setText("")
+                clearReplyPreview()
             }
         }
+
+        binding.btnCancelReply.setOnClickListener { clearReplyPreview() }
+
+        binding.btnSearch.setOnClickListener { openSearch() }
+        binding.btnSearchClose.setOnClickListener { closeSearch() }
+        binding.btnSearchNext.setOnClickListener { navigateSearch(+1) }
+        binding.btnSearchPrev.setOnClickListener { navigateSearch(-1) }
+        binding.etSearch.addTextChangedListener(object : android.text.TextWatcher {
+            override fun afterTextChanged(s: android.text.Editable?) { applySearch(s?.toString() ?: "") }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
         binding.btnAttach.setOnClickListener { showAttachmentMenu() }
 
@@ -462,6 +490,72 @@ class ChatFragment : Fragment() {
             if (idx >= 0 && cursor.moveToFirst()) return cursor.getString(idx)
         }
         return uri.lastPathSegment
+    }
+
+    private fun openSearch() {
+        binding.layoutSearchBar.visibility = View.VISIBLE
+        binding.btnSearch.visibility = View.GONE
+        binding.etSearch.requestFocus()
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.showSoftInput(binding.etSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun closeSearch() {
+        binding.layoutSearchBar.visibility = View.GONE
+        binding.btnSearch.visibility = View.VISIBLE
+        binding.etSearch.setText("")
+        applySearch("")
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
+    }
+
+    private fun applySearch(query: String) {
+        if (!::adapter.isInitialized) return
+        adapter.searchQuery = query
+        adapter.notifyDataSetChanged()
+        if (query.isBlank()) {
+            searchMatchPositions = emptyList()
+            searchMatchIndex = 0
+            binding.tvSearchCounter.text = ""
+            return
+        }
+        val messages = viewModel.messages.value ?: emptyList()
+        searchMatchPositions = messages.indices.filter { i ->
+            messages[i].messageText?.contains(query, ignoreCase = true) == true
+        }
+        searchMatchIndex = if (searchMatchPositions.isNotEmpty()) searchMatchPositions.size - 1 else 0
+        updateSearchCounter()
+        if (searchMatchPositions.isNotEmpty()) {
+            binding.rvMessages.scrollToPosition(searchMatchPositions[searchMatchIndex])
+        }
+    }
+
+    private fun navigateSearch(direction: Int) {
+        if (searchMatchPositions.isEmpty()) return
+        searchMatchIndex = (searchMatchIndex + direction + searchMatchPositions.size) % searchMatchPositions.size
+        updateSearchCounter()
+        binding.rvMessages.scrollToPosition(searchMatchPositions[searchMatchIndex])
+    }
+
+    private fun updateSearchCounter() {
+        if (searchMatchPositions.isEmpty()) {
+            binding.tvSearchCounter.text = "0/0"
+        } else {
+            binding.tvSearchCounter.text = "${searchMatchIndex + 1}/${searchMatchPositions.size}"
+        }
+    }
+
+    private fun showReplyPreview(msg: com.fitnesstrainer.app.data.model.MessageDto) {
+        replyToMessage = msg
+        binding.replyPreview.visibility = View.VISIBLE
+        binding.tvReplyToName.text = msg.senderName
+        binding.tvReplyToText.text = msg.messageText ?: "📎 Вложение"
+        binding.etMessage.requestFocus()
+    }
+
+    private fun clearReplyPreview() {
+        replyToMessage = null
+        binding.replyPreview.visibility = View.GONE
     }
 
     override fun onStart() {

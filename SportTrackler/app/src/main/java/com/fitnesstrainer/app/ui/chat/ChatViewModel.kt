@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.BuildConfig
 import com.fitnesstrainer.app.data.model.MessageDto
+import com.fitnesstrainer.app.data.model.ReactionDto
 import com.fitnesstrainer.app.data.model.SendMessageRequest
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
@@ -132,6 +133,14 @@ class ChatViewModel : ViewModel() {
             _messages.postValue(list)
         }, MessageDto::class.java)
 
+        hubConnection?.on("MessagesRead", { _: Int ->
+            loadMessages()
+        }, Int::class.java)
+
+        hubConnection?.on("ReactionUpdated", { _: Int ->
+            loadMessages()
+        }, Int::class.java)
+
         hubConnection?.on("ReceiveTyping", { senderId: Int, typingType: String ->
             if (senderId == contactId) {
                 val label = when (typingType) {
@@ -189,11 +198,28 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    fun sendMessage(text: String) {
+    fun toggleReaction(messageId: Int, emoji: String) {
+        viewModelScope.launch {
+            try {
+                val resp = api.toggleReaction(messageId, emoji)
+                if (resp.isSuccessful) {
+                    val reactions = resp.body() ?: emptyList()
+                    val list = _messages.value?.toMutableList() ?: return@launch
+                    val idx = list.indexOfFirst { it.messageId == messageId }
+                    if (idx >= 0) {
+                        list[idx] = list[idx].copy(reactions = reactions.ifEmpty { null })
+                        _messages.postValue(list)
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    fun sendMessage(text: String, replyToMessageId: Int? = null) {
         if (text.isBlank()) return
         viewModelScope.launch {
             try {
-                val response = api.sendMessage(SendMessageRequest(contactId, text))
+                val response = api.sendMessage(SendMessageRequest(contactId, text, replyToMessageId = replyToMessageId))
                 if (response.isSuccessful) appendMessage(response.body())
             } catch (_: Exception) {}
         }

@@ -38,7 +38,7 @@
             android:layout_height="36dp"
             android:layout_marginStart="4dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_person"
+            android:src="@drawable/ic_group"
             android:background="@drawable/bg_avatar_circle"
             android:clipToOutline="true"/>
 
@@ -84,54 +84,247 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingHorizontal="4dp"
+        android:paddingHorizontal="10dp"
+        android:paddingTop="8dp"
         android:paddingBottom="8dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toTopOf="@id/input_bar"
+        app:layout_constraintBottom_toTopOf="@id/input_panel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Input bar -->
+    <!-- Input panel -->
     <LinearLayout
-        android:id="@+id/input_bar"
+        android:id="@+id/input_panel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="8dp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp"
         android:background="@color/bg_elevated"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/et_message"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Сообщение..."
-            android:textColorHint="@color/text_hint"
-            android:textColor="@color/text_primary"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:background="@drawable/bg_chat_input_selector"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="10dp"
-            android:maxLines="4"
-            android:inputType="textMultiLine|textCapSentences"
-            android:imeOptions="actionNone"/>
+            android:paddingStart="12dp"
+            android:paddingEnd="6dp"
+            android:paddingVertical="4dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_send"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="6dp"
-            android:background="@drawable/bg_send_button"
-            android:text="→"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:padding="0dp"
-            android:minWidth="0dp"/>
+            <ImageButton
+                android:id="@+id/btn_attach"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_attach"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/text_hint"
+                android:scaleType="center"
+                android:padding="6dp"
+                android:contentDescription="Вложение"/>
+
+            <EditText
+                android:id="@+id/et_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="4dp"
+                android:hint="Сообщение…"
+                android:textColor="@color/text_primary"
+                android:textColorHint="#8A8A8A"
+                android:textSize="15sp"
+                android:background="@null"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="4"
+                android:paddingVertical="8dp"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:background="#3A3B43"
+                android:layout_marginHorizontal="4dp"/>
+
+            <ImageButton
+                android:id="@+id/btn_mic"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_mic"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/text_hint"
+                android:scaleType="center"
+                android:padding="6dp"
+                android:contentDescription="Голосовое сообщение"/>
+
+            <ImageButton
+                android:id="@+id/btn_video_note"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_video_note"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/text_hint"
+                android:scaleType="center"
+                android:padding="6dp"
+                android:contentDescription="Видеосообщение"/>
+
+            <ImageButton
+                android:id="@+id/btn_send"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_send"
+                android:background="@drawable/bg_send_button"
+                android:tint="@android:color/white"
+                android:scaleType="center"
+                android:padding="7dp"
+                android:visibility="gone"
+                android:contentDescription="Отправить"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Recording panel -->
+    <LinearLayout
+        android:id="@+id/recording_panel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/bg_elevated"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Hold mode hints -->
+        <LinearLayout
+            android:id="@+id/layout_hold_hints"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="2dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔴"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tv_recording_time"
+                android:layout_width="36dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="0:00"
+                android:textColor="@color/accent_rose"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"/>
+
+            <com.fitnesstrainer.app.ui.chat.WaveformView
+                android:id="@+id/waveform_recording"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="← отмена"
+                android:textColor="@color/text_hint"
+                android:textSize="11sp"
+                android:layout_marginEnd="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="↑ фикс"
+                android:textColor="@color/accent_cyan"
+                android:textSize="11sp"/>
+
+        </LinearLayout>
+
+        <!-- Locked mode controls -->
+        <LinearLayout
+            android:id="@+id/layout_locked_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/btn_record_delete"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/accent_rose"
+                android:padding="10dp"
+                android:contentDescription="Удалить"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="6dp">
+
+                <TextView
+                    android:id="@+id/tv_record_dot_locked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔴"
+                    android:textSize="11sp"
+                    android:layout_marginEnd="4dp"/>
+
+                <TextView
+                    android:id="@+id/tv_recording_time_locked"
+                    android:layout_width="36dp"
+                    android:layout_height="wrap_content"
+                    android:text="0:00"
+                    android:textColor="@color/accent_rose"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium"/>
+
+                <com.fitnesstrainer.app.ui.chat.WaveformView
+                    android:id="@+id/waveform_recording_locked"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"/>
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btn_record_pause"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_pause"
+                android:background="@drawable/bg_record_btn_active"
+                android:padding="12dp"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="Пауза"/>
+
+            <ImageButton
+                android:id="@+id/btn_record_send"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_send"
+                android:background="@drawable/bg_send_button"
+                android:padding="12dp"
+                android:contentDescription="Отправить"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

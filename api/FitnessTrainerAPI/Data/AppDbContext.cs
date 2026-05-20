@@ -27,6 +27,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ChatGroup>       ChatGroups       => Set<ChatGroup>();
     public DbSet<GroupMember>     GroupMembers     => Set<GroupMember>();
     public DbSet<GroupMessage>    GroupMessages    => Set<GroupMessage>();
+    public DbSet<MessageReaction> MessageReactions => Set<MessageReaction>();
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
@@ -185,5 +186,20 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany()
             .HasForeignKey(gm => gm.SenderId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        mb.Entity<MessageReaction>().ToTable("MessageReactions").HasKey(e => e.ReactionId);
+        mb.Entity<MessageReaction>()
+            .HasOne(r => r.Message)
+            .WithMany()
+            .HasForeignKey(r => r.MessageId)
+            .OnDelete(DeleteBehavior.Cascade);
+        mb.Entity<MessageReaction>()
+            .HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+        mb.Entity<MessageReaction>()
+            .HasIndex(r => new { r.MessageId, r.UserId, r.Emoji })
+            .IsUnique();
     }
 }

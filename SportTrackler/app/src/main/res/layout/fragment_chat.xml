@@ -33,47 +33,143 @@
             android:padding="0dp"
             android:minWidth="0dp"/>
 
-        <!-- Contact name + connection status -->
+        <!-- Avatar + name row (clickable — opens info card) -->
         <LinearLayout
+            android:id="@+id/btn_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+
+            <!-- Contact avatar -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_toolbar_avatar"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/ic_person"
+                android:scaleType="centerCrop"
+                android:background="@drawable/bg_avatar_circle"
+                android:clipToOutline="true"
+                app:shapeAppearanceOverlay="@style/CircleImageView"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_contact_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"/>
+
+                <TextView
+                    android:id="@+id/tv_connection_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:text="● подключено"
+                    android:textColor="@color/accent_emerald"
+                    android:textSize="11sp"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Search button -->
+        <ImageButton
+            android:id="@+id/btn_search"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_search"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/text_hint"
+            android:padding="8dp"
+            android:contentDescription="Поиск"/>
+
+    </LinearLayout>
+
+    <!-- Search bar (replaces toolbar row when active) -->
+    <LinearLayout
+        android:id="@+id/layout_search_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="8dp"
+        android:background="@color/bg_elevated"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_search_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/text_hint"
+            android:padding="8dp"
+            android:contentDescription="Закрыть поиск"/>
+
+        <EditText
+            android:id="@+id/et_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginHorizontal="4dp"
-            android:orientation="vertical">
+            android:hint="Поиск в сообщениях…"
+            android:textColor="@color/text_primary"
+            android:textColorHint="#8A8A8A"
+            android:textSize="15sp"
+            android:background="@null"
+            android:inputType="text"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            android:paddingVertical="8dp"/>
 
-            <TextView
-                android:id="@+id/tv_contact_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_primary"
-                android:textSize="17sp"
-                android:fontFamily="sans-serif-medium"/>
+        <TextView
+            android:id="@+id/tv_search_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0/0"
+            android:textColor="@color/text_hint"
+            android:textSize="12sp"
+            android:layout_marginEnd="4dp"/>
 
-            <TextView
-                android:id="@+id/tv_connection_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="● подключено"
-                android:textColor="@color/accent_emerald"
-                android:textSize="11sp"
-                android:visibility="gone"/>
-
-        </LinearLayout>
-
-        <!-- Info toggle -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_info"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        <ImageButton
+            android:id="@+id/btn_search_prev"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:text="ℹ"
-            android:textColor="@color/accent_indigo"
-            android:textSize="16sp"
-            android:padding="0dp"
-            android:minWidth="0dp"
-            app:strokeColor="@color/accent_indigo"
-            app:cornerRadius="12dp"/>
+            android:src="@drawable/ic_arrow_up"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/accent_cyan"
+            android:padding="8dp"
+            android:contentDescription="Предыдущий результат"/>
+
+        <ImageButton
+            android:id="@+id/btn_search_next"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_arrow_down"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/accent_cyan"
+            android:padding="8dp"
+            android:contentDescription="Следующий результат"/>
 
     </LinearLayout>
 
@@ -86,11 +182,10 @@
         android:layout_marginTop="8dp"
         android:visibility="gone"
         app:cardCornerRadius="20dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/accent_indigo"
+        app:cardElevation="4dp"
+        app:strokeWidth="0dp"
         app:cardBackgroundColor="@color/bg_surface"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/layout_search_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -98,65 +193,58 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingTop="20dp"
+            android:paddingBottom="16dp"
+            android:paddingHorizontal="20dp"
+            android:gravity="center_horizontal">
 
-            <!-- Avatar + name row -->
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Avatar centered -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_contact_avatar"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:src="@drawable/ic_person"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/CircleImageView"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/accent_indigo"/>
+
+            <!-- Name -->
+            <TextView
+                android:id="@+id/tv_info_name"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_marginTop="12dp"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"/>
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/iv_contact_avatar"
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:src="@drawable/ic_person"
-                    android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/CircleImageView"
-                    app:strokeWidth="2dp"
-                    app:strokeColor="@color/accent_indigo"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="14dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_info_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp"
-                        android:fontFamily="sans-serif-medium"/>
-
-                    <TextView
-                        android:id="@+id/tv_info_email"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="13sp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
+            <!-- Email under name -->
+            <TextView
+                android:id="@+id/tv_info_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textColor="@color/text_hint"
+                android:textSize="13sp"
+                android:gravity="center"/>
 
             <!-- Divider -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginVertical="12dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="12dp"
                 android:background="@color/border_default"/>
 
-            <!-- Stats row: phone + email short -->
+            <!-- Stats row: phone | email -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <!-- Phone -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -167,28 +255,30 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ТЕЛЕФОН"
+                        android:text="📞  ТЕЛЕФОН"
                         android:textColor="@color/text_hint"
                         android:textSize="10sp"
-                        android:letterSpacing="0.12"
+                        android:letterSpacing="0.10"
                         android:fontFamily="sans-serif-medium"/>
 
                     <TextView
                         android:id="@+id/tv_info_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="6dp"
                         android:text="—"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium"/>
 
                 </LinearLayout>
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="36dp"
+                    android:layout_height="40dp"
                     android:background="@color/border_default"/>
 
+                <!-- Email short -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -199,20 +289,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="EMAIL"
+                        android:text="✉️  EMAIL"
                         android:textColor="@color/text_hint"
                         android:textSize="10sp"
-                        android:letterSpacing="0.12"
+                        android:letterSpacing="0.10"
                         android:fontFamily="sans-serif-medium"/>
 
                     <TextView
                         android:id="@+id/tv_info_email_short"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="6dp"
                         android:text="—"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
                         android:ellipsize="end"
                         android:maxLines="1"/>
 
@@ -233,9 +325,67 @@
         android:paddingBottom="8dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/card_contact_info"
-        app:layout_constraintBottom_toTopOf="@id/input_panel"
+        app:layout_constraintBottom_toTopOf="@id/reply_preview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Reply preview bar (shown above input when replying) -->
+    <LinearLayout
+        android:id="@+id/reply_preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:background="@color/bg_elevated"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/input_panel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:layout_width="3dp"
+            android:layout_height="36dp"
+            android:background="@color/accent_cyan"
+            android:layout_marginEnd="10dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_reply_to_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/accent_cyan"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"/>
+
+            <TextView
+                android:id="@+id/tv_reply_to_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_hint"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_cancel_reply"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/text_hint"
+            android:padding="6dp"
+            android:contentDescription="Отменить ответ"/>
+
+    </LinearLayout>
 
     <!-- Input panel -->
     <LinearLayout

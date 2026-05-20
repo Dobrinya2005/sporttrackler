@@ -93,6 +93,25 @@ public class ChatController(IChatService chatService, IWebHostEnvironment env, I
         return Ok(new { mediaUrl, attachmentType, fileName = file.FileName });
     }
 
+    [HttpPost("{messageId:int}/react/{emoji}")]
+    public async Task<IActionResult> React(int messageId, string emoji)
+    {
+        var userId = GetUserId();
+        var reactions = await chatService.ToggleReactionAsync(messageId, userId, emoji);
+
+        // Узнаём участников чата чтобы оповестить обоих
+        var msg = await chatService.GetMessageParticipantsAsync(messageId);
+        if (msg.HasValue)
+        {
+            await hubContext.Clients.Group($"user_{msg.Value.SenderId}")
+                .SendAsync("ReactionUpdated", messageId, reactions);
+            await hubContext.Clients.Group($"user_{msg.Value.ReceiverId}")
+                .SendAsync("ReactionUpdated", messageId, reactions);
+        }
+
+        return Ok(reactions);
+    }
+
     private int GetUserId() =>
         int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 }

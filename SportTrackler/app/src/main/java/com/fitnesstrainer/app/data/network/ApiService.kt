@@ -88,6 +88,12 @@ interface ApiService {
     @POST("api/messages/{senderId}/read")
     suspend fun markRead(@Path("senderId") senderId: Int): Response<Unit>
 
+    @POST("api/messages/{messageId}/react/{emoji}")
+    suspend fun toggleReaction(
+        @Path("messageId") messageId: Int,
+        @Path("emoji") emoji: String
+    ): Response<List<com.fitnesstrainer.app.data.model.ReactionDto>>
+
     @Multipart
     @POST("api/messages/upload-media")
     suspend fun uploadChatMedia(

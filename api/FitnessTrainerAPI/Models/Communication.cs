@@ -14,9 +14,11 @@ public class Message
     public DateTime SentAt { get; set; } = DateTime.UtcNow;
     public DateTime? ReadAt { get; set; }
     public bool IsDeleted { get; set; }
+    public int? ReplyToMessageId { get; set; }
 
     public User Sender { get; set; } = null!;
     public User Receiver { get; set; } = null!;
+    public Message? ReplyToMessage { get; set; }
 }
 
 public class Notification
@@ -86,6 +88,18 @@ public class GroupMessage
 
     public ChatGroup Group { get; set; } = null!;
     public User Sender { get; set; } = null!;
+}
+
+public class MessageReaction
+{
+    public int ReactionId { get; set; }
+    public int MessageId { get; set; }
+    public int UserId { get; set; }
+    public string Emoji { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public Message Message { get; set; } = null!;
+    public User User { get; set; } = null!;
 }
 
 public class FcmToken

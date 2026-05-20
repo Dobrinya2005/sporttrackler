@@ -19,93 +19,83 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/gradient_header"
-            android:paddingTop="72dp"
-            android:paddingBottom="24dp"
-            android:paddingHorizontal="20dp">
+            android:paddingTop="56dp"
+            android:paddingBottom="28dp"
+            android:paddingHorizontal="20dp"
+            android:gravity="center_horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="НАСТРОЙКИ"
-                android:textColor="@color/accent_indigo"
-                android:textSize="10sp"
-                android:letterSpacing="0.16"
-                android:fontFamily="sans-serif-medium"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+            <!-- Avatar with edit overlay -->
+            <FrameLayout
+                android:layout_width="96dp"
+                android:layout_height="96dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/iv_avatar"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
                     android:src="@drawable/ic_person"
                     android:scaleType="centerCrop"
                     android:clipToOutline="true"
                     android:background="@color/bg_elevated"
                     app:shapeAppearanceOverlay="@style/CircleImageView"
-                    app:strokeWidth="2dp"
+                    app:strokeWidth="2.5dp"
                     app:strokeColor="@color/accent_indigo"/>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:orientation="vertical">
-
+                <!-- Camera badge -->
+                <FrameLayout
+                    android:id="@+id/btn_change_avatar"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="bottom|end"
+                    android:background="@drawable/bg_avatar_circle"
+                    android:clickable="true"
+                    android:focusable="true">
                     <TextView
-                        android:id="@+id/tv_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_primary"
-                        android:textSize="18sp"
-                        android:fontFamily="sans-serif-medium"/>
-
-                    <TextView
-                        android:id="@+id/tv_user_role"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:textColor="@color/text_secondary"
+                        android:layout_gravity="center"
+                        android:text="📷"
                         android:textSize="13sp"/>
+                </FrameLayout>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_change_avatar"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Изменить фото"
-                        android:textSize="12sp"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="6dp"
-                        android:minHeight="0dp"
-                        android:minWidth="0dp"
-                        app:strokeColor="@color/accent_indigo"
-                        app:cornerRadius="8dp"/>
+            </FrameLayout>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_edit_profile"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Редактировать"
-                        android:textSize="12sp"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="6dp"
-                        android:minHeight="0dp"
-                        android:minWidth="0dp"
-                        app:strokeColor="@color/accent_cyan"
-                        app:cornerRadius="8dp"/>
+            <!-- Name -->
+            <TextView
+                android:id="@+id/tv_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"/>
 
-                </LinearLayout>
-            </LinearLayout>
+            <!-- Role badge -->
+            <TextView
+                android:id="@+id/tv_user_role"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/accent_indigo"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.08"/>
+
+            <!-- Edit profile button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_edit_profile"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:text="Редактировать профиль"
+                android:textSize="13sp"
+                android:paddingHorizontal="20dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                app:strokeColor="@color/accent_cyan"
+                app:strokeWidth="1.5dp"
+                app:cornerRadius="20dp"/>
 
         </LinearLayout>
 

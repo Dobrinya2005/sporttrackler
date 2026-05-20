@@ -38,19 +38,23 @@ class ChatsAdapter(
                 b.tvName.text = item.name
                 b.tvLastMessage.text = "Личный чат"
                 b.ivBadge.setImageResource(R.drawable.ic_person)
+                val placeholder = AvatarHelper.forName(item.name)
                 val avatarUrl = item.avatar?.let { BuildConfig.BASE_URL.trimEnd('/') + it }
-                Glide.with(b.ivAvatar).load(avatarUrl).placeholder(R.drawable.ic_person)
+                Glide.with(b.ivAvatar).load(avatarUrl)
+                    .placeholder(placeholder).error(placeholder)
                     .circleCrop().into(b.ivAvatar)
-                b.root.setOnClickListener { onPersonClick(item.userId, item.name) }
+                b.card.setOnClickListener { onPersonClick(item.userId, item.name) }
             }
             is ChatListItem.GroupItem -> {
                 b.tvName.text = item.name
                 b.tvLastMessage.text = item.lastMessage ?: "Групповой чат"
                 b.ivBadge.setImageResource(R.drawable.ic_group)
+                val placeholder = AvatarHelper.forName(item.name)
                 val avatarUrl = item.avatar?.let { BuildConfig.BASE_URL.trimEnd('/') + it }
-                Glide.with(b.ivAvatar).load(avatarUrl).placeholder(R.drawable.ic_group)
+                Glide.with(b.ivAvatar).load(avatarUrl)
+                    .placeholder(placeholder).error(placeholder)
                     .circleCrop().into(b.ivAvatar)
-                b.root.setOnClickListener { onGroupClick(item.groupId, item.name) }
+                b.card.setOnClickListener { onGroupClick(item.groupId, item.name) }
             }
         }
     }
