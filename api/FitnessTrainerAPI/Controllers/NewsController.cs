@@ -92,10 +92,23 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
 
     private static List<NewsItem> FallbackNews() =>
     [
-        new("Топ-10 упражнений для роста мышц", "Лучшие упражнения для набора мышечной массы", null, "https://www.championat.com/football/", "Чемпионат", DateTime.UtcNow.ToString("o")),
-        new("Как правильно питаться при похудении", "Советы нутрициологов по составлению рациона", null, "https://sportrbc.ru", "РБК Спорт", DateTime.UtcNow.AddHours(-2).ToString("o")),
-        new("5 причин начать бегать по утрам", "Утренние пробежки улучшают метаболизм", null, "https://rsport.ria.ru", "РИА Спорт", DateTime.UtcNow.AddHours(-4).ToString("o")),
-        new("Протеин: всё что нужно знать", "Нормы потребления белка для спортсменов", null, "https://www.championat.com", "Чемпионат", DateTime.UtcNow.AddHours(-6).ToString("o")),
-        new("Восстановление после тренировки", "Почему отдых так же важен, как и сама тренировка", null, "https://sportrbc.ru", "РБК Спорт", DateTime.UtcNow.AddHours(-8).ToString("o")),
+        new("Топ-10 упражнений для роста мышц", "Лучшие упражнения для набора мышечной массы по мнению тренеров",
+            "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80",
+            "https://www.championat.com/football/", "Чемпионат", DateTime.UtcNow.ToString("o")),
+        new("Как правильно питаться при похудении", "Советы нутрициологов по составлению рациона для снижения веса",
+            "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80",
+            "https://sportrbc.ru", "РБК Спорт", DateTime.UtcNow.AddHours(-2).ToString("o")),
+        new("5 причин начать бегать по утрам", "Утренние пробежки улучшают метаболизм и повышают тонус",
+            "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&q=80",
+            "https://rsport.ria.ru", "РИА Спорт", DateTime.UtcNow.AddHours(-4).ToString("o")),
+        new("Протеин: всё что нужно знать", "Нормы потребления белка для спортсменов и обычных людей",
+            "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=400&q=80",
+            "https://www.championat.com", "Чемпионат", DateTime.UtcNow.AddHours(-6).ToString("o")),
+        new("Восстановление после тренировки", "Почему отдых так же важен, как и сама тренировка",
+            "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80",
+            "https://sportrbc.ru", "РБК Спорт", DateTime.UtcNow.AddHours(-8).ToString("o")),
+        new("Плавание: польза для всего тела", "Как водные тренировки развивают выносливость и сжигают калории",
+            "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=400&q=80",
+            "https://rsport.ria.ru", "РИА Спорт", DateTime.UtcNow.AddHours(-10).ToString("o")),
     ];
 }

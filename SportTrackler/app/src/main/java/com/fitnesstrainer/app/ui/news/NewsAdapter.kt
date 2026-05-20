@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.data.model.NewsItem
 import com.fitnesstrainer.app.databinding.ItemNewsCardBinding
 
@@ -23,11 +24,12 @@ class NewsAdapter(
             b.tvNewsTitle.text  = item.title
             b.tvNewsSource.text = item.source.uppercase()
 
-            if (!item.imageUrl.isNullOrBlank()) {
-                Glide.with(b.root).load(item.imageUrl).centerCrop().into(b.ivNewsImage)
-            } else {
-                b.ivNewsImage.setImageResource(android.R.color.transparent)
-            }
+            Glide.with(b.root)
+                .load(item.imageUrl.takeIf { !it.isNullOrBlank() })
+                .centerCrop()
+                .placeholder(R.drawable.bg_news_placeholder)
+                .error(R.drawable.bg_news_placeholder)
+                .into(b.ivNewsImage)
 
             b.root.setOnClickListener { onOpen(item) }
         }
