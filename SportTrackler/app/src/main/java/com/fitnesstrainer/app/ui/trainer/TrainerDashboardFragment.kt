@@ -77,7 +77,13 @@ class TrainerDashboardFragment : Fragment() {
             binding.tvReviewCount.text = stats.reviewCount.toString()
         }
 
-        val newsAdapter = NewsAdapter()
+        val newsAdapter = NewsAdapter { item ->
+            findNavController().navigate(
+                TrainerDashboardFragmentDirections.actionTrainerDashboardToNewsWebView(
+                    url = item.url, title = item.title
+                )
+            )
+        }
         binding.rvNews.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvNews.adapter = newsAdapter
         viewModel.news.observe(viewLifecycleOwner) { newsAdapter.submitList(it) }

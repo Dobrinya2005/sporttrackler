@@ -116,7 +116,13 @@ class ClientDashboardFragment : Fragment() {
         viewModel.loadTrainer()
         loadStepsAndGoals()
 
-        val newsAdapter = NewsAdapter()
+        val newsAdapter = NewsAdapter { item ->
+            findNavController().navigate(
+                ClientDashboardFragmentDirections.actionClientDashboardToNewsWebView(
+                    url = item.url, title = item.title
+                )
+            )
+        }
         binding.rvNews.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvNews.adapter = newsAdapter
         viewModel.news.observe(viewLifecycleOwner) { newsAdapter.submitList(it) }

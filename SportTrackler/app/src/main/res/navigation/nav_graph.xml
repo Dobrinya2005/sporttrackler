@@ -284,6 +284,13 @@
             app:exitAnim="@anim/nav_slide_out_left"
             app:popEnterAnim="@anim/nav_slide_in_left"
             app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_trainerDashboard_to_newsWebView"
+            app:destination="@id/newsWebViewFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
     </fragment>
 
     <fragment
@@ -386,6 +393,13 @@
         <action
             android:id="@+id/action_clientDashboard_to_qrScan"
             app:destination="@id/qrScanFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_clientDashboard_to_newsWebView"
+            app:destination="@id/newsWebViewFragment"
             app:enterAnim="@anim/nav_slide_in_right"
             app:exitAnim="@anim/nav_slide_out_left"
             app:popEnterAnim="@anim/nav_slide_in_left"
@@ -545,6 +559,14 @@
             app:exitAnim="@anim/nav_slide_out_left"
             app:popEnterAnim="@anim/nav_slide_in_left"
             app:popExitAnim="@anim/nav_slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/newsWebViewFragment"
+        android:name="com.fitnesstrainer.app.ui.news.NewsWebViewFragment"
+        android:label="Новость">
+        <argument android:name="url"   app:argType="string"/>
+        <argument android:name="title" app:argType="string"/>
     </fragment>
 
 </navigation>
