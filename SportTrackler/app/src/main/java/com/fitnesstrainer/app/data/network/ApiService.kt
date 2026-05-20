@@ -226,6 +226,10 @@ interface ApiService {
     @POST("api/admin/reviews/{id}/reply")
     suspend fun adminReplyReview(@Path("id") id: Int, @Body req: ReplyRequest): Response<MessageResponse>
 
+    // ── News ─────────────────────────────────────────────────
+    @GET("api/news")
+    suspend fun getNews(): Response<List<com.fitnesstrainer.app.data.model.NewsItem>>
+
     @GET("api/admin/clients")
     suspend fun adminGetClients(): Response<List<AdminClientItem>>
 

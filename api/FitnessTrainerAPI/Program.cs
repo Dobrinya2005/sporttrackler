@@ -58,6 +58,7 @@ builder.Services.AddScoped<IFcmService, FcmService>();
 builder.Services.AddScoped<IGroupChatService, GroupChatService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+builder.Services.AddMemoryCache();
 
 // ── SignalR ──────────────────────────────────────────────────
 builder.Services.AddSignalR();

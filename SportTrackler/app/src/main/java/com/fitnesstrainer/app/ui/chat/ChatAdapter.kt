@@ -166,8 +166,8 @@ class ChatAdapter(
         val msg  = getItem(position)
         val time = formatTime(msg.sentAt)
         when (holder) {
-            is SentVH     -> holder.bind(msg, time, searchQuery)
-            is ReceivedVH -> holder.bind(msg, time, searchQuery)
+            is SentVH     -> holder.bind(msg, time, searchQuery, onReact)
+            is ReceivedVH -> holder.bind(msg, time, searchQuery, onReact)
         }
         holder.itemView.setOnLongClickListener {
             showEmojiPickerForMessage(holder.itemView, msg)
@@ -184,7 +184,7 @@ class ChatAdapter(
         private var audioSpeed = 1.0f
         private var audioWaveform: FloatArray = floatArrayOf()
 
-        fun bind(msg: MessageDto, time: String, query: String = "") {
+        fun bind(msg: MessageDto, time: String, query: String = "", onReact: ((MessageDto, String) -> Unit)? = null) {
             b.tvTime.text = time
             if (msg.isRead) {
                 b.tvReadStatus.text = "✓✓"
@@ -200,7 +200,8 @@ class ChatAdapter(
             } else {
                 b.layoutReply.visibility = View.GONE
             }
-            bindReactions(b.layoutReactions, msg.reactions)
+            bindReactions(b.layoutReactions, msg.reactions) { emoji -> onReact?.invoke(msg, emoji) }
+
             bindContent(msg, time, query)
         }
 
@@ -498,7 +499,7 @@ class ChatAdapter(
         private var audioSpeed = 1.0f
         private var audioWaveform: FloatArray = floatArrayOf()
 
-        fun bind(msg: MessageDto, time: String, query: String = "") {
+        fun bind(msg: MessageDto, time: String, query: String = "", onReact: ((MessageDto, String) -> Unit)? = null) {
             b.tvSenderName.text = msg.senderName
             b.tvTime.text = time
             if (!msg.replyToSenderName.isNullOrBlank()) {
@@ -508,7 +509,8 @@ class ChatAdapter(
             } else {
                 b.layoutReply.visibility = View.GONE
             }
-            bindReactions(b.layoutReactions, msg.reactions)
+            bindReactions(b.layoutReactions, msg.reactions) { emoji -> onReact?.invoke(msg, emoji) }
+
             bindContent(msg, time, query)
         }
 
@@ -799,7 +801,7 @@ class ChatAdapter(
 
     companion object {
 
-        fun bindReactions(container: android.widget.LinearLayout, reactions: List<com.fitnesstrainer.app.data.model.ReactionDto>?) {
+        fun bindReactions(container: android.widget.LinearLayout, reactions: List<com.fitnesstrainer.app.data.model.ReactionDto>?, onReact: ((String) -> Unit)? = null) {
             container.removeAllViews()
             if (reactions.isNullOrEmpty()) { container.visibility = View.GONE; return }
             container.visibility = View.VISIBLE
@@ -824,6 +826,7 @@ class ChatAdapter(
                     )
                     lp.marginEnd = dp4
                     layoutParams = lp
+                    setOnClickListener { onReact?.invoke(r.emoji) }
                 }
                 container.addView(tv)
             }

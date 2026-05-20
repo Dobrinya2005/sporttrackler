@@ -10,10 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.databinding.DialogLeaveReviewBinding
 import com.fitnesstrainer.app.databinding.FragmentClientDashboardBinding
+import com.fitnesstrainer.app.ui.news.NewsAdapter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -113,6 +115,12 @@ class ClientDashboardFragment : Fragment() {
         viewModel.load()
         viewModel.loadTrainer()
         loadStepsAndGoals()
+
+        val newsAdapter = NewsAdapter()
+        binding.rvNews.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rvNews.adapter = newsAdapter
+        viewModel.news.observe(viewLifecycleOwner) { newsAdapter.submitList(it) }
+        viewModel.loadNews()
     }
 
     private fun loadStepsAndGoals() {

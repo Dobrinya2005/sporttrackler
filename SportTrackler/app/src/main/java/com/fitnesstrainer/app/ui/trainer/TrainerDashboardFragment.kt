@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.databinding.FragmentTrainerDashboardBinding
+import com.fitnesstrainer.app.ui.news.NewsAdapter
 
 class TrainerDashboardFragment : Fragment() {
 
@@ -75,6 +76,11 @@ class TrainerDashboardFragment : Fragment() {
             binding.tvRating.text = stats.averageRating?.let { "%.1f".format(it) } ?: "—"
             binding.tvReviewCount.text = stats.reviewCount.toString()
         }
+
+        val newsAdapter = NewsAdapter()
+        binding.rvNews.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rvNews.adapter = newsAdapter
+        viewModel.news.observe(viewLifecycleOwner) { newsAdapter.submitList(it) }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             binding.swipeRefresh.isRefreshing = false

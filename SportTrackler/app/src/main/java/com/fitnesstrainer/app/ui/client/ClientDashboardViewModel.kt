@@ -9,6 +9,7 @@ import com.fitnesstrainer.app.data.model.AddReviewRequest
 import com.fitnesstrainer.app.util.toUserMessage
 import com.fitnesstrainer.app.data.model.DailySummaryResponse
 import com.fitnesstrainer.app.data.model.MeasurementResponse
+import com.fitnesstrainer.app.data.model.NewsItem
 import com.fitnesstrainer.app.data.model.TrainerInfo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -34,6 +35,9 @@ class ClientDashboardViewModel : ViewModel() {
 
     private val _state = MutableLiveData<DashboardState>()
     val state: LiveData<DashboardState> = _state
+
+    private val _news = MutableLiveData<List<NewsItem>>(emptyList())
+    val news: LiveData<List<NewsItem>> = _news
 
     init {
         viewModelScope.launch {
@@ -117,6 +121,15 @@ class ClientDashboardViewModel : ViewModel() {
 
     fun clearNavigation() {
         _navigateToChat.value = null
+    }
+
+    fun loadNews() {
+        viewModelScope.launch {
+            try {
+                val resp = api.getNews()
+                if (resp.isSuccessful) _news.value = resp.body() ?: emptyList()
+            } catch (_: Exception) {}
+        }
     }
 
     fun logout() {

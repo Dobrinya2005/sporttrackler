@@ -226,6 +226,25 @@
 
         </LinearLayout>
 
+        <!-- News section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="📰 Новости спорта"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_news"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingHorizontal="0dp"
+            android:overScrollMode="never"/>
+
     </LinearLayout>
 
     <!-- Client list section -->
@@ -233,7 +252,7 @@
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="248dp">
+        android:layout_marginTop="460dp">
 
         <FrameLayout
             android:layout_width="match_parent"

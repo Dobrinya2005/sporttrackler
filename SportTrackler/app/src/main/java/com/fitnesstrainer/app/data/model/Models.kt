@@ -220,6 +220,17 @@ data class Exercise(
     val notes: String?
 )
 
+// ── News ─────────────────────────────────────────────────────
+
+data class NewsItem(
+    val title: String,
+    val description: String?,
+    val imageUrl: String?,
+    val url: String,
+    val source: String,
+    val publishedAt: String
+)
+
 // ── Chat ─────────────────────────────────────────────────────
 
 data class ReactionDto(

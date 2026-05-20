@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.data.model.ClientProfile
+import com.fitnesstrainer.app.data.model.NewsItem
 import com.fitnesstrainer.app.util.toUserMessage
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -37,10 +38,14 @@ class TrainerViewModel : ViewModel() {
     private val _stats = MutableLiveData<TrainerStats>()
     val stats: LiveData<TrainerStats> = _stats
 
+    private val _news = MutableLiveData<List<NewsItem>>(emptyList())
+    val news: LiveData<List<NewsItem>> = _news
+
     init {
         loadName()
         loadClients()
         loadStats()
+        loadNews()
         viewModelScope.launch {
             networkMonitor.isOnline.collectLatest { online ->
                 if (online && _state.value is TrainerState.Error) {
@@ -90,6 +95,15 @@ class TrainerViewModel : ViewModel() {
                     _stats.value = _stats.value?.copy(averageRating = avg, reviewCount = count)
                         ?: TrainerStats(0, avg, count)
                 }
+            } catch (_: Exception) {}
+        }
+    }
+
+    fun loadNews() {
+        viewModelScope.launch {
+            try {
+                val resp = api.getNews()
+                if (resp.isSuccessful) _news.value = resp.body() ?: emptyList()
             } catch (_: Exception) {}
         }
     }
