@@ -44,7 +44,6 @@ class ChatFragment : Fragment() {
     private val args: ChatFragmentArgs by navArgs()
     private val viewModel: ChatViewModel by viewModels()
     private lateinit var adapter: ChatAdapter
-    private var infoVisible = false
     private var replyToMessage: com.fitnesstrainer.app.data.model.MessageDto? = null
     private var searchMatchPositions: List<Int> = emptyList()
     private var searchMatchIndex: Int = 0
@@ -143,8 +142,10 @@ class ChatFragment : Fragment() {
         binding.ivToolbarAvatar.setImageDrawable(placeholder)
 
         binding.btnInfo.setOnClickListener {
-            infoVisible = !infoVisible
-            binding.cardContactInfo.visibility = if (infoVisible) View.VISIBLE else View.GONE
+            val msgs = viewModel.messages.value ?: emptyList()
+            ChatInfoBottomSheet(args.contactId, args.contactName, msgs) { theme ->
+                binding.chatRoot.setBackgroundResource(theme.bgRes)
+            }.show(childFragmentManager, "chat_info")
         }
 
         val layoutManager = LinearLayoutManager(requireContext()).apply { stackFromEnd = true }

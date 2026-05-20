@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet"
+    android:paddingBottom="32dp">
+
+    <!-- Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_sheet_handle"/>
+
+    <!-- Contact name + subtitle -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="16dp">
+
+        <FrameLayout
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="14dp">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_avatar_circle"/>
+            <TextView
+                android:id="@+id/tv_info_initials"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_info_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"/>
+            <TextView
+                android:id="@+id/tv_info_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_hint"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/border_default" android:layout_marginHorizontal="20dp"/>
+
+    <!-- Theme picker section -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="10dp"
+        android:text="ТЕМА ЧАТА"
+        android:textColor="@color/text_hint"
+        android:textSize="11sp"
+        android:letterSpacing="0.14"
+        android:fontFamily="sans-serif-medium"/>
+
+    <LinearLayout
+        android:id="@+id/theme_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:gravity="center_vertical">
+
+        <FrameLayout android:id="@+id/theme_default" android:layout_width="52dp" android:layout_height="52dp"
+            android:layout_marginEnd="4dp" android:clickable="true" android:focusable="true">
+            <View android:layout_width="40dp" android:layout_height="40dp" android:layout_gravity="center"
+                android:background="@drawable/bg_theme_circle_default"/>
+            <ImageView android:id="@+id/check_default" android:layout_width="16dp" android:layout_height="16dp"
+                android:layout_gravity="bottom|end" android:src="@drawable/ic_check_circle"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+        <FrameLayout android:id="@+id/theme_navy" android:layout_width="52dp" android:layout_height="52dp"
+            android:layout_marginEnd="4dp" android:clickable="true" android:focusable="true">
+            <View android:layout_width="40dp" android:layout_height="40dp" android:layout_gravity="center"
+                android:background="@drawable/bg_theme_circle_navy"/>
+            <ImageView android:id="@+id/check_navy" android:layout_width="16dp" android:layout_height="16dp"
+                android:layout_gravity="bottom|end" android:src="@drawable/ic_check_circle"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+        <FrameLayout android:id="@+id/theme_forest" android:layout_width="52dp" android:layout_height="52dp"
+            android:layout_marginEnd="4dp" android:clickable="true" android:focusable="true">
+            <View android:layout_width="40dp" android:layout_height="40dp" android:layout_gravity="center"
+                android:background="@drawable/bg_theme_circle_forest"/>
+            <ImageView android:id="@+id/check_forest" android:layout_width="16dp" android:layout_height="16dp"
+                android:layout_gravity="bottom|end" android:src="@drawable/ic_check_circle"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+        <FrameLayout android:id="@+id/theme_sunset" android:layout_width="52dp" android:layout_height="52dp"
+            android:layout_marginEnd="4dp" android:clickable="true" android:focusable="true">
+            <View android:layout_width="40dp" android:layout_height="40dp" android:layout_gravity="center"
+                android:background="@drawable/bg_theme_circle_sunset"/>
+            <ImageView android:id="@+id/check_sunset" android:layout_width="16dp" android:layout_height="16dp"
+                android:layout_gravity="bottom|end" android:src="@drawable/ic_check_circle"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+        <FrameLayout android:id="@+id/theme_galaxy" android:layout_width="52dp" android:layout_height="52dp"
+            android:layout_marginEnd="4dp" android:clickable="true" android:focusable="true">
+            <View android:layout_width="40dp" android:layout_height="40dp" android:layout_gravity="center"
+                android:background="@drawable/bg_theme_circle_galaxy"/>
+            <ImageView android:id="@+id/check_galaxy" android:layout_width="16dp" android:layout_height="16dp"
+                android:layout_gravity="bottom|end" android:src="@drawable/ic_check_circle"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+        <FrameLayout android:id="@+id/theme_ocean" android:layout_width="52dp" android:layout_height="52dp"
+            android:clickable="true" android:focusable="true">
+            <View android:layout_width="40dp" android:layout_height="40dp" android:layout_gravity="center"
+                android:background="@drawable/bg_theme_circle_ocean"/>
+            <ImageView android:id="@+id/check_ocean" android:layout_width="16dp" android:layout_height="16dp"
+                android:layout_gravity="bottom|end" android:src="@drawable/ic_check_circle"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/border_default" android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Media label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="МЕДИА И ФАЙЛЫ"
+        android:textColor="@color/text_hint"
+        android:textSize="11sp"
+        android:letterSpacing="0.14"
+        android:fontFamily="sans-serif-medium"/>
+
+    <!-- Media rows -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        app:cardBackgroundColor="@color/bg_surface"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/border_default"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="4dp">
+
+            <!-- Photos -->
+            <LinearLayout android:id="@+id/row_media_photos"
+                android:layout_width="match_parent" android:layout_height="56dp"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:paddingHorizontal="16dp" android:clickable="true" android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+                <TextView android:layout_width="32dp" android:layout_height="wrap_content"
+                    android:text="🖼️" android:textSize="20sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginStart="12dp"
+                    android:text="Фотографии" android:textColor="@color/text_primary" android:textSize="15sp"/>
+                <TextView android:id="@+id/tv_count_photos"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="0" android:textColor="@color/text_hint" android:textSize="14sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="›" android:textColor="@color/text_hint" android:textSize="20sp" android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="@color/border_default" android:layout_marginHorizontal="16dp"/>
+
+            <!-- Videos -->
+            <LinearLayout android:id="@+id/row_media_videos"
+                android:layout_width="match_parent" android:layout_height="56dp"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:paddingHorizontal="16dp" android:clickable="true" android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+                <TextView android:layout_width="32dp" android:layout_height="wrap_content"
+                    android:text="🎬" android:textSize="20sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginStart="12dp"
+                    android:text="Видео" android:textColor="@color/text_primary" android:textSize="15sp"/>
+                <TextView android:id="@+id/tv_count_videos"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="0" android:textColor="@color/text_hint" android:textSize="14sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="›" android:textColor="@color/text_hint" android:textSize="20sp" android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="@color/border_default" android:layout_marginHorizontal="16dp"/>
+
+            <!-- Voice -->
+            <LinearLayout android:id="@+id/row_media_voice"
+                android:layout_width="match_parent" android:layout_height="56dp"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:paddingHorizontal="16dp" android:clickable="true" android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+                <TextView android:layout_width="32dp" android:layout_height="wrap_content"
+                    android:text="🎤" android:textSize="20sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginStart="12dp"
+                    android:text="Голосовые" android:textColor="@color/text_primary" android:textSize="15sp"/>
+                <TextView android:id="@+id/tv_count_voice"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="0" android:textColor="@color/text_hint" android:textSize="14sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="›" android:textColor="@color/text_hint" android:textSize="20sp" android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="@color/border_default" android:layout_marginHorizontal="16dp"/>
+
+            <!-- Links -->
+            <LinearLayout android:id="@+id/row_media_links"
+                android:layout_width="match_parent" android:layout_height="56dp"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:paddingHorizontal="16dp" android:clickable="true" android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+                <TextView android:layout_width="32dp" android:layout_height="wrap_content"
+                    android:text="🔗" android:textSize="20sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginStart="12dp"
+                    android:text="Ссылки" android:textColor="@color/text_primary" android:textSize="15sp"/>
+                <TextView android:id="@+id/tv_count_links"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="0" android:textColor="@color/text_hint" android:textSize="14sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="›" android:textColor="@color/text_hint" android:textSize="20sp" android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

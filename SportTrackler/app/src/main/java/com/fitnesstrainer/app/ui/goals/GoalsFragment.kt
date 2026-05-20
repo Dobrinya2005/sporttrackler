@@ -1,6 +1,8 @@
 package com.fitnesstrainer.app.ui.goals
 
 import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
@@ -51,16 +53,22 @@ class GoalsFragment : Fragment() {
             requireContext(), android.R.layout.simple_spinner_item, labels
         ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Новая цель")
+        val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogBinding.root)
-            .setPositiveButton("Сохранить") { _, _ ->
-                val type  = types[dialogBinding.spinnerType.selectedItemPosition]
-                val value = dialogBinding.etValue.text.toString().toDoubleOrNull() ?: return@setPositiveButton
+            .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogBinding.btnCancel.setOnClickListener { dialog.dismiss() }
+        dialogBinding.btnSave.setOnClickListener {
+            val type  = types[dialogBinding.spinnerType.selectedItemPosition]
+            val value = dialogBinding.etValue.text.toString().toDoubleOrNull()
+            if (value != null) {
                 viewModel.setGoal(type, value)
+                dialog.dismiss()
             }
-            .setNegativeButton("Отмена", null)
-            .show()
+        }
+
+        dialog.show()
     }
 
     private fun labelFor(type: GoalType) = when (type) {

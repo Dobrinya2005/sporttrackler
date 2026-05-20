@@ -1,29 +1,27 @@
 package com.fitnesstrainer.app.ui.chat
 
 import android.content.Context
-import android.content.SharedPreferences
 
 object ChatThemeManager {
 
-    private const val PREFS = "chat_theme_prefs"
-    private const val KEY   = "selected_theme"
+    private const val PREFS = "chat_theme_per_contact"
 
-    enum class Theme(val id: String, val label: String, val colorHex: String) {
-        DEFAULT ("default", "Тёмная",    "#080B14"),
-        NAVY    ("navy",    "Синяя",     "#0A1628"),
-        FOREST  ("forest",  "Лес",       "#081409"),
-        SUNSET  ("sunset",  "Закат",     "#1A0A0E"),
-        GALAXY  ("galaxy",  "Галактика", "#0E0A1A"),
-        OCEAN   ("ocean",   "Океан",     "#071520"),
+    enum class Theme(val id: String, val label: String, val bgRes: Int) {
+        DEFAULT ("default", "Тёмная",    com.fitnesstrainer.app.R.drawable.chat_bg_default),
+        NAVY    ("navy",    "Синяя",      com.fitnesstrainer.app.R.drawable.chat_bg_navy),
+        FOREST  ("forest",  "Лес",        com.fitnesstrainer.app.R.drawable.chat_bg_forest),
+        SUNSET  ("sunset",  "Закат",      com.fitnesstrainer.app.R.drawable.chat_bg_sunset),
+        GALAXY  ("galaxy",  "Галактика",  com.fitnesstrainer.app.R.drawable.chat_bg_galaxy),
+        OCEAN   ("ocean",   "Океан",      com.fitnesstrainer.app.R.drawable.chat_bg_ocean),
     }
 
-    fun save(ctx: Context, theme: Theme) =
-        prefs(ctx).edit().putString(KEY, theme.id).apply()
-
-    fun load(ctx: Context): Theme =
-        Theme.entries.find { it.id == prefs(ctx).getString(KEY, Theme.DEFAULT.id) }
-            ?: Theme.DEFAULT
-
-    private fun prefs(ctx: Context): SharedPreferences =
+    fun save(ctx: Context, contactId: Int, theme: Theme) =
         ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit().putString("theme_$contactId", theme.id).apply()
+
+    fun load(ctx: Context, contactId: Int): Theme =
+        Theme.entries.find {
+            it.id == ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .getString("theme_$contactId", Theme.DEFAULT.id)
+        } ?: Theme.DEFAULT
 }

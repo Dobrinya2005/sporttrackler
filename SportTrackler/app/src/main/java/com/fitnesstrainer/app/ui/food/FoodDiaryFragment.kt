@@ -113,10 +113,13 @@ class FoodDiaryFragment : Fragment() {
         })
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Добавить продукт")
             .setView(dialogBinding.root)
-            .setPositiveButton("Готово") { _, _ -> viewModel.clearSearch() }
             .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialogBinding.btnDone.setOnClickListener {
+            viewModel.clearSearch()
+            dialog.dismiss()
+        }
 
         viewModel.searchState.observe(viewLifecycleOwner) { state ->
             when (state) {
