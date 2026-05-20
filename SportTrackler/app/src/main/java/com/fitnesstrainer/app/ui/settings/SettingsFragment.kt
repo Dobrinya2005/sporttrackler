@@ -239,12 +239,48 @@ class SettingsFragment : Fragment() {
 
     private fun showTimePicker() {
         lifecycleScope.launch {
-            val initH = App.instance.tokenStorage.getReminderHour()
-            val initM = App.instance.tokenStorage.getReminderMinute()
+            val initH    = App.instance.tokenStorage.getReminderHour()
+            val initM    = App.instance.tokenStorage.getReminderMinute()
+            val initDays = App.instance.tokenStorage.getReminderDays().toMutableSet()
 
             val sheet = BottomSheetDialog(requireContext())
             val sb = BottomSheetReminderBinding.inflate(layoutInflater)
             sheet.setContentView(sb.root)
+
+            // Days: Calendar.MONDAY=2 .. Calendar.SUNDAY=1
+            val dayViews = mapOf(
+                java.util.Calendar.MONDAY    to sb.dayMon,
+                java.util.Calendar.TUESDAY   to sb.dayTue,
+                java.util.Calendar.WEDNESDAY to sb.dayWed,
+                java.util.Calendar.THURSDAY  to sb.dayThu,
+                java.util.Calendar.FRIDAY    to sb.dayFri,
+                java.util.Calendar.SATURDAY  to sb.daySat,
+                java.util.Calendar.SUNDAY    to sb.daySun
+            )
+            val selectedDays = initDays.toMutableSet()
+
+            fun refreshDays() {
+                dayViews.forEach { (day, view) ->
+                    val active = day in selectedDays
+                    view.isSelected = active
+                    view.setTextColor(
+                        if (active) requireContext().getColor(android.R.color.black)
+                        else requireContext().getColor(R.color.text_hint)
+                    )
+                }
+            }
+            refreshDays()
+
+            dayViews.forEach { (day, view) ->
+                view.setOnClickListener {
+                    if (day in selectedDays) {
+                        if (selectedDays.size > 1) selectedDays.remove(day) // min 1 day
+                    } else {
+                        selectedDays.add(day)
+                    }
+                    refreshDays()
+                }
+            }
 
             // State: editing hours (true) or minutes (false)
             var editingHour = true
@@ -312,10 +348,10 @@ class SettingsFragment : Fragment() {
                 val hour   = hourStr.toInt().coerceIn(0, 23)
                 val minute = minStr.toInt().coerceIn(0, 59)
                 lifecycleScope.launch {
-                    App.instance.tokenStorage.setWorkoutReminder(true, hour, minute)
+                    App.instance.tokenStorage.setWorkoutReminder(true, hour, minute, selectedDays)
                     b.switchReminder.isChecked = true
                     b.tvReminderTime.text = "%02d:%02d".format(hour, minute)
-                    WorkoutReminderReceiver.schedule(requireContext(), hour, minute)
+                    WorkoutReminderReceiver.scheduleForDays(requireContext(), hour, minute, selectedDays)
                     Toast.makeText(requireContext(),
                         "Напоминание установлено на %02d:%02d".format(hour, minute),
                         Toast.LENGTH_SHORT).show()

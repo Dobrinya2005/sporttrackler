@@ -144,6 +144,19 @@
         <item name="strokeWidth">0dp</item>
     </style>
 
+    <style name="DayChip">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_hint</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:background">@drawable/bg_day_chip</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
     <style name="ReminderKey">
         <item name="android:layout_width">88dp</item>
         <item name="android:layout_height">72dp</item>

@@ -26,6 +26,7 @@ class TokenStorage(private val context: Context) {
         private val KEY_WORKOUT_REMINDER   = booleanPreferencesKey("workout_reminder")
         private val KEY_REMINDER_HOUR      = intPreferencesKey("reminder_hour")
         private val KEY_REMINDER_MINUTE    = intPreferencesKey("reminder_minute")
+        private val KEY_REMINDER_DAYS      = stringPreferencesKey("reminder_days") // "1,2,3,4,5,6,7" (Calendar.DAY_OF_WEEK)
         private val KEY_PIN_HASH           = stringPreferencesKey("pin_hash")
         private val KEY_PIN_OFFERED        = booleanPreferencesKey("pin_offered")
         private val KEY_PHONE              = stringPreferencesKey("phone")
@@ -98,18 +99,26 @@ class TokenStorage(private val context: Context) {
     suspend fun isRememberMe()  = context.dataStore.data.map { it[KEY_REMEMBER_ME]  ?: false }.first()
     suspend fun getSavedEmail() = context.dataStore.data.map { it[KEY_SAVED_EMAIL]  }.first()
 
-    suspend fun setWorkoutReminder(enabled: Boolean, hour: Int = 8, minute: Int = 0) {
+    suspend fun setWorkoutReminder(enabled: Boolean, hour: Int = 8, minute: Int = 0, days: Set<Int> = setOf(2,3,4,5,6,7,1)) {
+        val daysStr = days.joinToString(",")
         context.dataStore.edit {
             it[KEY_WORKOUT_REMINDER] = enabled
             it[KEY_REMINDER_HOUR]    = hour
             it[KEY_REMINDER_MINUTE]  = minute
+            it[KEY_REMINDER_DAYS]    = daysStr
         }
         // Mirror to SharedPreferences so BroadcastReceiver can read without coroutines
         context.getSharedPreferences("reminder_prefs", android.content.Context.MODE_PRIVATE)
             .edit()
             .putInt("reminder_hour", hour)
             .putInt("reminder_minute", minute)
+            .putString("reminder_days", daysStr)
             .apply()
+    }
+
+    suspend fun getReminderDays(): Set<Int> {
+        val str = context.dataStore.data.map { it[KEY_REMINDER_DAYS] ?: "2,3,4,5,6,7,1" }.first()
+        return str.split(",").mapNotNull { it.trim().toIntOrNull() }.toSet()
     }
     suspend fun setPinOffered(offered: Boolean) {
         context.dataStore.edit { it[KEY_PIN_OFFERED] = offered }
