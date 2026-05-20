@@ -36,8 +36,8 @@
 
                 <!-- Avatar -->
                 <FrameLayout
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="12dp">
                     <View
                         android:layout_width="match_parent"
@@ -49,8 +49,14 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:textColor="#FFFFFF"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:fontFamily="sans-serif-medium"/>
+                    <ImageView
+                        android:id="@+id/iv_avatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"/>
                 </FrameLayout>
 
                 <!-- Name + Date -->
@@ -79,19 +85,20 @@
                 </LinearLayout>
 
                 <!-- QR button -->
-                <com.google.android.material.button.MaterialButton
+                <FrameLayout
                     android:id="@+id/btn_scan_qr"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:text="📷 QR"
-                    android:textSize="11sp"
-                    android:textColor="@color/accent_cyan"
-                    android:paddingHorizontal="12dp"
-                    android:minWidth="0dp"
-                    app:strokeColor="@color/accent_cyan"
-                    app:strokeWidth="1dp"
-                    app:cornerRadius="18dp"/>
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_glass_card"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_qr_code"
+                        android:tint="@color/accent_cyan"/>
+                </FrameLayout>
 
             </LinearLayout>
 

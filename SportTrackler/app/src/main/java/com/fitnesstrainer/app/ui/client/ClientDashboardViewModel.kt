@@ -11,6 +11,7 @@ import com.fitnesstrainer.app.data.model.DailySummaryResponse
 import com.fitnesstrainer.app.data.model.MeasurementResponse
 import com.fitnesstrainer.app.data.model.NewsItem
 import com.fitnesstrainer.app.data.model.TrainerInfo
+import com.fitnesstrainer.app.data.model.UserProfile
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -58,6 +59,9 @@ class ClientDashboardViewModel : ViewModel() {
     private val _myTrainer = MutableLiveData<TrainerInfo?>(null)
     val myTrainer: LiveData<TrainerInfo?> = _myTrainer
 
+    private val _avatarUrl = MutableLiveData<String?>(null)
+    val avatarUrl: LiveData<String?> = _avatarUrl
+
     fun load() {
         viewModelScope.launch {
             _state.value = DashboardState.Loading
@@ -79,6 +83,15 @@ class ClientDashboardViewModel : ViewModel() {
             } catch (e: Exception) {
                 _state.value = DashboardState.Error(e.toUserMessage())
             }
+        }
+    }
+
+    fun loadAvatar() {
+        viewModelScope.launch {
+            try {
+                val resp = api.getMe()
+                if (resp.isSuccessful) _avatarUrl.value = resp.body()?.avatarUrl
+            } catch (_: Exception) {}
         }
     }
 

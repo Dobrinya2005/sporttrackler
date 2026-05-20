@@ -16,6 +16,8 @@ import com.fitnesstrainer.app.App
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.databinding.DialogLeaveReviewBinding
 import com.fitnesstrainer.app.databinding.FragmentClientDashboardBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.fitnesstrainer.app.ui.news.NewsAdapter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -45,6 +47,7 @@ class ClientDashboardFragment : Fragment() {
 
         viewModel.load()
         viewModel.loadTrainer()
+        viewModel.loadAvatar()
         loadStepsAndGoals()
 
         val newsAdapter = NewsAdapter { item ->
@@ -138,6 +141,20 @@ class ClientDashboardFragment : Fragment() {
                         .setAction("Повторить") { viewModel.load() }
                         .show()
                 }
+            }
+        }
+
+        viewModel.avatarUrl.observe(viewLifecycleOwner) { url ->
+            if (!url.isNullOrBlank()) {
+                binding.ivAvatar.visibility = View.VISIBLE
+                binding.tvAvatarInitials.visibility = View.GONE
+                Glide.with(this)
+                    .load(url)
+                    .transform(CircleCrop())
+                    .into(binding.ivAvatar)
+            } else {
+                binding.ivAvatar.visibility = View.GONE
+                binding.tvAvatarInitials.visibility = View.VISIBLE
             }
         }
 
