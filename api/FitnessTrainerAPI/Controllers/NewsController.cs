@@ -20,7 +20,7 @@ public record NewsItem(
 [Authorize]
 public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) : ControllerBase
 {
-    private const string CacheKey = "fitness_news_v3";
+    private const string CacheKey = "fitness_news_v4";
 
     private static readonly string[] FitnessKeywords =
     [
@@ -33,8 +33,8 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
 
     private static readonly (string Url, string Name)[] RssFeeds =
     [
-        ("https://lenta.ru/rss/news/wellness/", "Lenta.ru Забота о себе"),
-        ("https://lenta.ru/rss/news/sport/", "Lenta.ru Спорт"),
+        ("https://lenta.ru/rss/news/wellness/", "Lenta.ru"),
+        ("https://lenta.ru/rss/news/sport/", "Lenta.ru"),
     ];
 
     [HttpGet]
@@ -44,11 +44,54 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
             return Ok(cached);
 
         var client = httpFactory.CreateClient();
-        client.Timeout = TimeSpan.FromSeconds(8);
+        client.Timeout = TimeSpan.FromSeconds(10);
         client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; Bot/1.0)");
 
         var all = new List<NewsItem>();
 
+        // 1. InstructorPro — WordPress REST API
+        try
+        {
+            var json = await client.GetStringAsync(
+                "https://instructorpro.ru/wp-json/wp/v2/posts?per_page=15&_fields=title,link,excerpt,date&_embed=1");
+            using var doc = JsonDocument.Parse(json);
+            foreach (var post in doc.RootElement.EnumerateArray())
+            {
+                var title = System.Net.WebUtility.HtmlDecode(
+                    post.GetProperty("title").GetProperty("rendered").GetString() ?? "");
+                var url   = post.GetProperty("link").GetString() ?? "";
+                var date  = post.GetProperty("date").GetString() ?? DateTime.UtcNow.ToString("o");
+                var desc  = System.Net.WebUtility.HtmlDecode(
+                    System.Text.RegularExpressions.Regex.Replace(
+                        post.GetProperty("excerpt").GetProperty("rendered").GetString() ?? "", "<[^>]+>", "")).Trim();
+                if (desc.Length > 200) desc = desc[..200] + "…";
+
+                string? img = null;
+                if (post.TryGetProperty("_embedded", out var emb) &&
+                    emb.TryGetProperty("wp:featuredmedia", out var media) &&
+                    media.ValueKind == JsonValueKind.Array &&
+                    media.GetArrayLength() > 0)
+                {
+                    img = media[0].TryGetProperty("source_url", out var src) ? src.GetString() : null;
+                    // encode cyrillic filename if needed
+                    if (img != null)
+                    {
+                        var lastSlash = img.LastIndexOf('/');
+                        if (lastSlash >= 0)
+                        {
+                            var fileName = Uri.EscapeDataString(img[(lastSlash + 1)..]);
+                            img = img[..(lastSlash + 1)] + fileName;
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(url))
+                    all.Add(new NewsItem(title, desc, img, url, "InstructorPro", date));
+            }
+        }
+        catch { /* skip */ }
+
+        // 2. Lenta.ru RSS feeds (fitness-filtered)
         foreach (var (feedUrl, sourceName) in RssFeeds)
         {
             try
@@ -68,13 +111,10 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
                         var desc  = item.Element("description")?.Value;
                         var pub   = item.Element("pubDate")?.Value ?? DateTime.UtcNow.ToString("o");
 
-                        // strip CDATA / HTML
                         if (desc != null)
-                            desc = System.Text.RegularExpressions.Regex
-                                .Replace(desc, "<[^>]+>", "").Trim();
+                            desc = System.Text.RegularExpressions.Regex.Replace(desc, "<[^>]+>", "").Trim();
                         if (desc?.Length > 200) desc = desc[..200] + "…";
 
-                        // try various image locations
                         var img = item.Element(media + "content")?.Attribute("url")?.Value
                                ?? item.Element(media + "thumbnail")?.Attribute("url")?.Value
                                ?? item.Element("enclosure")?.Attribute("url")?.Value;
@@ -82,17 +122,17 @@ public class NewsController(IHttpClientFactory httpFactory, IMemoryCache cache) 
                         return new NewsItem(title, desc, img, link, sourceName, pub);
                     })
                     .Where(n => !string.IsNullOrWhiteSpace(n.Title) && !string.IsNullOrWhiteSpace(n.Url)
-                                && FitnessKeywords.Any(kw => n.Title.Contains(kw, StringComparison.OrdinalIgnoreCase)
-                                                          || (n.Description?.Contains(kw, StringComparison.OrdinalIgnoreCase) ?? false)))
-                    .Take(8)
+                                && FitnessKeywords.Any(kw =>
+                                    n.Title.Contains(kw, StringComparison.OrdinalIgnoreCase) ||
+                                    (n.Description?.Contains(kw, StringComparison.OrdinalIgnoreCase) ?? false)))
+                    .Take(6)
                     .ToList();
 
                 all.AddRange(items);
             }
-            catch { /* skip failed feed */ }
+            catch { /* skip */ }
         }
 
-        // fallback if all RSS feeds failed
         if (all.Count == 0)
             all = FallbackNews();
 

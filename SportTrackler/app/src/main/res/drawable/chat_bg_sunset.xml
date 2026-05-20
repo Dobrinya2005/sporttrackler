@@ -12,10 +12,10 @@
     </item>
 
     <!-- Top-right warm orange blob -->
-    <item android:top="-200dp" android:right="-200dp" android:bottom="520dp" android:left="140dp">
+    <item android:top="-80dp" android:right="-80dp" android:bottom="650dp" android:left="240dp">
         <shape android:shape="oval">
             <solid android:color="#4A1520"/>
-            <size android:width="380dp" android:height="380dp"/>
+            <size android:width="220dp" android:height="220dp"/>
         </shape>
     </item>
 
