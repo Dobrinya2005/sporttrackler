@@ -95,12 +95,16 @@ class AuthViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _state.value = AuthState.Success(role, response.body()?.devCode)
                 } else {
-                    val msg = response.errorBody()?.string()
-                    _state.value = AuthState.Error(
-                        if (msg?.contains("код") == true || msg?.contains("Trainer") == true)
-                            "Неверный код тренера"
-                        else "Ошибка регистрации. Email уже занят?"
-                    )
+                    val msg = try { response.errorBody()?.string() } catch (_: Exception) { null }
+                    _state.value = AuthState.Error(when {
+                        msg?.contains("код", ignoreCase = true) == true ||
+                        msg?.contains("Trainer", ignoreCase = true) == true -> "Неверный код тренера"
+                        response.code() == 409 ||
+                        msg?.contains("exist", ignoreCase = true) == true ||
+                        msg?.contains("занят", ignoreCase = true) == true -> "Email уже занят"
+                        response.code() == 400 -> "Проверьте правильность данных"
+                        else -> "Ошибка регистрации (${response.code()})"
+                    })
                 }
             } catch (e: Exception) {
                 _state.value = AuthState.Error(e.toUserMessage())
