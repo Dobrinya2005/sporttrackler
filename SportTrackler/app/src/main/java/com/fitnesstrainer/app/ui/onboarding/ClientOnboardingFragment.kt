@@ -66,7 +66,7 @@ class ClientOnboardingFragment : Fragment() {
             try {
                 val api = (requireActivity().application as App).apiService
                 api.saveClientProfile(
-                    SaveClientProfileRequest(goal, activity, weight, height, goalWeight, null)
+                    SaveClientProfileRequest(goal, activity, null, height, goalWeight, null)
                 )
             } catch (_: Exception) {
                 // Non-critical — navigate anyway

@@ -12,8 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.App
-import com.fitnesstrainer.app.data.model.MeasurementRequest
 import com.fitnesstrainer.app.data.model.SaveClientProfileRequest
+import com.fitnesstrainer.app.ui.MainActivity
 import com.fitnesstrainer.app.data.model.SendCodeRequest
 import com.fitnesstrainer.app.data.model.VerifyCodeRequest
 import com.fitnesstrainer.app.databinding.FragmentEmailVerificationBinding
@@ -106,27 +106,22 @@ class EmailVerificationFragment : Fragment() {
                             val fcm = FirebaseMessaging.getInstance().token.await()
                             app.apiService.registerFcmToken(mapOf("deviceToken" to fcm))
                         } catch (_: Exception) {}
-                        // Профиль клиента (weight/height/gender из регистрации)
+                        // Профиль клиента (height/gender из регистрации; вес вводится на шаге замеров)
                         if (role == "Client" && (weightKg > 0 || heightCm > 0)) {
                             try {
                                 app.apiService.saveClientProfile(
                                     SaveClientProfileRequest(
                                         fitnessGoal   = null,
                                         activityLevel = null,
-                                        weightKg      = if (weightKg > 0) weightKg.toDouble() else null,
+                                        weightKg      = null,
                                         heightCm      = if (heightCm > 0) heightCm.toDouble() else null,
                                         goalWeightKg  = null,
                                         gender        = gender.ifEmpty { null }
                                     )
                                 )
-                                app.apiService.addMeasurement(
-                                    MeasurementRequest(
-                                        weightKg = if (weightKg > 0) weightKg.toDouble() else null,
-                                        heightCm = if (heightCm > 0) heightCm.toDouble() else null
-                                    )
-                                )
                             } catch (_: Exception) {}
                         }
+                        (activity as? MainActivity)?.onUserLoggedIn(body.role ?: role)
                     }
                     navigateNext(body?.accessToken?.isNotEmpty() == true)
                 } else {

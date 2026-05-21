@@ -59,11 +59,11 @@ class FoodDiaryFragment : Fragment() {
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
             override fun getSwipeDirs(rv: RecyclerView, vh: RecyclerView.ViewHolder): Int {
-                return if (diaryAdapter.isSwipeable(vh.bindingAdapterPosition))
+                return if (diaryAdapter.isSwipeable(vh.adapterPosition))
                     ItemTouchHelper.LEFT else 0
             }
             override fun onSwiped(vh: RecyclerView.ViewHolder, dir: Int) {
-                val diaryId = diaryAdapter.getDiaryIdAt(vh.bindingAdapterPosition)
+                val diaryId = diaryAdapter.getDiaryIdAt(vh.adapterPosition)
                 if (diaryId != null) viewModel.deleteEntry(diaryId)
             }
         }).attachToRecyclerView(binding.rvDiary)

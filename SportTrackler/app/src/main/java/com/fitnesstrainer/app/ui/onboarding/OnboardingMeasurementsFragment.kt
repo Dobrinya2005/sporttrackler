@@ -28,19 +28,26 @@ class OnboardingMeasurementsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         b.btnSave.setOnClickListener { save() }
         b.btnSkip.setOnClickListener { navigateToPhotos() }
+
+        val prefs = requireContext().getSharedPreferences("onboarding", Context.MODE_PRIVATE)
+        val savedWeight = prefs.getFloat("initial_weight", -1f).takeIf { it > 0 }
+        if (savedWeight != null) {
+            b.etWeight.setText(savedWeight.toBigDecimal().stripTrailingZeros().toPlainString())
+        }
+        prefs.edit().remove("initial_weight").apply()
     }
 
     private fun save() {
+        val weight  = b.etWeight.text?.toString()?.toDoubleOrNull()
         val chest   = b.etChest.text?.toString()?.toDoubleOrNull()
         val waist   = b.etWaist.text?.toString()?.toDoubleOrNull()
         val hips    = b.etHips.text?.toString()?.toDoubleOrNull()
         val bicep   = b.etBicep.text?.toString()?.toDoubleOrNull()
         val bodyFat = b.etBodyFat.text?.toString()?.toDoubleOrNull()
 
-        if (chest == null && waist == null && hips == null && bicep == null) {
+        if (weight == null && chest == null && waist == null && hips == null && bicep == null) {
             b.tvError.text = "Введите хотя бы один замер"
             b.tvError.visibility = View.VISIBLE
             return
@@ -49,12 +56,9 @@ class OnboardingMeasurementsFragment : Fragment() {
         setLoading(true)
         lifecycleScope.launch {
             try {
-                val prefs = requireContext().getSharedPreferences("onboarding", Context.MODE_PRIVATE)
-                val passedWeight = prefs.getFloat("initial_weight", -1f).takeIf { it > 0 }?.toDouble()
-                prefs.edit().remove("initial_weight").apply()
                 (requireActivity().application as App).apiService.addMeasurement(
                     MeasurementRequest(
-                        weightKg   = passedWeight,
+                        weightKg   = weight,
                         chestCm    = chest,
                         waistCm    = waist,
                         hipsCm     = hips,

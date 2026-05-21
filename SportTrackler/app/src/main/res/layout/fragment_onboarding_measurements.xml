@@ -57,6 +57,25 @@
             android:paddingHorizontal="20dp"
             android:paddingTop="24dp">
 
+            <!-- Вес -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_weight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                style="@style/InputField"
+                app:boxStrokeColor="@color/accent_indigo"
+                app:hintTextColor="@color/accent_indigo"
+                android:hint="Вес (кг)"
+                app:suffixText="кг">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/text_primary"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- Row: Грудь / Талия -->
             <LinearLayout
                 android:layout_width="match_parent"

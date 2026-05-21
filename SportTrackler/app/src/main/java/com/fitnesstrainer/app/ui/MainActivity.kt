@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val noNavDestinations = setOf(
+        R.id.onboardingFragment,
         R.id.loginFragment,
         R.id.registerFragment,
         R.id.pinFragment,
