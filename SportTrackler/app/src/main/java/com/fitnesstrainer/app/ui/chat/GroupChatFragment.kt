@@ -278,6 +278,12 @@ class GroupChatFragment : Fragment() {
             requestCameraPermission.launch(Manifest.permission.CAMERA)
             return
         }
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED) {
+            pendingCameraAction = { openVideoNoteRecorder() }
+            requestAudioPermission.launch(Manifest.permission.RECORD_AUDIO)
+            return
+        }
         val sheet = VideoNoteBottomSheet()
         sheet.onVideoReady = { file ->
             viewModel.sendMediaFile(file, "video/mp4", "video_note")

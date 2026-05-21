@@ -1,6 +1,11 @@
 package com.fitnesstrainer.app.ui.admin
 
 import android.app.AlertDialog
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -104,6 +109,12 @@ class AdminDashboardFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+        b.etSearch.setOnEditorActionListener { _, _, _ ->
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(b.etSearch.windowToken, 0)
+            b.etSearch.clearFocus()
+            true
+        }
 
         vm.trainers.observe(viewLifecycleOwner) { trainers ->
             allTrainers = trainers
@@ -164,6 +175,7 @@ class AdminDashboardFragment : Fragment() {
                 it.trainerCode.contains(query, true)
             }
             trainerAdapter.submitList(filtered)
+            b.tvEmpty.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
         } else {
             val filtered = if (query.isBlank()) allClients
             else allClients.filter {
@@ -173,27 +185,35 @@ class AdminDashboardFragment : Fragment() {
                 (it.trainerName?.contains(query, true) == true)
             }
             clientAdapter.submitList(filtered)
+            b.tvEmpty.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 
     private fun showCreateDialog() {
-        val dialogBinding = DialogCreateTrainerBinding.inflate(layoutInflater)
-        AlertDialog.Builder(requireContext())
-            .setTitle("Новый тренер")
-            .setView(dialogBinding.root)
-            .setPositiveButton("Создать") { _, _ ->
-                val firstName = dialogBinding.etFirstName.text?.toString()?.trim() ?: ""
-                val lastName  = dialogBinding.etLastName.text?.toString()?.trim() ?: ""
-                val email     = dialogBinding.etEmail.text?.toString()?.trim() ?: ""
-                val password  = dialogBinding.etPassword.text?.toString()?.trim() ?: ""
-                if (firstName.isBlank() || email.isBlank() || password.length < 6) {
-                    Toast.makeText(requireContext(), "Заполните все поля (пароль ≥ 6 символов)", Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
-                }
-                vm.createTrainer(firstName, lastName, email, password)
+        val db = DialogCreateTrainerBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext(), android.R.style.Theme_Material_Light_Dialog_NoActionBar)
+        dialog.setContentView(db.root)
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.92).toInt(),
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+        db.btnCancel.setOnClickListener { dialog.dismiss() }
+        db.btnCreate.setOnClickListener {
+            val firstName = db.etFirstName.text?.toString()?.trim() ?: ""
+            val lastName  = db.etLastName.text?.toString()?.trim() ?: ""
+            val email     = db.etEmail.text?.toString()?.trim() ?: ""
+            val password  = db.etPassword.text?.toString()?.trim() ?: ""
+            if (firstName.isBlank() || email.isBlank() || password.length < 8) {
+                Toast.makeText(requireContext(), "Заполните все поля (пароль ≥ 8 символов)", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-            .setNegativeButton("Отмена", null)
-            .show()
+            vm.createTrainer(firstName, lastName, email, password)
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     override fun onDestroyView() { super.onDestroyView(); _b = null }

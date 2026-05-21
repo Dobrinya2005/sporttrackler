@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import com.facebook.shimmer.ShimmerFrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -49,6 +50,14 @@ class ClientDashboardFragment : Fragment() {
         viewModel.loadTrainer()
         viewModel.loadAvatar()
         loadStepsAndGoals()
+
+        binding.swipeRefresh.setColorSchemeResources(R.color.accent_cyan, R.color.accent_indigo)
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.load()
+            viewModel.loadTrainer()
+            viewModel.loadAvatar()
+            loadStepsAndGoals()
+        }
 
         val newsAdapter = NewsAdapter { item ->
             findNavController().navigate(
@@ -101,9 +110,17 @@ class ClientDashboardFragment : Fragment() {
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is DashboardState.Loading -> binding.progressBar.visibility = View.VISIBLE
-                is DashboardState.Success -> {
+                is DashboardState.Loading -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.shimmerLayout.visibility = View.VISIBLE
+                    binding.shimmerLayout.startShimmer()
+                    binding.contentLayout.visibility = View.GONE
+                }
+                is DashboardState.Success -> {
+                    binding.shimmerLayout.stopShimmer()
+                    binding.shimmerLayout.visibility = View.GONE
+                    binding.contentLayout.visibility = View.VISIBLE
+                    binding.swipeRefresh.isRefreshing = false
                     val d = state.data
                     val firstName = d.firstName
                     binding.tvWelcome.text = "Привет, $firstName!"
@@ -136,7 +153,10 @@ class ClientDashboardFragment : Fragment() {
                     }
                 }
                 is DashboardState.Error -> {
-                    binding.progressBar.visibility = View.GONE
+                    binding.shimmerLayout.stopShimmer()
+                    binding.shimmerLayout.visibility = View.GONE
+                    binding.contentLayout.visibility = View.VISIBLE
+                    binding.swipeRefresh.isRefreshing = false
                     Snackbar.make(binding.root, state.message, Snackbar.LENGTH_INDEFINITE)
                         .setAction("Повторить") { viewModel.load() }
                         .show()

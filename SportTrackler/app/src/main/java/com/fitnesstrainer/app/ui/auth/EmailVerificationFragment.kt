@@ -1,6 +1,7 @@
 package com.fitnesstrainer.app.ui.auth
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,7 @@ class EmailVerificationFragment : Fragment() {
     private var weightKg = -1f
     private var heightCm = -1f
     private var gender   = ""
+    private var resendTimer: CountDownTimer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -142,6 +144,7 @@ class EmailVerificationFragment : Fragment() {
     }
 
     private fun resend() {
+        b.tvResend.isEnabled = false
         lifecycleScope.launch {
             try {
                 (requireActivity().application as App).apiService.sendVerificationCode(SendCodeRequest(email))
@@ -150,6 +153,16 @@ class EmailVerificationFragment : Fragment() {
                 b.tvError.visibility = View.VISIBLE
             } catch (_: Exception) {}
         }
+        resendTimer?.cancel()
+        resendTimer = object : CountDownTimer(60_000, 1_000) {
+            override fun onTick(ms: Long) {
+                b.tvResend.text = "Отправить снова (${ms / 1000}с)"
+            }
+            override fun onFinish() {
+                b.tvResend.isEnabled = true
+                b.tvResend.text = "Отправить снова"
+            }
+        }.start()
     }
 
     private fun navigateNext(isLoggedIn: Boolean) {
@@ -188,5 +201,5 @@ class EmailVerificationFragment : Fragment() {
         b.btnVerify.isEnabled  = !loading
     }
 
-    override fun onDestroyView() { super.onDestroyView(); _b = null }
+    override fun onDestroyView() { resendTimer?.cancel(); super.onDestroyView(); _b = null }
 }

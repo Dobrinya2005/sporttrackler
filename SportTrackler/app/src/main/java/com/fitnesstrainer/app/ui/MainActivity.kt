@@ -24,6 +24,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private var isTrainerMode = false
 
+    companion object {
+        // Флаг живёт в памяти процесса — сбрасывается только при kill, не при recreate()
+        var sessionAuthenticated = false
+    }
+
     private val noNavDestinations = setOf(
         R.id.loginFragment,
         R.id.registerFragment,
@@ -229,12 +234,13 @@ class MainActivity : AppCompatActivity() {
             val role = storage.getUserRole()
             configureNavForRole(role)
             when {
-                // PIN установлен → всегда спрашиваем при старте
-                storage.hasPinSet() -> navController.navigate(R.id.pinFragment)
+                // PIN установлен → спрашиваем только если сессия ещё не аутентифицирована
+                storage.hasPinSet() && !sessionAuthenticated -> navController.navigate(R.id.pinFragment)
                 // PIN ещё не предлагали → предложим (первый вход после авторизации)
-                !storage.isPinOffered() -> navController.navigate(R.id.pinFragment)
+                !storage.isPinOffered() && !sessionAuthenticated -> navController.navigate(R.id.pinFragment)
                 // PIN пропущен/отключён → сразу на дашборд
                 else -> {
+                    configureNavForRole(role)
                     val dest = when (role) {
                         "Trainer" -> R.id.trainerDashboardFragment
                         "Admin"   -> R.id.adminDashboardFragment

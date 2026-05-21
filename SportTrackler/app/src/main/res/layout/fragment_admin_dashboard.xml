@@ -134,6 +134,8 @@
             android:textColor="?attr/textPrimary"
             android:textColorHint="?attr/textHint"
             android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:singleLine="true"
             android:textSize="15sp"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -159,6 +161,20 @@
         android:paddingTop="8dp"
         android:paddingBottom="16dp"
         android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/til_search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Empty state -->
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Список пуст"
+        android:textColor="?attr/textHint"
+        android:textSize="15sp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/til_search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

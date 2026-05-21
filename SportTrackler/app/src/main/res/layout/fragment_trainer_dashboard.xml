@@ -235,6 +235,22 @@
 
                     </LinearLayout>
 
+                    <!-- Stats button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_stats"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="16dp"
+                        android:text="📊  Подробная статистика"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium"
+                        app:backgroundTint="@color/bg_surface"
+                        app:strokeColor="@color/accent_indigo"
+                        app:strokeWidth="1dp"
+                        app:cornerRadius="16dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:textColor="@color/accent_indigo"/>
+
                     <!-- News label -->
                     <TextView
                         android:layout_width="wrap_content"
@@ -334,6 +350,36 @@
                         android:visibility="gone"/>
 
                 </LinearLayout>
+
+                <!-- Search bar -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layout_search"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:hint="Поиск клиентов..."
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxStrokeColor="@color/border_default"
+                    app:hintTextColor="@color/text_hint"
+                    app:startIconDrawable="@android:drawable/ic_menu_search"
+                    app:startIconTint="@color/text_hint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:inputType="text"
+                        android:imeOptions="actionSearch"
+                        android:background="@android:color/transparent"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_clients"

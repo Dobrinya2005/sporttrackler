@@ -57,7 +57,7 @@ class WorkoutPlanFragment : Fragment() {
                     binding.emptyState.visibility = View.GONE
                 }
                 is WorkoutState.Success -> {
-                    adapter.submitPlans(state.plans)
+                    adapter.submitPlans(state.plans, requireContext())
                     if (state.plans.isEmpty()) {
                         binding.tvEmpty.text    = "Тренировочный план не назначен"
                         binding.tvEmptySub.text = if (args.clientId != -1)

@@ -175,43 +175,51 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_marginTop="12dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_reviews"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:text="Отзывы"
                 android:textSize="12sp"
-                android:layout_marginEnd="6dp"
+                android:layout_marginBottom="6dp"
                 app:strokeColor="@color/border_default"
                 app:cornerRadius="8dp"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_block"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="36dp"
-                android:text="Блок"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"
-                android:layout_marginEnd="6dp"
-                app:backgroundTint="@color/accent_amber"
-                app:cornerRadius="8dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_delete"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="36dp"
-                android:text="Удалить"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"
-                app:backgroundTint="@color/accent_rose"
-                app:cornerRadius="8dp"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_block"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="36dp"
+                    android:text="Блок"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:layout_marginEnd="6dp"
+                    android:paddingHorizontal="0dp"
+                    app:backgroundTint="@color/accent_amber"
+                    app:cornerRadius="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_delete"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="36dp"
+                    android:text="Удалить"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:paddingHorizontal="0dp"
+                    app:backgroundTint="@color/accent_rose"
+                    app:cornerRadius="8dp"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

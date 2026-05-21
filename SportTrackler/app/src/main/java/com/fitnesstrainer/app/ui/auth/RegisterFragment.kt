@@ -28,13 +28,6 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Показывать поле кода тренера только при выборе роли «Тренер»
-        binding.rgRole.setOnCheckedChangeListener { _, checkedId ->
-            val isTrainer = checkedId == R.id.rb_trainer
-            binding.tilTrainerCode.visibility   = if (isTrainer) View.VISIBLE else View.GONE
-            binding.tvTrainerCodeHint.visibility = if (isTrainer) View.VISIBLE else View.GONE
-        }
-
         binding.btnRegister.setOnClickListener {
             val password = binding.etPassword.text.toString()
             val weight   = binding.etWeight.text?.toString()?.toDoubleOrNull()
@@ -48,10 +41,6 @@ class RegisterFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val role = if (binding.rbTrainer.isChecked) "Trainer" else "Client"
-            val trainerCode = if (role == "Trainer")
-                binding.etTrainerCode.text?.toString()?.trim()
-            else null
             val gender = if (binding.rbFemale.isChecked) "Female" else "Male"
 
             viewModel.register(
@@ -59,9 +48,9 @@ class RegisterFragment : Fragment() {
                 lastName    = binding.etLastName.text.toString(),
                 email       = binding.etEmail.text.toString(),
                 password    = password,
-                role        = role,
+                role        = "Client",
                 phone       = null,
-                trainerCode = trainerCode,
+                trainerCode = null,
                 weightKg    = weight,
                 heightCm    = height,
                 gender      = gender

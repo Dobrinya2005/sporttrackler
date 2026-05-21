@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/bgPrimary">
+
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="52dp"
+        android:paddingBottom="14dp"
+        android:background="@drawable/gradient_header_hero"
+        android:gravity="center_vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_back"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="←"
+            android:textColor="@color/accent_cyan"
+            android:textSize="20sp"
+            android:padding="0dp"
+            android:minWidth="0dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ТРЕНЕР"
+                android:textColor="@color/accent_indigo"
+                android:textSize="10sp"
+                android:letterSpacing="0.16"
+                android:fontFamily="sans-serif-medium"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Моя статистика"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="104dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="100dp">
+
+            <!-- Summary cards -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#1A0A30"
+                    app:strokeColor="@color/accent_indigo"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="👥"
+                            android:textSize="22sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_client_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="0"
+                            android:textColor="@color/text_primary"
+                            android:textSize="28sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="клиентов"
+                            android:textColor="@color/text_hint"
+                            android:textSize="11sp"/>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#1A2A10"
+                    app:strokeColor="@color/accent_emerald"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⭐"
+                            android:textSize="22sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_avg_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="—"
+                            android:textColor="@color/accent_amber"
+                            android:textSize="28sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="рейтинг"
+                            android:textColor="@color/text_hint"
+                            android:textSize="11sp"/>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#1A1030"
+                    app:strokeColor="@color/accent_violet"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="💬"
+                            android:textSize="22sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_review_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="0"
+                            android:textColor="@color/text_primary"
+                            android:textSize="28sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="отзывов"
+                            android:textColor="@color/text_hint"
+                            android:textSize="11sp"/>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- Rating distribution chart -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border_default"
+                app:cardBackgroundColor="@color/bg_surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="РАСПРЕДЕЛЕНИЕ ОЦЕНОК"
+                        android:textColor="@color/text_hint"
+                        android:textSize="10sp"
+                        android:letterSpacing="0.14"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginBottom="12dp"/>
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chart_ratings"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Client weight list -->
+            <TextView
+                android:id="@+id/tv_clients_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="4dp"
+                android:text="ВЕС КЛИЕНТОВ (последний замер)"
+                android:textColor="@color/text_hint"
+                android:textSize="10sp"
+                android:letterSpacing="0.14"
+                android:fontFamily="sans-serif-medium"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_client_weights"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="4dp"
+                android:clipToPadding="false"
+                android:visibility="gone"/>
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

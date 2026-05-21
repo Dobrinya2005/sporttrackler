@@ -20,12 +20,7 @@ class GlassBottomNav @JvmOverloads constructor(
 
     private val d = resources.displayMetrics.density
 
-    private var items = listOf(
-        NavItem("Главная",    R.drawable.ic_home),
-        NavItem("Питание",    R.drawable.ic_nutrition),
-        NavItem("Тренировки", R.drawable.ic_dumbbell),
-        NavItem("Настройки",  R.drawable.ic_settings)
-    )
+    private var items = emptyList<NavItem>()
 
     private var selectedIndex = 0
     private var pressAlphas   = FloatArray(items.size)
@@ -149,6 +144,7 @@ class GlassBottomNav @JvmOverloads constructor(
     }
 
     fun setSelected(index: Int) {
+        if (items.isEmpty()) return
         selectedIndex = index.coerceIn(0, items.size - 1)
         invalidate()
     }

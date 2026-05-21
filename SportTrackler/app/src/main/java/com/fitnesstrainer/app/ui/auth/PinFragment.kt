@@ -233,6 +233,7 @@ class PinFragment : Fragment() {
 
     private fun navigateToDashboard() {
         val b = _binding ?: return
+        com.fitnesstrainer.app.ui.MainActivity.sessionAuthenticated = true
         (requireActivity() as? com.fitnesstrainer.app.ui.MainActivity)?.onUserLoggedIn(role)
         val action = when (role) {
             "Trainer" -> R.id.action_pinFragment_to_trainerDashboardFragment
@@ -243,6 +244,7 @@ class PinFragment : Fragment() {
     }
 
     private fun logout() {
+        com.fitnesstrainer.app.ui.MainActivity.sessionAuthenticated = false
         lifecycleScope.launch {
             App.instance.tokenStorage.clearAuth()
             App.instance.tokenStorage.clearPin()

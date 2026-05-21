@@ -174,6 +174,7 @@ class SettingsFragment : Fragment() {
         // Выход
         b.rowLogout.setOnClickListener {
             SoundManager.playClick(it)
+            com.fitnesstrainer.app.ui.MainActivity.sessionAuthenticated = false
             lifecycleScope.launch {
                 App.instance.tokenStorage.clearAuth()
                 App.instance.tokenStorage.clearPin()

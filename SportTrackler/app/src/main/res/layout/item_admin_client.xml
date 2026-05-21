@@ -111,8 +111,9 @@
                 android:layout_height="36dp"
                 android:text="Блок"
                 android:textColor="#FFFFFF"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:layout_marginEnd="6dp"
+                android:paddingHorizontal="0dp"
                 app:backgroundTint="@color/accent_amber"
                 app:cornerRadius="8dp"/>
 
@@ -123,7 +124,8 @@
                 android:layout_height="36dp"
                 android:text="Удалить"
                 android:textColor="#FFFFFF"
-                android:textSize="12sp"
+                android:textSize="13sp"
+                android:paddingHorizontal="0dp"
                 app:backgroundTint="@color/accent_rose"
                 app:cornerRadius="8dp"/>
 

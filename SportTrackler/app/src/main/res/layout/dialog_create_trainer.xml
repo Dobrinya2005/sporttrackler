@@ -5,74 +5,201 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:background="@color/bg_surface"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="28dp"
+    android:paddingBottom="20dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <!-- Icon + Title -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:hint="Имя"
-        app:boxCornerRadiusTopStart="10dp"
-        app:boxCornerRadiusTopEnd="10dp"
-        app:boxCornerRadiusBottomStart="10dp"
-        app:boxCornerRadiusBottomEnd="10dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <FrameLayout
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_avatar_circle"
+            android:layout_marginEnd="14dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="+"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:fontFamily="sans-serif-light"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Новый тренер"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Заполните данные для регистрации"
+                android:textColor="@color/text_hint"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Имя -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ИМЯ"
+        android:textColor="@color/text_hint"
+        android:textSize="10sp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.1"
+        android:layout_marginBottom="6dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/InputField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"/>
+            android:inputType="textPersonName"
+            android:textColor="@color/text_primary"
+            android:hint="Никита"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Фамилия -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ФАМИЛИЯ"
+        android:textColor="@color/text_hint"
+        android:textSize="10sp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.1"
+        android:layout_marginBottom="6dp"/>
+
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/InputField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:hint="Фамилия"
-        app:boxCornerRadiusTopStart="10dp"
-        app:boxCornerRadiusTopEnd="10dp"
-        app:boxCornerRadiusBottomStart="10dp"
-        app:boxCornerRadiusBottomEnd="10dp">
+        android:layout_marginBottom="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_last_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"/>
+            android:inputType="textPersonName"
+            android:textColor="@color/text_primary"
+            android:hint="Ермаков"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Email -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EMAIL"
+        android:textColor="@color/text_hint"
+        android:textSize="10sp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.1"
+        android:layout_marginBottom="6dp"/>
+
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/InputField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:hint="Email"
-        app:boxCornerRadiusTopStart="10dp"
-        app:boxCornerRadiusTopEnd="10dp"
-        app:boxCornerRadiusBottomStart="10dp"
-        app:boxCornerRadiusBottomEnd="10dp">
+        android:layout_marginBottom="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"/>
+            android:inputType="textEmailAddress"
+            android:textColor="@color/text_primary"
+            android:hint="trainer@example.com"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Пароль -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ПАРОЛЬ"
+        android:textColor="@color/text_hint"
+        android:textSize="10sp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.1"
+        android:layout_marginBottom="6dp"/>
+
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/InputField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Пароль"
+        android:layout_marginBottom="24dp"
         app:passwordToggleEnabled="true"
-        app:boxCornerRadiusTopStart="10dp"
-        app:boxCornerRadiusTopEnd="10dp"
-        app:boxCornerRadiusBottomStart="10dp"
-        app:boxCornerRadiusBottomEnd="10dp">
+        app:passwordToggleTint="@color/text_hint">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:textColor="@color/text_primary"
+            android:hint="Мин. 8 символов"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/border_default"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Кнопки -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:text="Отмена"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:layout_marginEnd="8dp"
+            app:rippleColor="#225B6AF0"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_create"
+            android:layout_width="120dp"
+            android:layout_height="42dp"
+            android:text="Создать"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:backgroundTint="@color/accent_indigo"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_check_circle"
+            app:iconSize="16dp"
+            app:iconTint="#FFFFFF"
+            app:iconGravity="textStart"/>
+
+    </LinearLayout>
 
 </LinearLayout>

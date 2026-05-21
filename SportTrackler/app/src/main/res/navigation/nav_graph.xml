@@ -2,7 +2,21 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/onboardingFragment">
+
+    <!-- ── Онбординг ────────────────────────── -->
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.fitnesstrainer.app.ui.onboarding.OnboardingFragment"
+        android:label="Добро пожаловать">
+        <action
+            android:id="@+id/action_onboarding_to_login"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"/>
+    </fragment>
 
     <!-- ── Авторизация ────────────────────────── -->
     <fragment
@@ -291,7 +305,19 @@
             app:exitAnim="@anim/nav_slide_out_left"
             app:popEnterAnim="@anim/nav_slide_in_left"
             app:popExitAnim="@anim/nav_slide_out_right"/>
+        <action
+            android:id="@+id/action_trainerDashboard_to_stats"
+            app:destination="@id/trainerStatsFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popEnterAnim="@anim/nav_slide_in_left"
+            app:popExitAnim="@anim/nav_slide_out_right"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/trainerStatsFragment"
+        android:name="com.fitnesstrainer.app.ui.trainer.TrainerStatsFragment"
+        android:label="Статистика"/>
 
     <fragment
         android:id="@+id/clientDetailFragment"

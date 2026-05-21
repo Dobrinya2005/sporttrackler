@@ -70,25 +70,274 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="104dp">
+        android:layout_marginTop="104dp"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="100dp">
 
-            <!-- Chart -->
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/chart"
+            <!-- Stat cards -->
+            <LinearLayout
+                android:id="@+id/layout_stats"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:layout_marginHorizontal="12dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp"
+                android:visibility="gone">
+
+                <!-- Current value card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/border_default"
+                    app:cardBackgroundColor="@color/bg_surface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="СЕЙЧАС"
+                            android:textColor="@color/text_hint"
+                            android:textSize="9sp"
+                            android:letterSpacing="0.14"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:id="@+id/tv_current_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="—"
+                            android:textColor="@color/text_primary"
+                            android:textSize="22sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:id="@+id/tv_current_unit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="кг"
+                            android:textColor="@color/text_hint"
+                            android:textSize="12sp"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Change card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="0dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/border_default"
+                    app:cardBackgroundColor="@color/bg_surface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ИЗМЕНЕНИЕ"
+                            android:textColor="@color/text_hint"
+                            android:textSize="9sp"
+                            android:letterSpacing="0.14"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:id="@+id/tv_change_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="—"
+                            android:textColor="@color/accent_emerald"
+                            android:textSize="22sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:id="@+id/tv_change_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="за всё время"
+                            android:textColor="@color/text_hint"
+                            android:textSize="12sp"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Points card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/border_default"
+                    app:cardBackgroundColor="@color/bg_surface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ЗАМЕРОВ"
+                            android:textColor="@color/text_hint"
+                            android:textSize="9sp"
+                            android:letterSpacing="0.14"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:id="@+id/tv_points_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="0"
+                            android:textColor="@color/text_primary"
+                            android:textSize="22sp"
+                            android:fontFamily="sans-serif-medium"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="записей"
+                            android:textColor="@color/text_hint"
+                            android:textSize="12sp"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- Chart card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"/>
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border_default"
+                app:cardBackgroundColor="@color/bg_surface"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="8dp">
+
+                    <!-- Metric chip selector -->
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"
+                        android:paddingHorizontal="16dp">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chip_group_metric"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true"
+                            app:selectionRequired="true">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_weight"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Вес"
+                                android:checked="true"
+                                app:chipBackgroundColor="@color/accent_indigo"
+                                app:checkedIconVisible="false"/>
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_waist"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Талия"
+                                app:checkedIconVisible="false"/>
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_chest"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Грудь"
+                                app:checkedIconVisible="false"/>
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_hips"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Бёдра"
+                                app:checkedIconVisible="false"/>
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_bicep"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Бицепс"
+                                app:checkedIconVisible="false"/>
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip_bodyfat"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="% жира"
+                                app:checkedIconVisible="false"/>
+
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </HorizontalScrollView>
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="8dp"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <ProgressBar
                 android:id="@+id/progress_bar"
@@ -148,30 +397,44 @@
 
             </LinearLayout>
 
+            <!-- Section label -->
+            <TextView
+                android:id="@+id/tv_history_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="4dp"
+                android:text="ИСТОРИЯ"
+                android:textColor="@color/text_hint"
+                android:textSize="10sp"
+                android:letterSpacing="0.14"
+                android:fontFamily="sans-serif-medium"
+                android:visibility="gone"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_measurements"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="88dp"
+                android:paddingTop="4dp"
                 android:clipToPadding="false"/>
 
         </LinearLayout>
 
-        <!-- FAB -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="100dp"
-            android:src="@android:drawable/ic_input_add"
-            app:backgroundTint="@color/accent_indigo"
-            app:tint="@color/text_primary"/>
+    </androidx.core.widget.NestedScrollView>
 
-    </FrameLayout>
+    <!-- FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="100dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/accent_indigo"
+        app:tint="@color/text_primary"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

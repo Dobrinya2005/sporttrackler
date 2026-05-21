@@ -32,6 +32,9 @@ class TrainerViewModel : ViewModel() {
     private val _state = MutableLiveData<TrainerState>()
     val state: LiveData<TrainerState> = _state
 
+    private var allClients: List<ClientProfile> = emptyList()
+    private var currentQuery = ""
+
     private val _trainerName = MutableLiveData<String>()
     val trainerName: LiveData<String> = _trainerName
 
@@ -71,7 +74,8 @@ class TrainerViewModel : ViewModel() {
                 val response = api.getMyClients()
                 if (response.isSuccessful) {
                     val clients = response.body() ?: emptyList()
-                    _state.value = TrainerState.Success(clients)
+                    allClients = clients
+                    applyFilter()
                     _stats.value = _stats.value?.copy(clientCount = clients.size)
                         ?: TrainerStats(clients.size, null, 0)
                 } else {
@@ -97,6 +101,19 @@ class TrainerViewModel : ViewModel() {
                 }
             } catch (_: Exception) {}
         }
+    }
+
+    fun filterClients(query: String) {
+        currentQuery = query
+        if (allClients.isNotEmpty()) applyFilter()
+    }
+
+    private fun applyFilter() {
+        val filtered = if (currentQuery.isBlank()) allClients
+        else allClients.filter {
+            "${it.firstName} ${it.lastName}".contains(currentQuery.trim(), ignoreCase = true)
+        }
+        _state.value = TrainerState.Success(filtered)
     }
 
     fun loadNews() {
