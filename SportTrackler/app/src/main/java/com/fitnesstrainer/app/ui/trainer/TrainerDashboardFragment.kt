@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
@@ -74,6 +75,8 @@ class TrainerDashboardFragment : Fragment() {
             )
         }
 
+        animateEntrance()
+
         viewModel.trainerName.observe(viewLifecycleOwner) { name ->
             binding.tvTrainerName.text = name
             val initials = name.trim().split(" ")
@@ -128,6 +131,26 @@ class TrainerDashboardFragment : Fragment() {
                     binding.emptyState.visibility = View.VISIBLE
                 }
             }
+        }
+    }
+
+    private fun animateEntrance() {
+        val interp = DecelerateInterpolator(1.5f)
+        val views = listOf(
+            binding.toolbar,
+            binding.statsRow,
+            binding.sectionHeader,
+            binding.layoutSearch,
+            binding.rvClients
+        )
+        views.forEachIndexed { i, v ->
+            v.alpha = 0f
+            v.animate()
+                .alpha(1f)
+                .setDuration(400)
+                .setStartDelay(i * 90L)
+                .setInterpolator(interp)
+                .start()
         }
     }
 

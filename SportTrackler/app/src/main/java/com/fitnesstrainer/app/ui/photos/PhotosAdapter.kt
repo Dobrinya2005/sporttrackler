@@ -12,8 +12,19 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class PhotosAdapter(
-    private val onClick: (ProgressPhoto) -> Unit
+    private val onClick: (ProgressPhoto) -> Unit,
+    private val onSelectionChanged: (List<ProgressPhoto>) -> Unit = {}
 ) : ListAdapter<ProgressPhoto, PhotosAdapter.VH>(DIFF) {
+
+    private val selected = mutableListOf<ProgressPhoto>()
+    val isSelecting get() = selected.isNotEmpty()
+    fun getSelected(): List<ProgressPhoto> = selected.toList()
+
+    fun clearSelection() {
+        selected.clear()
+        notifyDataSetChanged()
+        onSelectionChanged(selected)
+    }
 
     inner class VH(private val b: ItemPhotoBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(photo: ProgressPhoto) {
@@ -27,7 +38,28 @@ class PhotosAdapter(
             } catch (_: Exception) { photo.photoDate.take(10) }
             b.tvDate.text = date
 
-            b.root.setOnClickListener { onClick(photo) }
+            val isSelected = selected.contains(photo)
+            b.overlaySelected.visibility = if (isSelected) android.view.View.VISIBLE else android.view.View.GONE
+            b.tvCheck.visibility         = if (isSelected) android.view.View.VISIBLE else android.view.View.GONE
+
+            b.root.setOnClickListener {
+                if (isSelecting) toggleSelect(photo)
+                else onClick(photo)
+            }
+            b.root.setOnLongClickListener {
+                toggleSelect(photo)
+                true
+            }
+        }
+
+        private fun toggleSelect(photo: ProgressPhoto) {
+            if (selected.contains(photo)) {
+                selected.remove(photo)
+            } else if (selected.size < 2) {
+                selected.add(photo)
+            }
+            notifyDataSetChanged()
+            onSelectionChanged(selected.toList())
         }
     }
 

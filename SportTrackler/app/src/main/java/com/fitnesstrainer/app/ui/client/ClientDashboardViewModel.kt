@@ -12,6 +12,7 @@ import com.fitnesstrainer.app.data.model.MeasurementResponse
 import com.fitnesstrainer.app.data.model.NewsItem
 import com.fitnesstrainer.app.data.model.TrainerInfo
 import com.fitnesstrainer.app.data.model.UserProfile
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -70,13 +71,23 @@ class ClientDashboardViewModel : ViewModel() {
                 val firstName = tokenStorage.getFirstName() ?: ""
                 val today     = LocalDate.now().toString()
 
-                val latestResp  = api.getLatestMeasurement(userId)
-                val summaryResp = api.getDailySummary(userId, today)
+                val latestDeferred  = async { api.getLatestMeasurement(userId) }
+                val summaryDeferred = async { api.getDailySummary(userId, today) }
+                val avatarDeferred  = async { api.getMe() }
+                val trainerDeferred = async { api.getMyTrainer() }
+
+                val latestResp  = latestDeferred.await()
+                val summaryResp = summaryDeferred.await()
+                val avatarResp  = avatarDeferred.await()
+                val trainerResp = trainerDeferred.await()
+
+                if (avatarResp.isSuccessful) _avatarUrl.value = avatarResp.body()?.avatarUrl
+                if (trainerResp.isSuccessful) _myTrainer.value = trainerResp.body()
 
                 _state.value = DashboardState.Success(
                     DashboardData(
-                        firstName   = firstName,
-                        latest      = if (latestResp.isSuccessful) latestResp.body() else null,
+                        firstName    = firstName,
+                        latest       = if (latestResp.isSuccessful) latestResp.body() else null,
                         todaySummary = if (summaryResp.isSuccessful) summaryResp.body() else null
                     )
                 )
@@ -99,9 +110,7 @@ class ClientDashboardViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = api.getMyTrainer()
-                if (response.isSuccessful) {
-                    _myTrainer.value = response.body()
-                }
+                if (response.isSuccessful) _myTrainer.value = response.body()
             } catch (_: Exception) {}
         }
     }

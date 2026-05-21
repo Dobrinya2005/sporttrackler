@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-import com.facebook.shimmer.ShimmerFrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -111,7 +110,6 @@ class ClientDashboardFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is DashboardState.Loading -> {
-                    binding.progressBar.visibility = View.GONE
                     binding.shimmerLayout.visibility = View.VISIBLE
                     binding.shimmerLayout.startShimmer()
                     binding.contentLayout.visibility = View.GONE

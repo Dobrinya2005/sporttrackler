@@ -3,6 +3,8 @@ package com.fitnesstrainer.app.ui.photos
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -17,7 +19,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.fitnesstrainer.app.data.model.ProgressPhoto
+import com.fitnesstrainer.app.databinding.DialogComparePhotosBinding
 import com.fitnesstrainer.app.databinding.FragmentPhotosBinding
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class PhotosFragment : Fragment() {
 
@@ -45,11 +51,36 @@ class PhotosFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = PhotosAdapter { photo -> showFullScreen(photo.photoUrl) }
+        adapter = PhotosAdapter(
+            onClick = { photo ->
+                if (!adapter.isSelecting) showFullScreen(photo.photoUrl)
+            },
+            onSelectionChanged = { selected ->
+                val showBar = selected.size == 2
+                binding.compareBar.visibility = if (showBar) View.VISIBLE else View.GONE
+                binding.fabUpload.visibility  = if (adapter.isSelecting) View.GONE else
+                    if (viewModel.isOwnData) View.VISIBLE else View.GONE
+            }
+        )
         binding.rvPhotos.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvPhotos.adapter       = adapter
 
+        binding.btnCancelCompare.setOnClickListener {
+            adapter.clearSelection()
+        }
+        binding.btnCompare.setOnClickListener {
+            val sel = adapter.getSelected()
+            if (sel.size == 2) showCompareDialog(sel[0], sel[1])
+        }
+
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
+
+        binding.swipeRefresh.setColorSchemeResources(
+            com.fitnesstrainer.app.R.color.accent_violet,
+            com.fitnesstrainer.app.R.color.accent_indigo
+        )
+        binding.swipeRefresh.setOnRefreshListener { viewModel.load() }
+
         binding.fabUpload.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             pickImage.launch(intent)
@@ -72,6 +103,7 @@ class PhotosFragment : Fragment() {
                 }
                 is PhotosState.Success -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.swipeRefresh.isRefreshing = false
                     adapter.submitList(state.photos)
                     binding.fabUpload.visibility = if (viewModel.isOwnData) View.VISIBLE else View.GONE
                     if (state.photos.isEmpty()) {
@@ -85,6 +117,7 @@ class PhotosFragment : Fragment() {
                 }
                 is PhotosState.Error -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.swipeRefresh.isRefreshing = false
                     binding.tvEmpty.text    = state.message
                     binding.tvEmptySub.text = ""
                     binding.btnRetry.visibility   = View.VISIBLE
@@ -92,6 +125,35 @@ class PhotosFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showCompareDialog(p1: ProgressPhoto, p2: ProgressPhoto) {
+        val sorted = listOf(p1, p2).sortedBy { it.photoDate }
+        val before = sorted[0]
+        val after  = sorted[1]
+
+        val db = DialogComparePhotosBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext(), android.R.style.Theme_Material_Light_Dialog_NoActionBar)
+        dialog.setContentView(db.root)
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.95).toInt(),
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        Glide.with(this).load(before.photoUrl).centerCrop().into(db.ivBefore)
+        Glide.with(this).load(after.photoUrl).centerCrop().into(db.ivAfter)
+
+        fun fmt(d: String) = try {
+            LocalDate.parse(d).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        } catch (_: Exception) { d.take(10) }
+        db.tvDateBefore.text = fmt(before.photoDate)
+        db.tvDateAfter.text  = fmt(after.photoDate)
+
+        db.btnClose.setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
 
     private fun showFullScreen(url: String) {

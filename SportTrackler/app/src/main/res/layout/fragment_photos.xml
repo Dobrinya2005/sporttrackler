@@ -58,10 +58,15 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="104dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -140,6 +145,52 @@
             app:backgroundTint="@color/accent_violet"
             app:tint="@color/text_primary"/>
 
+        <!-- Compare bar (appears when 2 photos selected) -->
+        <LinearLayout
+            android:id="@+id/compare_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="88dp"
+            android:layout_marginHorizontal="20dp"
+            android:background="@drawable/bg_dialog_card"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="2 фото выбрано"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel_compare"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Отмена"
+                android:textColor="@color/text_hint"
+                android:textSize="13sp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_compare"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:paddingHorizontal="16dp"
+                android:text="Сравнить"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                app:backgroundTint="@color/accent_violet"
+                app:cornerRadius="10dp"/>
+
+        </LinearLayout>
+
     </FrameLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

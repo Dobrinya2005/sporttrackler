@@ -21,6 +21,7 @@ class GlassBottomNav @JvmOverloads constructor(
     private val d = resources.displayMetrics.density
 
     private var items = emptyList<NavItem>()
+    private var badges = IntArray(0)
 
     private var selectedIndex = 0
     private var pressAlphas   = FloatArray(items.size)
@@ -43,6 +44,14 @@ class GlassBottomNav @JvmOverloads constructor(
     }
     private val highlightPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE; strokeWidth = 1.5f * d
+    }
+    private val badgePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#EF4444")
+    }
+    private val badgeTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
+        textAlign = Paint.Align.CENTER
+        typeface = Typeface.create("sans-serif-medium", Typeface.BOLD)
     }
 
     private val iconBitmaps = mutableListOf<Bitmap>()
@@ -114,6 +123,22 @@ class GlassBottomNav @JvmOverloads constructor(
 
         textPaint.color = if (isActive) activeText else inactiveText
         canvas.drawText(items[i].label, cx, rect.bottom - 7 * d, textPaint)
+
+        // Badge
+        val count = badges.getOrElse(i) { 0 }
+        if (count > 0) {
+            val bmp = iconBitmaps.getOrNull(i)
+            val iconX = cx - iconSize / 2f
+            val iconY = rect.top + rect.height() * 0.12f
+            val badgeR = 8f * d
+            val badgeCx = iconX + iconSize - badgeR * 0.3f
+            val badgeCy = iconY + badgeR * 0.3f
+            canvas.drawCircle(badgeCx, badgeCy, badgeR, badgePaint)
+            badgeTextPaint.textSize = 8f * d
+            val text = if (count > 99) "99+" else count.toString()
+            val fm = badgeTextPaint.fontMetrics
+            canvas.drawText(text, badgeCx, badgeCy - (fm.ascent + fm.descent) / 2f, badgeTextPaint)
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -157,10 +182,19 @@ class GlassBottomNav @JvmOverloads constructor(
         selectedIndex = 0
         pressAlphas = FloatArray(newItems.size)
         pressAnimators = arrayOfNulls(newItems.size)
+        badges = IntArray(newItems.size)
         if (width > 0) {
             itemW = width / newItems.size.toFloat()
             rebuildBitmaps()
         }
+        invalidate()
+    }
+
+    fun setBadge(tabIndex: Int, count: Int) {
+        if (tabIndex < 0 || tabIndex >= items.size) return
+        if (badges.getOrElse(tabIndex) { -1 } == count) return
+        if (badges.size != items.size) badges = IntArray(items.size)
+        badges[tabIndex] = count
         invalidate()
     }
 

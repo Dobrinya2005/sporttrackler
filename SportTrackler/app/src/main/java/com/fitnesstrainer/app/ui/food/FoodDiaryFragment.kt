@@ -19,7 +19,14 @@ import com.fitnesstrainer.app.data.model.FoodProduct
 import com.fitnesstrainer.app.databinding.DialogAddFoodBinding
 import com.fitnesstrainer.app.databinding.DialogFoodWeightBinding
 import com.fitnesstrainer.app.databinding.FragmentFoodDiaryBinding
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.fitnesstrainer.app.App
+import com.fitnesstrainer.app.data.model.MealSummary
+import kotlinx.coroutines.launch
 import com.fitnesstrainer.app.util.FoodEmojiUtil
+import com.fitnesstrainer.app.util.PdfExporter
 import java.time.format.DateTimeFormatter
 
 class FoodDiaryFragment : Fragment() {
@@ -30,6 +37,7 @@ class FoodDiaryFragment : Fragment() {
     private lateinit var diaryAdapter: FoodDiaryAdapter
     private lateinit var searchAdapter: FoodSearchAdapter
     private var pendingMealType = "Breakfast"
+    private var currentMeals: List<MealSummary> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -48,9 +56,34 @@ class FoodDiaryFragment : Fragment() {
         binding.rvDiary.layoutManager = LinearLayoutManager(requireContext())
         binding.rvDiary.adapter       = diaryAdapter
 
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
+            override fun getSwipeDirs(rv: RecyclerView, vh: RecyclerView.ViewHolder): Int {
+                return if (diaryAdapter.isSwipeable(vh.bindingAdapterPosition))
+                    ItemTouchHelper.LEFT else 0
+            }
+            override fun onSwiped(vh: RecyclerView.ViewHolder, dir: Int) {
+                val diaryId = diaryAdapter.getDiaryIdAt(vh.bindingAdapterPosition)
+                if (diaryId != null) viewModel.deleteEntry(diaryId)
+            }
+        }).attachToRecyclerView(binding.rvDiary)
+
         binding.btnBack.setOnClickListener  { findNavController().popBackStack() }
         binding.btnPrevDay.setOnClickListener { viewModel.previousDay() }
         binding.btnNextDay.setOnClickListener { viewModel.nextDay() }
+
+        binding.btnExportPdf.setOnClickListener {
+            if (currentMeals.isEmpty() || currentMeals.all { it.items.isEmpty() }) {
+                Toast.makeText(requireContext(), "Нет данных для экспорта", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val dateStr = viewModel.currentDate.value
+                ?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: ""
+            lifecycleScope.launch {
+                val firstName = App.instance.tokenStorage.getFirstName() ?: ""
+                PdfExporter.exportFoodDiary(requireContext(), currentMeals, dateStr, firstName)
+            }
+        }
 
         viewModel.currentDate.observe(viewLifecycleOwner) { date ->
             binding.tvDate.text = date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
@@ -84,6 +117,7 @@ class FoodDiaryFragment : Fragment() {
                     binding.progressCalories.max      = 100
                     binding.progressCalories.progress = ((s.totalCalories / goal) * 100).toInt().coerceIn(0, 100)
 
+                    currentMeals = s.meals
                     diaryAdapter.submitMeals(s.meals)
                 }
                 is FoodDiaryState.Error -> {

@@ -2,6 +2,7 @@ package com.fitnesstrainer.app.ui.food
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fitnesstrainer.app.data.model.DiaryEntryResponse
 import com.fitnesstrainer.app.data.model.MealSummary
@@ -26,16 +27,36 @@ class FoodDiaryAdapter(
     private val items = mutableListOf<DiaryListItem>()
 
     fun submitMeals(meals: List<MealSummary>) {
-        items.clear()
+        val newItems = mutableListOf<DiaryListItem>()
         val mealOrder = listOf("Breakfast", "Lunch", "Dinner", "Snack")
         val mealMap = meals.associateBy { it.mealType }
         for (type in mealOrder) {
             val meal = mealMap[type] ?: MealSummary(type, 0.0, 0.0, 0.0, 0.0, emptyList())
-            items.add(DiaryListItem.Header(meal))
-            meal.items.forEach { items.add(DiaryListItem.Entry(it)) }
+            newItems.add(DiaryListItem.Header(meal))
+            meal.items.forEach { newItems.add(DiaryListItem.Entry(it)) }
         }
-        notifyDataSetChanged()
+        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize() = items.size
+            override fun getNewListSize() = newItems.size
+            override fun areItemsTheSame(o: Int, n: Int): Boolean {
+                val old = items[o]; val new = newItems[n]
+                return when {
+                    old is DiaryListItem.Header && new is DiaryListItem.Header -> old.meal.mealType == new.meal.mealType
+                    old is DiaryListItem.Entry  && new is DiaryListItem.Entry  -> old.dto.diaryId == new.dto.diaryId
+                    else -> false
+                }
+            }
+            override fun areContentsTheSame(o: Int, n: Int) = items[o] == newItems[n]
+        })
+        items.clear()
+        items.addAll(newItems)
+        diff.dispatchUpdatesTo(this)
     }
+
+    fun isSwipeable(position: Int) = items.getOrNull(position) is DiaryListItem.Entry
+
+    fun getDiaryIdAt(position: Int) =
+        (items.getOrNull(position) as? DiaryListItem.Entry)?.dto?.diaryId
 
     override fun getItemViewType(position: Int) =
         if (items[position] is DiaryListItem.Header) TYPE_HEADER else TYPE_ENTRY

@@ -6,7 +6,7 @@ import android.graphics.Paint
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.data.model.Exercise
@@ -33,15 +33,31 @@ class WorkoutPlanAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun submitPlans(plans: List<WorkoutPlan>, context: Context) {
         prefs = context.getSharedPreferences("workout_done", Context.MODE_PRIVATE)
-        items.clear()
+        val newItems = mutableListOf<WorkoutItem>()
         for (plan in plans) {
-            items.add(WorkoutItem.PlanHeader(plan))
+            newItems.add(WorkoutItem.PlanHeader(plan))
             for (day in plan.days) {
-                items.add(WorkoutItem.DayHeader(day))
-                day.exercises.forEach { items.add(WorkoutItem.ExerciseItem(it, plan.planId, day.dayId)) }
+                newItems.add(WorkoutItem.DayHeader(day))
+                day.exercises.forEach { newItems.add(WorkoutItem.ExerciseItem(it, plan.planId, day.dayId)) }
             }
         }
-        notifyDataSetChanged()
+        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize() = items.size
+            override fun getNewListSize() = newItems.size
+            override fun areItemsTheSame(o: Int, n: Int): Boolean {
+                val old = items[o]; val new = newItems[n]
+                return when {
+                    old is WorkoutItem.PlanHeader   && new is WorkoutItem.PlanHeader   -> old.plan.planId == new.plan.planId
+                    old is WorkoutItem.DayHeader    && new is WorkoutItem.DayHeader    -> old.day.dayId == new.day.dayId
+                    old is WorkoutItem.ExerciseItem && new is WorkoutItem.ExerciseItem -> old.ex.exerciseId == new.ex.exerciseId
+                    else -> false
+                }
+            }
+            override fun areContentsTheSame(o: Int, n: Int) = items[o] == newItems[n]
+        })
+        items.clear()
+        items.addAll(newItems)
+        diff.dispatchUpdatesTo(this)
     }
 
     override fun getItemViewType(position: Int) = when (items[position]) {

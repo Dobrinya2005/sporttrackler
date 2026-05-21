@@ -47,6 +47,17 @@
                 android:fontFamily="sans-serif-medium"
                 android:layout_marginStart="4dp"/>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_export_pdf"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="PDF"
+                android:textColor="@color/accent_indigo"
+                android:textSize="12sp"
+                android:padding="8dp"
+                android:minWidth="0dp"/>
+
         </LinearLayout>
 
         <!-- Date navigation -->

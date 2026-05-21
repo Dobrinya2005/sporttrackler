@@ -72,11 +72,17 @@ class MeasurementsFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is MeasurementsState.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.emptyState.visibility  = View.GONE
+                    binding.shimmerLayout.visibility = View.VISIBLE
+                    binding.shimmerLayout.startShimmer()
+                    binding.contentScroll.visibility = View.GONE
+                    binding.progressBar.visibility   = View.GONE
+                    binding.emptyState.visibility    = View.GONE
                 }
                 is MeasurementsState.Success -> {
-                    binding.progressBar.visibility = View.GONE
+                    binding.shimmerLayout.stopShimmer()
+                    binding.shimmerLayout.visibility = View.GONE
+                    binding.contentScroll.visibility = View.VISIBLE
+                    binding.progressBar.visibility   = View.GONE
                     adapter.canDelete = viewModel.isOwnData
                     adapter.submitList(state.list)
                     if (state.list.isEmpty()) {
@@ -97,7 +103,10 @@ class MeasurementsFragment : Fragment() {
                     updateChart()
                 }
                 is MeasurementsState.Error -> {
-                    binding.progressBar.visibility = View.GONE
+                    binding.shimmerLayout.stopShimmer()
+                    binding.shimmerLayout.visibility = View.GONE
+                    binding.contentScroll.visibility = View.VISIBLE
+                    binding.progressBar.visibility   = View.GONE
                     binding.tvEmpty.text    = state.message
                     binding.tvEmptySub.text = ""
                     binding.btnRetry.visibility   = View.VISIBLE

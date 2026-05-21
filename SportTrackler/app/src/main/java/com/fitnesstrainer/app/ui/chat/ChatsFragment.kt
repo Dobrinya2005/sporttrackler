@@ -52,8 +52,12 @@ class ChatsFragment : Fragment() {
             findNavController().navigate(R.id.action_chats_to_createGroup)
         }
 
+        binding.swipeRefresh.setColorSchemeResources(R.color.accent_cyan, R.color.accent_indigo)
+        binding.swipeRefresh.setOnRefreshListener { viewModel.load() }
+
         viewModel.items.observe(viewLifecycleOwner) { items ->
-            binding.progressBar.visibility = View.GONE
+            binding.progressBar.visibility    = View.GONE
+            binding.swipeRefresh.isRefreshing = false
             adapter.submitList(items)
             binding.tvEmpty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
         }

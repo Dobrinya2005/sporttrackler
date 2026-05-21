@@ -15,7 +15,9 @@ import com.fitnesstrainer.app.data.local.ThemeManager
 import com.fitnesstrainer.app.databinding.ActivityMainBinding
 import com.fitnesstrainer.app.ui.widget.GlassBottomNav
 import com.fitnesstrainer.app.util.SoundManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -80,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         handleNotificationIntent(intent)
+        startUnreadBadgePoller()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -337,6 +340,26 @@ class MainActivity : AppCompatActivity() {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+    }
+
+    private fun startUnreadBadgePoller() {
+        lifecycleScope.launch {
+            val storage = App.instance.tokenStorage
+            val api     = App.instance.apiService
+            while (isActive) {
+                try {
+                    if (storage.isLoggedIn()) {
+                        val resp = api.getConversations()
+                        if (resp.isSuccessful) {
+                            val total = resp.body()?.sumOf { it.unreadCount } ?: 0
+                            val chatTabIdx = if (isTrainerMode) 1 else 1
+                            binding.bottomNav.setBadge(chatTabIdx, total)
+                        }
+                    }
+                } catch (_: Exception) {}
+                delay(30_000)
             }
         }
     }
