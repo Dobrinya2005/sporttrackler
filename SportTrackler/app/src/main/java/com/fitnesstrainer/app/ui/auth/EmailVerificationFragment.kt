@@ -94,19 +94,16 @@ class EmailVerificationFragment : Fragment() {
                 if (resp.isSuccessful) {
                     val body = resp.body()
                     if (body?.accessToken?.isNotEmpty() == true) {
-                        // Регистрация — сохраняем токены
                         app.tokenStorage.saveAuth(
                             body.accessToken, body.refreshToken,
                             body.userId, body.role,
                             body.firstName, body.lastName,
                             body.email, body.avatarUrl
                         )
-                        // FCM токен
                         try {
                             val fcm = FirebaseMessaging.getInstance().token.await()
                             app.apiService.registerFcmToken(mapOf("deviceToken" to fcm))
                         } catch (_: Exception) {}
-                        // Профиль клиента (height/gender из регистрации; вес вводится на шаге замеров)
                         if (role == "Client" && (weightKg > 0 || heightCm > 0)) {
                             try {
                                 app.apiService.saveClientProfile(
@@ -122,12 +119,16 @@ class EmailVerificationFragment : Fragment() {
                             } catch (_: Exception) {}
                         }
                         (activity as? MainActivity)?.onUserLoggedIn(body.role ?: role)
+                        navigateNext(true)
+                    } else {
+                        // Сервер вернул 200, но без токена — код неверный или истёк
+                        showError("Неверный или истёкший код")
                     }
-                    navigateNext(body?.accessToken?.isNotEmpty() == true)
                 } else {
                     showError(when (resp.code()) {
                         400 -> "Неверный или истёкший код"
-                        else -> "Ошибка. Попробуйте снова"
+                        404 -> "Пользователь не найден"
+                        else -> "Ошибка верификации (${resp.code()})"
                     })
                 }
             } catch (e: Exception) {

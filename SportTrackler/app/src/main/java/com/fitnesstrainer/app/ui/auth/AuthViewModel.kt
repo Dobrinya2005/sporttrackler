@@ -100,9 +100,9 @@ class AuthViewModel : ViewModel() {
                         msg?.contains("код", ignoreCase = true) == true ||
                         msg?.contains("Trainer", ignoreCase = true) == true -> "Неверный код тренера"
                         response.code() == 409 ||
+                        response.code() == 400 ||
                         msg?.contains("exist", ignoreCase = true) == true ||
-                        msg?.contains("занят", ignoreCase = true) == true -> "Email уже занят"
-                        response.code() == 400 -> "Проверьте правильность данных"
+                        msg?.contains("занят", ignoreCase = true) == true -> "Данный email уже занят"
                         else -> "Ошибка регистрации (${response.code()})"
                     })
                 }
