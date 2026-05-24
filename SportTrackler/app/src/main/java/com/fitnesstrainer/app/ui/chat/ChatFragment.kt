@@ -55,7 +55,8 @@ class ChatFragment : Fragment() {
     private var proximitySensor: Sensor? = null
     private val proximityListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
-            val audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            val ctx = context ?: return
+            val audioManager = ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
             if (event.values[0] < (proximitySensor?.maximumRange ?: 5f)) {
                 audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
                 audioManager.isSpeakerphoneOn = false

@@ -58,11 +58,15 @@ class QrScanFragment : Fragment() {
                 is SelectResult.Success -> {
                     b.scannerOverlay.scanSuccess = true
                     view.postDelayed({
-                        Toast.makeText(requireContext(), "Тренер привязан!", Toast.LENGTH_SHORT).show()
-                        findNavController().navigate(
-                            R.id.clientDashboardFragment, null,
-                            NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build()
-                        )
+                        val ctx = context ?: return@postDelayed
+                        if (_b == null) return@postDelayed
+                        Toast.makeText(ctx, "Тренер привязан!", Toast.LENGTH_SHORT).show()
+                        try {
+                            findNavController().navigate(
+                                R.id.clientDashboardFragment, null,
+                                NavOptions.Builder().setPopUpTo(R.id.nav_graph, true).build()
+                            )
+                        } catch (_: Exception) {}
                     }, 400)
                 }
                 is SelectResult.Error -> {

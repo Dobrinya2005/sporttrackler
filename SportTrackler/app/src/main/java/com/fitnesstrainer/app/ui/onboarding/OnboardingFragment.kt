@@ -48,7 +48,7 @@ class OnboardingFragment : Fragment() {
             .getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             .getBoolean("onboarding_shown", false)
         if (shown) {
-            findNavController().navigate(R.id.action_onboarding_to_login)
+            try { findNavController().navigate(R.id.action_onboarding_to_login) } catch (_: Exception) {}
             return
         }
 

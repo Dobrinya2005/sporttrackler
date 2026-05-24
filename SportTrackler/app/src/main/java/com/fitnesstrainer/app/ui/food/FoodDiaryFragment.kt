@@ -155,7 +155,7 @@ class FoodDiaryFragment : Fragment() {
             dialog.dismiss()
         }
 
-        viewModel.searchState.observe(viewLifecycleOwner) { state ->
+        val searchObserver = androidx.lifecycle.Observer<SearchState> { state ->
             when (state) {
                 is SearchState.Loading -> dialogBinding.progressSearch.visibility = View.VISIBLE
                 is SearchState.Results -> {
@@ -167,6 +167,10 @@ class FoodDiaryFragment : Fragment() {
                     searchAdapter.submitList(emptyList())
                 }
             }
+        }
+        viewModel.searchState.observe(viewLifecycleOwner, searchObserver)
+        dialog.setOnDismissListener {
+            viewModel.searchState.removeObserver(searchObserver)
         }
 
         dialog.show()

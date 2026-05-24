@@ -21,6 +21,7 @@ import javax.net.ssl.X509TrustManager
 object RetrofitClient {
 
     var onSessionExpired: (() -> Unit)? = null
+    @Volatile private var sessionExpiredHandled = false
 
     fun create(tokenStorage: TokenStorage): ApiService {
         val authenticator = object : Authenticator {
@@ -30,7 +31,7 @@ object RetrofitClient {
                 if (url.contains("/auth/") || url.contains("/fcm/")) return null
                 if (response.request.header("X-No-Retry") != null) return null
                 val refreshToken = runBlocking { tokenStorage.getRefreshToken() } ?: run {
-                    onSessionExpired?.invoke(); return null
+                    triggerSessionExpired(); return null
                 }
                 val refreshResponse = runBlocking {
                     try {
@@ -51,7 +52,7 @@ object RetrofitClient {
                         .build()
                 } else {
                     runBlocking { tokenStorage.clearAuth() }
-                    onSessionExpired?.invoke()
+                    triggerSessionExpired()
                     return null
                 }
             }
@@ -80,6 +81,21 @@ object RetrofitClient {
             .build()
 
         return buildRetrofit(client).create(ApiService::class.java)
+    }
+
+    private fun triggerSessionExpired() {
+        if (sessionExpiredHandled) return
+        synchronized(this) {
+            if (sessionExpiredHandled) return
+            sessionExpiredHandled = true
+        }
+        android.os.Handler(android.os.Looper.getMainLooper()).post {
+            onSessionExpired?.invoke()
+        }
+    }
+
+    fun resetSessionExpiredFlag() {
+        sessionExpiredHandled = false
     }
 
     private fun buildBaseClient() = OkHttpClient.Builder()

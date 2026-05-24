@@ -52,7 +52,8 @@ class MainActivity : AppCompatActivity() {
         R.id.adminSettingsFragment,
         R.id.forgotPasswordFragment,
         R.id.resetPasswordCodeFragment,
-        R.id.resetPasswordFragment
+        R.id.resetPasswordFragment,
+        R.id.newsWebViewFragment
     )
 
     // Время ухода в фон; PIN запрашивается если прошло > 30 сек
@@ -230,8 +231,9 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val storage = App.instance.tokenStorage
             if (!storage.isLoggedIn()) return@launch
-            // Если "запомнить меня" не выбрано — выходим из аккаунта при перезапуске
-            if (!storage.isRememberMe()) {
+            // Если "запомнить меня" не выбрано — выходим только при холодном старте процесса,
+            // но НЕ при recreate() (смена темы), когда sessionAuthenticated = true
+            if (!storage.isRememberMe() && !sessionAuthenticated) {
                 storage.clearAuth()
                 return@launch
             }

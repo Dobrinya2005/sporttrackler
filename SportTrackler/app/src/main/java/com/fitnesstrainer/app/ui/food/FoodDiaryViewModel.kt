@@ -68,13 +68,28 @@ class FoodDiaryViewModel : ViewModel() {
             // Показываем кеш мгновенно
             val cached = summaryDao.get(userId, date.toString())
             if (cached != null) {
-                _state.value = FoodDiaryState.Success(cached.toResponse())
+                val cachedSummary = cached.toResponse().let { s ->
+                    if (s.calorieGoal == null) {
+                        val weight = App.instance.database.measurementDao()
+                            .getAll(userId).firstOrNull()?.weightKg
+                        val estimated = weight?.let { ((it * 33) / 50).toInt() * 50 }
+                        s.copy(calorieGoal = estimated)
+                    } else s
+                }
+                _state.value = FoodDiaryState.Success(cachedSummary)
             }
 
             try {
                 val response = api.getDailySummary(userId, date.toString())
                 if (response.isSuccessful) {
-                    val summary = response.body()!!
+                    val summary = response.body()!!.let { s ->
+                        if (s.calorieGoal == null) {
+                            val weight = App.instance.database.measurementDao()
+                                .getAll(userId).firstOrNull()?.weightKg
+                            val estimated = weight?.let { ((it * 33) / 50).toInt() * 50 }
+                            s.copy(calorieGoal = estimated)
+                        } else s
+                    }
                     _state.value = FoodDiaryState.Success(summary)
                     // Сохраняем в Room
                     summaryDao.insert(DailySummaryEntity(

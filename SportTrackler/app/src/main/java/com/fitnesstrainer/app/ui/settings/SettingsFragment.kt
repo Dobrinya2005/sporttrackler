@@ -27,6 +27,7 @@ import com.fitnesstrainer.app.service.StepCounterService
 import com.fitnesstrainer.app.service.WorkoutReminderReceiver
 import com.fitnesstrainer.app.util.BiometricHelper
 import com.fitnesstrainer.app.util.SoundManager
+import android.view.animation.DecelerateInterpolator
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -67,6 +68,7 @@ class SettingsFragment : Fragment() {
 
         loadProfile()
         setupTrainerSections()
+        animateEntrance()
 
         // Тема
         val isDark = ThemeManager.isDark(requireContext())
@@ -242,12 +244,13 @@ class SettingsFragment : Fragment() {
     }
 
     private fun showTimePicker() {
+        val ctx = context ?: return
         lifecycleScope.launch {
             val initH    = App.instance.tokenStorage.getReminderHour()
             val initM    = App.instance.tokenStorage.getReminderMinute()
             val initDays = App.instance.tokenStorage.getReminderDays().toMutableSet()
 
-            val sheet = BottomSheetDialog(requireContext())
+            val sheet = BottomSheetDialog(ctx)
             val sb = BottomSheetReminderBinding.inflate(layoutInflater)
             sheet.setContentView(sb.root)
 
@@ -268,8 +271,8 @@ class SettingsFragment : Fragment() {
                     val active = day in selectedDays
                     view.isSelected = active
                     view.setTextColor(
-                        if (active) requireContext().getColor(android.R.color.black)
-                        else requireContext().getColor(R.color.text_hint)
+                        if (active) ctx.getColor(android.R.color.black)
+                        else ctx.getColor(R.color.text_hint)
                     )
                 }
             }
@@ -295,12 +298,12 @@ class SettingsFragment : Fragment() {
                 sb.tvHour.text   = hourStr
                 sb.tvMinute.text = minStr
                 sb.tvHour.setTextColor(
-                    if (editingHour) requireContext().getColor(R.color.accent_cyan)
-                    else requireContext().getColor(R.color.text_primary)
+                    if (editingHour) ctx.getColor(R.color.accent_cyan)
+                    else ctx.getColor(R.color.text_primary)
                 )
                 sb.tvMinute.setTextColor(
-                    if (!editingHour) requireContext().getColor(R.color.accent_cyan)
-                    else requireContext().getColor(R.color.text_primary)
+                    if (!editingHour) ctx.getColor(R.color.accent_cyan)
+                    else ctx.getColor(R.color.text_primary)
                 )
             }
 
@@ -351,7 +354,6 @@ class SettingsFragment : Fragment() {
             sb.btnSave.setOnClickListener {
                 val hour   = hourStr.toInt().coerceIn(0, 23)
                 val minute = minStr.toInt().coerceIn(0, 59)
-                val ctx = requireContext()
                 val am = ctx.getSystemService(AlarmManager::class.java)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) {
                     Toast.makeText(ctx,
@@ -454,6 +456,14 @@ class SettingsFragment : Fragment() {
             val hasPin = App.instance.tokenStorage.hasPinSet()
             _b?.switchPin?.isChecked = hasPin
             _b?.tvPinStatus?.text = if (hasPin) "Включён" else "Выключен"
+        }
+    }
+
+    private fun animateEntrance() {
+        val interp = DecelerateInterpolator()
+        listOf(b.ivAvatar, b.tvUserName, b.tvUserRole, b.btnEditProfile).forEachIndexed { i, v ->
+            v.alpha = 0f
+            v.animate().alpha(1f).setDuration(350).setStartDelay(i * 60L).setInterpolator(interp).start()
         }
     }
 

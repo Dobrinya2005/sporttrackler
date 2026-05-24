@@ -216,7 +216,7 @@ class ClientDashboardFragment : Fragment() {
             val today   = LocalDate.now().toString()
 
             val steps = db.stepDao().get(uid, today)?.steps ?: 0
-            binding.tvSteps.text = steps.toString()
+            _binding?.tvSteps?.text = steps.toString()
 
             val goals = db.goalDao().getAll(uid)
             val done  = goals.count { goal ->
@@ -232,7 +232,7 @@ class ClientDashboardFragment : Fragment() {
                 }}
                 cur != null && cur <= goal.targetValue
             }
-            binding.tvGoalsSummary.text = when {
+            _binding?.tvGoalsSummary?.text = when {
                 goals.isEmpty() -> "Нет целей"
                 done == goals.size -> "Все достигнуты ✓"
                 else -> "$done / ${goals.size} достигнуто"

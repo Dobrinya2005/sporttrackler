@@ -232,8 +232,12 @@ class GroupChatFragment : Fragment() {
                     }
                 }
             }
-            viewModel.group.observe(viewLifecycleOwner) { updatedGroup ->
+            val groupObserver = androidx.lifecycle.Observer<com.fitnesstrainer.app.data.model.GroupDto?> { updatedGroup ->
                 if (updatedGroup != null) sheet.updateGroup(updatedGroup)
+            }
+            viewModel.group.observe(viewLifecycleOwner, groupObserver)
+            sheet.dialog?.setOnDismissListener {
+                viewModel.group.removeObserver(groupObserver)
             }
             sheet.show(parentFragmentManager, "group_info")
         }

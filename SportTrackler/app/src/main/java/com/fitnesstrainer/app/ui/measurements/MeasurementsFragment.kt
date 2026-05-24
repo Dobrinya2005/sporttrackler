@@ -221,13 +221,14 @@ class MeasurementsFragment : Fragment() {
     }
 
     private fun exportPdf() {
+        val ctx = context ?: return
         if (currentList.isEmpty()) {
-            Toast.makeText(requireContext(), "Нет данных для экспорта", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, "Нет данных для экспорта", Toast.LENGTH_SHORT).show()
             return
         }
         viewLifecycleOwner.lifecycleScope.launch {
             val firstName = App.instance.tokenStorage.getFirstName() ?: ""
-            PdfExporter.exportMeasurements(requireContext(), currentList, firstName)
+            PdfExporter.exportMeasurements(ctx, currentList, firstName)
         }
     }
 

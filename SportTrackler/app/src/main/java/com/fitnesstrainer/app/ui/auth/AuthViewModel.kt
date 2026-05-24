@@ -46,6 +46,7 @@ class AuthViewModel : ViewModel() {
                         body.firstName, body.lastName,
                         body.email, body.avatarUrl
                     )
+                    com.fitnesstrainer.app.data.network.RetrofitClient.resetSessionExpiredFlag()
                     registerFcmToken()
                     _state.value = AuthState.Success(body.role)
                 } else {

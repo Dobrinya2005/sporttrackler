@@ -100,6 +100,7 @@ class EmailVerificationFragment : Fragment() {
                             body.firstName, body.lastName,
                             body.email, body.avatarUrl
                         )
+                        com.fitnesstrainer.app.data.network.RetrofitClient.resetSessionExpiredFlag()
                         try {
                             val fcm = FirebaseMessaging.getInstance().token.await()
                             app.apiService.registerFcmToken(mapOf("deviceToken" to fcm))
