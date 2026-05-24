@@ -80,12 +80,18 @@ class FoodDiaryViewModel : ViewModel() {
             }
 
             try {
+                // Получаем вес: сначала из локальной БД, иначе из API
+                val localWeight = App.instance.database.measurementDao()
+                    .getAll(userId).firstOrNull()?.weightKg
+                val weight = localWeight ?: run {
+                    val resp = api.getLatestMeasurement(userId)
+                    if (resp.isSuccessful) resp.body()?.weightKg else null
+                }
+
                 val response = api.getDailySummary(userId, date.toString())
                 if (response.isSuccessful) {
                     val summary = response.body()!!.let { s ->
                         if (s.calorieGoal == null) {
-                            val weight = App.instance.database.measurementDao()
-                                .getAll(userId).firstOrNull()?.weightKg
                             val estimated = weight?.let { ((it * 33) / 50).toInt() * 50 }
                             s.copy(calorieGoal = estimated)
                         } else s
@@ -153,15 +159,18 @@ class FoodDiaryViewModel : ViewModel() {
     fun clearSearch() { _searchState.value = SearchState.Idle }
 }
 
-private fun DailySummaryEntity.toResponse() = DailySummaryResponse(
-    date          = date,
-    calorieGoal   = calorieGoal,
-    proteinGoal   = null,
-    fatGoal       = null,
-    carbGoal      = null,
-    totalCalories = totalCalories,
-    totalProtein  = totalProtein,
-    totalFat      = totalFat,
-    totalCarbs    = totalCarbs,
-    meals         = emptyList()
-)
+private fun DailySummaryEntity.toResponse(): DailySummaryResponse {
+    val kcal = calorieGoal?.toDouble() ?: 0.0
+    return DailySummaryResponse(
+        date          = date,
+        calorieGoal   = calorieGoal,
+        proteinGoal   = if (kcal > 0) (kcal * 0.20 / 4) else null,
+        fatGoal       = if (kcal > 0) (kcal * 0.30 / 9) else null,
+        carbGoal      = if (kcal > 0) (kcal * 0.50 / 4) else null,
+        totalCalories = totalCalories,
+        totalProtein  = totalProtein,
+        totalFat      = totalFat,
+        totalCarbs    = totalCarbs,
+        meals         = emptyList()
+    )
+}

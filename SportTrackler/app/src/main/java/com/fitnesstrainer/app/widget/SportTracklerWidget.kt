@@ -51,7 +51,11 @@ class SportTracklerWidget : AppWidgetProvider() {
                 val steps   = db.stepDao().get(userId, today)?.steps ?: 0
                 val summary = db.dailySummaryDao().get(userId, today)
 
-                val calories = summary?.let { "%.0f / %d ккал".format(it.totalCalories, it.calorieGoal ?: 2000) }
+                val calorieGoal = summary?.calorieGoal ?: run {
+                    val weight = db.measurementDao().getAll(userId).firstOrNull()?.weightKg
+                    weight?.let { ((it * 33) / 50).toInt() * 50 }
+                }
+                val calories = summary?.let { "%.0f / %d ккал".format(it.totalCalories, calorieGoal ?: 0) }
                     ?: "— ккал"
 
                 views.setTextViewText(R.id.widget_greeting, "Привет, $firstName!")

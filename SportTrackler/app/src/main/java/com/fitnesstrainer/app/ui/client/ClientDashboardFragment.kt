@@ -134,19 +134,24 @@ class ClientDashboardFragment : Fragment() {
 
                     d.todaySummary?.let { s ->
                         binding.tvCaloriesToday.text =
-                            "%.0f / %d ккал".format(s.totalCalories, s.calorieGoal ?: 2000)
-                        val goal = (s.calorieGoal ?: 2000).toFloat()
+                            "%.0f / %d ккал".format(s.totalCalories, s.calorieGoal ?: 0)
+                        val goal = (s.calorieGoal ?: 0).toFloat()
                         binding.progressCalories.max      = 100
                         binding.progressCalories.progress = ((s.totalCalories / goal) * 100).toInt().coerceIn(0, 100)
 
-                        binding.tvProteinDash.text = if (s.proteinGoal != null)
-                            "%.0f/%.0fг".format(s.totalProtein, s.proteinGoal)
+                        val kcal = (s.calorieGoal ?: 0).toDouble()
+                        val proteinGoal = s.proteinGoal ?: if (kcal > 0) (kcal * 0.20 / 4).toInt() else null
+                        val fatGoal    = s.fatGoal    ?: if (kcal > 0) (kcal * 0.30 / 9).toInt() else null
+                        val carbGoal   = s.carbGoal   ?: if (kcal > 0) (kcal * 0.50 / 4).toInt() else null
+
+                        binding.tvProteinDash.text = if (proteinGoal != null)
+                            "%.0f/%dг".format(s.totalProtein, proteinGoal)
                         else "%.0fг".format(s.totalProtein)
-                        binding.tvFatDash.text = if (s.fatGoal != null)
-                            "%.0f/%.0fг".format(s.totalFat, s.fatGoal)
+                        binding.tvFatDash.text = if (fatGoal != null)
+                            "%.0f/%dг".format(s.totalFat, fatGoal)
                         else "%.0fг".format(s.totalFat)
-                        binding.tvCarbsDash.text = if (s.carbGoal != null)
-                            "%.0f/%.0fг".format(s.totalCarbs, s.carbGoal)
+                        binding.tvCarbsDash.text = if (carbGoal != null)
+                            "%.0f/%dг".format(s.totalCarbs, carbGoal)
                         else "%.0fг".format(s.totalCarbs)
                     }
                 }

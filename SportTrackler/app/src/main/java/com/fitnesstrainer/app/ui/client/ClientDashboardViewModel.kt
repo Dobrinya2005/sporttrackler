@@ -84,11 +84,20 @@ class ClientDashboardViewModel : ViewModel() {
                 if (avatarResp.isSuccessful) _avatarUrl.value = avatarResp.body()?.avatarUrl
                 if (trainerResp.isSuccessful) _myTrainer.value = trainerResp.body()
 
+                val rawSummary = if (summaryResp.isSuccessful) summaryResp.body() else null
+                val todaySummary = rawSummary?.let { s ->
+                    if (s.calorieGoal == null) {
+                        val weight = if (latestResp.isSuccessful) latestResp.body()?.weightKg else null
+                        val estimated = weight?.let { ((it * 33) / 50).toInt() * 50 }
+                        s.copy(calorieGoal = estimated)
+                    } else s
+                }
+
                 _state.value = DashboardState.Success(
                     DashboardData(
                         firstName    = firstName,
                         latest       = if (latestResp.isSuccessful) latestResp.body() else null,
-                        todaySummary = if (summaryResp.isSuccessful) summaryResp.body() else null
+                        todaySummary = todaySummary
                     )
                 )
             } catch (e: Exception) {

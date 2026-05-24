@@ -101,19 +101,24 @@ class FoodDiaryFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.errorState.visibility  = View.GONE
                     val s = state.summary
+                    val kcal = (s.calorieGoal ?: 0).toDouble()
+                    val proteinGoal = s.proteinGoal ?: if (kcal > 0) (kcal * 0.20 / 4).toInt() else null
+                    val fatGoal    = s.fatGoal    ?: if (kcal > 0) (kcal * 0.30 / 9).toInt() else null
+                    val carbGoal   = s.carbGoal   ?: if (kcal > 0) (kcal * 0.50 / 4).toInt() else null
+
                     binding.tvTotalCalories.text =
-                        "%.0f / %d ккал".format(s.totalCalories, s.calorieGoal ?: 2000)
-                    binding.tvProtein.text = if (s.proteinGoal != null)
-                        "Б %.0f / %.0f г".format(s.totalProtein, s.proteinGoal)
+                        "%.0f / %d ккал".format(s.totalCalories, s.calorieGoal ?: 0)
+                    binding.tvProtein.text = if (proteinGoal != null)
+                        "Б %.0f / %d г".format(s.totalProtein, proteinGoal)
                     else "Б %.1f г".format(s.totalProtein)
-                    binding.tvFat.text = if (s.fatGoal != null)
-                        "Ж %.0f / %.0f г".format(s.totalFat, s.fatGoal)
+                    binding.tvFat.text = if (fatGoal != null)
+                        "Ж %.0f / %d г".format(s.totalFat, fatGoal)
                     else "Ж %.1f г".format(s.totalFat)
-                    binding.tvCarbs.text = if (s.carbGoal != null)
-                        "У %.0f / %.0f г".format(s.totalCarbs, s.carbGoal)
+                    binding.tvCarbs.text = if (carbGoal != null)
+                        "У %.0f / %d г".format(s.totalCarbs, carbGoal)
                     else "У %.1f г".format(s.totalCarbs)
 
-                    val goal = (s.calorieGoal ?: 2000).toFloat()
+                    val goal = (s.calorieGoal ?: 0).toFloat()
                     binding.progressCalories.max      = 100
                     binding.progressCalories.progress = ((s.totalCalories / goal) * 100).toInt().coerceIn(0, 100)
 
