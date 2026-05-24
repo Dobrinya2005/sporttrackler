@@ -39,7 +39,17 @@ class FcmTokenService : FirebaseMessagingService() {
         val body       = message.notification?.body  ?: message.data["body"]  ?: return
         val senderId   = message.data["senderId"]?.toIntOrNull()
         val senderName = message.data["senderName"] ?: title
-        showNotification(title, body, senderId, senderName)
+
+        // Не показывать уведомление если отправитель — это сам текущий пользователь
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val myId = App.instance.tokenStorage.getUserId()
+                if (senderId != null && senderId == myId) return@launch
+                showNotification(title, body, senderId, senderName)
+            } catch (_: Exception) {
+                showNotification(title, body, senderId, senderName)
+            }
+        }
     }
 
     private fun showNotification(title: String, body: String, senderId: Int?, senderName: String) {
