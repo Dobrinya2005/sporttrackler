@@ -363,10 +363,6 @@
                 android:paddingTop="4dp"
                 android:paddingBottom="8dp">
 
-                <!-- Divider -->
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="@color/border_default" android:layout_marginHorizontal="16dp"/>
-
                 <!-- Биометрия -->
                 <LinearLayout
                     android:id="@+id/row_biometric"
@@ -530,10 +526,6 @@
                         app:trackTint="@null"/>
                 </LinearLayout>
 
-                <!-- Chat theme row -->
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="@color/border_default" android:layout_marginHorizontal="16dp"/>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -571,50 +563,58 @@
                     </LinearLayout>
 
                     <!-- Theme color pickers -->
-                    <LinearLayout
-                        android:id="@+id/theme_picker_row"
+                    <HorizontalScrollView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:scrollbars="none"
+                        android:clipToPadding="false"
+                        android:paddingEnd="16dp">
 
-                        <FrameLayout android:id="@+id/theme_default" android:layout_width="44dp" android:layout_height="44dp"
-                            android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
-                            <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
-                                android:background="@drawable/bg_theme_circle_default"/>
-                        </FrameLayout>
+                        <LinearLayout
+                            android:id="@+id/theme_picker_row"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
-                        <FrameLayout android:id="@+id/theme_navy" android:layout_width="44dp" android:layout_height="44dp"
-                            android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
-                            <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
-                                android:background="@drawable/bg_theme_circle_navy"/>
-                        </FrameLayout>
+                            <FrameLayout android:id="@+id/theme_default" android:layout_width="44dp" android:layout_height="44dp"
+                                android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
+                                <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
+                                    android:background="@drawable/bg_theme_circle_default"/>
+                            </FrameLayout>
 
-                        <FrameLayout android:id="@+id/theme_forest" android:layout_width="44dp" android:layout_height="44dp"
-                            android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
-                            <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
-                                android:background="@drawable/bg_theme_circle_forest"/>
-                        </FrameLayout>
+                            <FrameLayout android:id="@+id/theme_navy" android:layout_width="44dp" android:layout_height="44dp"
+                                android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
+                                <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
+                                    android:background="@drawable/bg_theme_circle_navy"/>
+                            </FrameLayout>
 
-                        <FrameLayout android:id="@+id/theme_sunset" android:layout_width="44dp" android:layout_height="44dp"
-                            android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
-                            <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
-                                android:background="@drawable/bg_theme_circle_sunset"/>
-                        </FrameLayout>
+                            <FrameLayout android:id="@+id/theme_forest" android:layout_width="44dp" android:layout_height="44dp"
+                                android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
+                                <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
+                                    android:background="@drawable/bg_theme_circle_forest"/>
+                            </FrameLayout>
 
-                        <FrameLayout android:id="@+id/theme_galaxy" android:layout_width="44dp" android:layout_height="44dp"
-                            android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
-                            <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
-                                android:background="@drawable/bg_theme_circle_galaxy"/>
-                        </FrameLayout>
+                            <FrameLayout android:id="@+id/theme_sunset" android:layout_width="44dp" android:layout_height="44dp"
+                                android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
+                                <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
+                                    android:background="@drawable/bg_theme_circle_sunset"/>
+                            </FrameLayout>
 
-                        <FrameLayout android:id="@+id/theme_ocean" android:layout_width="44dp" android:layout_height="44dp"
-                            android:clickable="true" android:focusable="true">
-                            <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
-                                android:background="@drawable/bg_theme_circle_ocean"/>
-                        </FrameLayout>
+                            <FrameLayout android:id="@+id/theme_galaxy" android:layout_width="44dp" android:layout_height="44dp"
+                                android:layout_marginEnd="8dp" android:clickable="true" android:focusable="true">
+                                <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
+                                    android:background="@drawable/bg_theme_circle_galaxy"/>
+                            </FrameLayout>
 
-                    </LinearLayout>
+                            <FrameLayout android:id="@+id/theme_ocean" android:layout_width="44dp" android:layout_height="44dp"
+                                android:clickable="true" android:focusable="true">
+                                <View android:layout_width="36dp" android:layout_height="36dp" android:layout_gravity="center"
+                                    android:background="@drawable/bg_theme_circle_ocean"/>
+                            </FrameLayout>
+
+                        </LinearLayout>
+                    </HorizontalScrollView>
                 </LinearLayout>
 
                 <!-- Logout row -->

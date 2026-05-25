@@ -72,6 +72,15 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                                     <img src="http://185.185.71.46:5001/icon-wm.png" width="150" height="150" alt="" style="display:block;border-radius:32px;"/>
                                   </td>
                                 </tr>
+                                <tr>
+                                  <td colspan="2" style="padding-top:16px;">
+                                    <a href="javascript:void(0)"
+                                       onclick="navigator.clipboard.writeText('{code}').then(function(){{this.innerText='✓ Скопировано';this.style.background='#1e3a2f';this.style.borderColor='#a6e3a1';this.style.color='#a6e3a1';}}.bind(this));"
+                                       style="display:inline-block;padding:10px 24px;background:#0d1f3c;border:1.5px solid #2e8eff;border-radius:10px;color:#89b4fa;font-size:14px;font-weight:bold;font-family:Arial,sans-serif;text-decoration:none;letter-spacing:0.3px;cursor:pointer;">
+                                      📋 Скопировать код
+                                    </a>
+                                  </td>
+                                </tr>
                               </table>
                             </td>
                           </tr>

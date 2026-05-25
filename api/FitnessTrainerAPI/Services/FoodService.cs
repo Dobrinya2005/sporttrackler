@@ -67,7 +67,7 @@ public class FoodService(AppDbContext db, IClientProfileService profileService) 
     public async Task<DailySummaryResponse> GetDailySummaryAsync(int clientId, DateOnly date)
     {
         var profile = await db.ClientProfiles.FirstOrDefaultAsync(cp => cp.UserId == clientId);
-        if (profile is not null && profile.DailyCalorieGoal is null)
+        if (profile is not null && (profile.DailyCalorieGoal is null || profile.DailyProteinGoal is null))
         {
             try
             {

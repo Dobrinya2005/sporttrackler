@@ -23,6 +23,18 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE goals ADD COLUMN startValue REAL NOT NULL DEFAULT 0.0")
                 db.execSQL("DELETE FROM goals")
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS daily_summary (
+                        userId INTEGER NOT NULL,
+                        date TEXT NOT NULL,
+                        totalCalories REAL NOT NULL,
+                        totalProtein REAL NOT NULL,
+                        totalFat REAL NOT NULL,
+                        totalCarbs REAL NOT NULL,
+                        calorieGoal INTEGER,
+                        PRIMARY KEY(userId, date)
+                    )
+                """.trimIndent())
             }
         }
 

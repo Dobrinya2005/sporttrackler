@@ -109,13 +109,13 @@ class FoodDiaryFragment : Fragment() {
                     binding.tvTotalCalories.text =
                         "%.0f / %d ккал".format(s.totalCalories, s.calorieGoal ?: 0)
                     binding.tvProtein.text = if (proteinGoal != null)
-                        "Б %.0f / %d г".format(s.totalProtein, proteinGoal)
+                        "Б %.0f / %.0f г".format(s.totalProtein, proteinGoal)
                     else "Б %.1f г".format(s.totalProtein)
                     binding.tvFat.text = if (fatGoal != null)
-                        "Ж %.0f / %d г".format(s.totalFat, fatGoal)
+                        "Ж %.0f / %.0f г".format(s.totalFat, fatGoal)
                     else "Ж %.1f г".format(s.totalFat)
                     binding.tvCarbs.text = if (carbGoal != null)
-                        "У %.0f / %d г".format(s.totalCarbs, carbGoal)
+                        "У %.0f / %.0f г".format(s.totalCarbs, carbGoal)
                     else "У %.1f г".format(s.totalCarbs)
 
                     val goal = (s.calorieGoal ?: 0).toFloat()

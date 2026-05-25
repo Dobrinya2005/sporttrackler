@@ -40,7 +40,7 @@ public class ClientProfileService(AppDbContext db) : IClientProfileService
 
         if (profile is null) return null;
 
-        if (profile.DailyCalorieGoal is null)
+        if (profile.DailyCalorieGoal is null || profile.DailyProteinGoal is null)
         {
             CalculateMacroGoals(profile);
             await db.SaveChangesAsync();

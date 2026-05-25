@@ -140,6 +140,7 @@ class SettingsFragment : Fragment() {
         }
 
         // Шагомер
+        b.switchSteps.isChecked = isStepServiceRunning()
         b.switchSteps.setOnCheckedChangeListener { _, checked ->
             if (checked) checkAndStartStepCounter()
             else StepCounterService.stop(requireContext())
@@ -227,7 +228,22 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    @Suppress("DEPRECATION")
+    private fun isStepServiceRunning(): Boolean {
+        val am = requireContext().getSystemService(android.content.Context.ACTIVITY_SERVICE)
+            as android.app.ActivityManager
+        return am.getRunningServices(Int.MAX_VALUE)
+            .any { it.service.className == StepCounterService::class.java.name }
+    }
+
     private fun checkAndStartStepCounter() {
+        val sensorManager = requireContext().getSystemService(android.content.Context.SENSOR_SERVICE)
+            as android.hardware.SensorManager
+        if (sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_STEP_COUNTER) == null) {
+            b.switchSteps.isChecked = false
+            Toast.makeText(requireContext(), "Шагомер не поддерживается на этом устройстве", Toast.LENGTH_SHORT).show()
+            return
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACTIVITY_RECOGNITION)
             != PackageManager.PERMISSION_GRANTED

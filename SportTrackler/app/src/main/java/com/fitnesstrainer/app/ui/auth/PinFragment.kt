@@ -210,10 +210,18 @@ class PinFragment : Fragment() {
                 .setTitle("Вход по биометрии")
                 .setMessage("Хотите использовать отпечаток пальца или Face ID для входа?")
                 .setPositiveButton("Включить") { _, _ ->
-                    lifecycleScope.launch {
-                        App.instance.tokenStorage.setBiometricEnabled(true)
-                        navigateToDashboard()
-                    }
+                    BiometricHelper.show(
+                        fragment  = this,
+                        title     = "Настройка биометрии",
+                        subtitle  = "Отсканируйте отпечаток пальца или подтвердите Face ID",
+                        onSuccess = {
+                            lifecycleScope.launch {
+                                App.instance.tokenStorage.setBiometricEnabled(true)
+                                navigateToDashboard()
+                            }
+                        },
+                        onError   = { _ -> navigateToDashboard() }
+                    )
                 }
                 .setNegativeButton("Пропустить") { _, _ -> navigateToDashboard() }
                 .setCancelable(false)

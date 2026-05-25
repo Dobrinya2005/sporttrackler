@@ -101,7 +101,7 @@ class LoginButton @JvmOverloads constructor(
 
         // icon (27x27 dp) + text centered with gap 15dp
         val iconSize = 27 * d
-        val text     = "Log In"
+        val text     = "Войти"
         val textW    = textPaint.measureText(text)
         val gap      = 15 * d
         val contentW = iconSize + gap + textW

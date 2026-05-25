@@ -1,12 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="48dp"
+    android:width="24dp"
     android:height="24dp"
-    android:viewportWidth="48"
+    android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- Barbell: outer plates + collars + bar -->
+    <!-- Ruler body (rotated 45°) -->
     <path
-        android:fillColor="#268BD2"
-        android:pathData="M1,5 h6 v3 h3 v2 h28 v-2 h3 v-3 h6 v14 h-6 v-3 h-3 v-2 h-28 v2 h-3 v3 h-6 Z"/>
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M3,17.25 L17.25,3 A2.47,2.47 0,0,1 21,6.75 L6.75,21 A2.47,2.47 0,0,1 3,17.25 Z"/>
+
+    <!-- Tick marks along the ruler -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:pathData="M7.5,14.5 L9.5,16.5"/>
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:pathData="M10,12 L13,15"/>
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:pathData="M12.5,9.5 L14.5,11.5"/>
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:pathData="M15,7 L17,9"/>
+
 </vector>

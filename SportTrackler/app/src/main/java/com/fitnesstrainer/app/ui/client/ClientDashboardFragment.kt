@@ -260,6 +260,11 @@ class ClientDashboardFragment : Fragment() {
             .show()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadStepsAndGoals()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

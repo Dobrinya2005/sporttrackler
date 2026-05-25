@@ -49,9 +49,17 @@ class StepCounterService : Service(), SensorEventListener {
         super.onCreate()
         createChannel()
         startForeground(NOTIFICATION_ID, buildNotification(0))
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        stepSensor    = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-        stepSensor?.let { sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL) }
+        try {
+            sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            stepSensor    = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+            if (stepSensor == null) {
+                stopSelf()
+                return
+            }
+            sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        } catch (e: Exception) {
+            stopSelf()
+        }
     }
 
     override fun onSensorChanged(event: SensorEvent) {
