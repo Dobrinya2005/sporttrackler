@@ -69,7 +69,7 @@ class GroupChatViewModel : ViewModel() {
         viewModelScope.launch { _accessToken.value = tokenStorage.getAccessToken() }
         loadMessages()
         loadGroupInfo()
-        viewModelScope.launch { connectSignalR() }
+        viewModelScope.launch { try { connectSignalR() } catch (_: Exception) {} }
     }
 
     fun loadGroupInfo() {

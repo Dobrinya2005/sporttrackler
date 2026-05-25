@@ -67,11 +67,13 @@ class ChatViewModel : ViewModel() {
     fun init(contactId: Int) {
         this.contactId = contactId
         viewModelScope.launch {
-            _myUserId.value = tokenStorage.getUserId()
-            _accessToken.value = tokenStorage.getAccessToken()
-            loadMessages()
-            loadContactProfile()
-            connectSignalR()
+            try {
+                _myUserId.value = tokenStorage.getUserId()
+                _accessToken.value = tokenStorage.getAccessToken()
+                loadMessages()
+                loadContactProfile()
+                connectSignalR()
+            } catch (_: Exception) {}
             observeNetwork()
         }
     }
@@ -83,7 +85,7 @@ class ChatViewModel : ViewModel() {
                     val state = hubConnection?.connectionState
                     if (state == null || state == HubConnectionState.DISCONNECTED) {
                         loadMessages()
-                        connectSignalR()
+                        try { connectSignalR() } catch (_: Exception) {}
                     }
                 } else {
                     _connectionState.postValue(false)

@@ -65,19 +65,14 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
                               <!-- code row with watermark -->
                               <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                  <td style="font-size:44px;font-weight:bold;letter-spacing:10px;color:#a6e3a1;font-family:monospace;padding:8px 0 0 0;vertical-align:middle;">
-                                    {code}
+                                  <td style="vertical-align:middle;">
+                                    <div style="font-size:48px;font-weight:bold;letter-spacing:12px;color:#a6e3a1;font-family:'Courier New',Courier,monospace;padding:12px 16px;background:#11111b;border-radius:12px;display:inline-block;margin-top:8px;border:1.5px solid #313244;user-select:all;-webkit-user-select:all;">
+                                      {code}
+                                    </div>
+                                    <p style="margin:8px 0 0;color:#6c7086;font-size:12px;">Нажмите на код, чтобы выделить его</p>
                                   </td>
-                                  <td align="right" width="150" style="vertical-align:middle;">
-                                    <img src="http://185.185.71.46:5001/icon-wm.png" width="150" height="150" alt="" style="display:block;border-radius:32px;"/>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td colspan="2" style="padding-top:16px;">
-                                    <a href="javascript:navigator.clipboard.writeText('{code}')"
-                                       style="display:inline-block;padding:10px 24px;background:#0d1f3c;border:1.5px solid #2e8eff;border-radius:10px;color:#89b4fa;font-size:14px;font-weight:bold;font-family:Arial,sans-serif;text-decoration:none;letter-spacing:0.3px;cursor:pointer;">
-                                      📋 Скопировать код
-                                    </a>
+                                  <td align="right" width="130" style="vertical-align:middle;">
+                                    <img src="http://185.185.71.46:5001/icon-wm.png" width="120" height="120" alt="" style="display:block;border-radius:24px;"/>
                                   </td>
                                 </tr>
                               </table>

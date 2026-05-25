@@ -145,13 +145,13 @@ class ClientDashboardFragment : Fragment() {
                         val carbGoal   = s.carbGoal   ?: if (kcal > 0) Math.round(kcal * 0.50 / 4).toDouble() else null
 
                         binding.tvProteinDash.text = if (proteinGoal != null)
-                            "%.0f/%dг".format(s.totalProtein, proteinGoal)
+                            "%.0f/%.0fг".format(s.totalProtein, proteinGoal)
                         else "%.0fг".format(s.totalProtein)
                         binding.tvFatDash.text = if (fatGoal != null)
-                            "%.0f/%dг".format(s.totalFat, fatGoal)
+                            "%.0f/%.0fг".format(s.totalFat, fatGoal)
                         else "%.0fг".format(s.totalFat)
                         binding.tvCarbsDash.text = if (carbGoal != null)
-                            "%.0f/%dг".format(s.totalCarbs, carbGoal)
+                            "%.0f/%.0fг".format(s.totalCarbs, carbGoal)
                         else "%.0fг".format(s.totalCarbs)
                     }
                 }
