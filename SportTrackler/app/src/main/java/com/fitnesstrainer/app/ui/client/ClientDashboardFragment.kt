@@ -140,9 +140,9 @@ class ClientDashboardFragment : Fragment() {
                         binding.progressCalories.progress = ((s.totalCalories / goal) * 100).toInt().coerceIn(0, 100)
 
                         val kcal = (s.calorieGoal ?: 0).toDouble()
-                        val proteinGoal = s.proteinGoal ?: if (kcal > 0) (kcal * 0.20 / 4).toInt() else null
-                        val fatGoal    = s.fatGoal    ?: if (kcal > 0) (kcal * 0.30 / 9).toInt() else null
-                        val carbGoal   = s.carbGoal   ?: if (kcal > 0) (kcal * 0.50 / 4).toInt() else null
+                        val proteinGoal = s.proteinGoal ?: if (kcal > 0) Math.round(kcal * 0.20 / 4).toDouble() else null
+                        val fatGoal    = s.fatGoal    ?: if (kcal > 0) Math.round(kcal * 0.30 / 9).toDouble() else null
+                        val carbGoal   = s.carbGoal   ?: if (kcal > 0) Math.round(kcal * 0.50 / 4).toDouble() else null
 
                         binding.tvProteinDash.text = if (proteinGoal != null)
                             "%.0f/%dг".format(s.totalProtein, proteinGoal)

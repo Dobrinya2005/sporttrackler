@@ -102,9 +102,9 @@ class FoodDiaryFragment : Fragment() {
                     binding.errorState.visibility  = View.GONE
                     val s = state.summary
                     val kcal = (s.calorieGoal ?: 0).toDouble()
-                    val proteinGoal = s.proteinGoal ?: if (kcal > 0) (kcal * 0.20 / 4).toInt() else null
-                    val fatGoal    = s.fatGoal    ?: if (kcal > 0) (kcal * 0.30 / 9).toInt() else null
-                    val carbGoal   = s.carbGoal   ?: if (kcal > 0) (kcal * 0.50 / 4).toInt() else null
+                    val proteinGoal = s.proteinGoal ?: if (kcal > 0) Math.round(kcal * 0.20 / 4).toDouble() else null
+                    val fatGoal    = s.fatGoal    ?: if (kcal > 0) Math.round(kcal * 0.30 / 9).toDouble() else null
+                    val carbGoal   = s.carbGoal   ?: if (kcal > 0) Math.round(kcal * 0.50 / 4).toDouble() else null
 
                     binding.tvTotalCalories.text =
                         "%.0f / %d ккал".format(s.totalCalories, s.calorieGoal ?: 0)

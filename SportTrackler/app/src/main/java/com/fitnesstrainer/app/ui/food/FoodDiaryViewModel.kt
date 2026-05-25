@@ -164,9 +164,9 @@ private fun DailySummaryEntity.toResponse(): DailySummaryResponse {
     return DailySummaryResponse(
         date          = date,
         calorieGoal   = calorieGoal,
-        proteinGoal   = if (kcal > 0) (kcal * 0.20 / 4) else null,
-        fatGoal       = if (kcal > 0) (kcal * 0.30 / 9) else null,
-        carbGoal      = if (kcal > 0) (kcal * 0.50 / 4) else null,
+        proteinGoal   = if (kcal > 0) Math.round(kcal * 0.20 / 4).toDouble() else null,
+        fatGoal       = if (kcal > 0) Math.round(kcal * 0.30 / 9).toDouble() else null,
+        carbGoal      = if (kcal > 0) Math.round(kcal * 0.50 / 4).toDouble() else null,
         totalCalories = totalCalories,
         totalProtein  = totalProtein,
         totalFat      = totalFat,

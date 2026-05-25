@@ -5,42 +5,33 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- Ruler body (rotated 45°) -->
+    <!-- Ruler body -->
     <path
         android:fillColor="@android:color/transparent"
         android:strokeColor="#FFFFFF"
         android:strokeWidth="1.8"
-        android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:pathData="M3,17.25 L17.25,3 A2.47,2.47 0,0,1 21,6.75 L6.75,21 A2.47,2.47 0,0,1 3,17.25 Z"/>
+        android:pathData="M2,8 H22 V16 H2 Z"/>
 
-    <!-- Tick marks along the ruler -->
+    <!-- Long tick (center) -->
     <path
-        android:fillColor="@android:color/transparent"
         android:strokeColor="#FFFFFF"
         android:strokeWidth="1.8"
         android:strokeLineCap="round"
-        android:pathData="M7.5,14.5 L9.5,16.5"/>
+        android:pathData="M12,8 V13"/>
 
+    <!-- Medium ticks -->
     <path
-        android:fillColor="@android:color/transparent"
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="1.8"
+        android:strokeWidth="1.5"
         android:strokeLineCap="round"
-        android:pathData="M10,12 L13,15"/>
+        android:pathData="M7,8 V12 M17,8 V12"/>
 
+    <!-- Short ticks -->
     <path
-        android:fillColor="@android:color/transparent"
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="1.8"
+        android:strokeWidth="1.2"
         android:strokeLineCap="round"
-        android:pathData="M12.5,9.5 L14.5,11.5"/>
-
-    <path
-        android:fillColor="@android:color/transparent"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="1.8"
-        android:strokeLineCap="round"
-        android:pathData="M15,7 L17,9"/>
+        android:pathData="M4.5,8 V11 M9.5,8 V11 M14.5,8 V11 M19.5,8 V11"/>
 
 </vector>

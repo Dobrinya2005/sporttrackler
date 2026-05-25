@@ -201,6 +201,7 @@ class PinFragment : Fragment() {
             navigateToDashboard()
             return
         }
+        val fragment = this
         lifecycleScope.launch {
             if (App.instance.tokenStorage.isBiometricEnabled()) {
                 navigateToDashboard()
@@ -211,7 +212,7 @@ class PinFragment : Fragment() {
                 .setMessage("Хотите использовать отпечаток пальца или Face ID для входа?")
                 .setPositiveButton("Включить") { _, _ ->
                     BiometricHelper.show(
-                        fragment  = this,
+                        fragment  = fragment,
                         title     = "Настройка биометрии",
                         subtitle  = "Отсканируйте отпечаток пальца или подтвердите Face ID",
                         onSuccess = {
