@@ -222,7 +222,7 @@ class ChatViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = api.sendMessage(SendMessageRequest(contactId, text, replyToMessageId = replyToMessageId))
-                if (response.isSuccessful) appendMessage(response.body())
+                if (response.isSuccessful) loadMessages()
             } catch (_: Exception) {}
         }
     }
@@ -242,7 +242,7 @@ class ChatViewModel : ViewModel() {
                 val sendResp = api.sendMessage(
                     SendMessageRequest(contactId, null, mediaUrl, attachmentType)
                 )
-                if (sendResp.isSuccessful) appendMessage(sendResp.body())
+                if (sendResp.isSuccessful) loadMessages()
                 else _uploadError.value = "Ошибка отправки"
             } catch (e: Exception) {
                 _uploadError.value = "Ошибка: ${e.message}"
