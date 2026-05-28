@@ -41,8 +41,8 @@ private const val TYPE_SENT     = 0
 private const val TYPE_RECEIVED = 1
 
 class ChatAdapter(
-    private val myUserId: Int,
-    private val accessToken: String? = null,
+    var myUserId: Int,
+    var accessToken: String? = null,
     var onReply: ((MessageDto) -> Unit)? = null
 ) : ListAdapter<MessageDto, RecyclerView.ViewHolder>(DIFF) {
 

@@ -152,22 +152,25 @@ class ChatFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext()).apply { stackFromEnd = true }
         binding.rvMessages.layoutManager = layoutManager
 
+        // Init adapter immediately with placeholder userId, update when real id arrives
+        adapter = ChatAdapter(-1, null)
+        adapter.onReply = { msg -> showReplyPreview(msg) }
+        adapter.onReact = { msg, emoji -> viewModel.toggleReaction(msg.messageId, emoji) }
+        binding.rvMessages.adapter = adapter
+
         viewModel.myUserId.observe(viewLifecycleOwner) { myId ->
             if (myId != -1) {
-                adapter = ChatAdapter(myId, viewModel.accessToken.value)
-                adapter.onReply = { msg -> showReplyPreview(msg) }
-                adapter.onReact = { msg, emoji -> viewModel.toggleReaction(msg.messageId, emoji) }
-                binding.rvMessages.adapter = adapter
+                adapter.myUserId = myId
+                adapter.accessToken = viewModel.accessToken.value
+                adapter.notifyDataSetChanged()
                 applyTheme()
             }
         }
 
         viewModel.messages.observe(viewLifecycleOwner) { messages ->
-            if (::adapter.isInitialized) {
-                adapter.submitList(messages) {
-                    if (messages.isNotEmpty())
-                        binding.rvMessages.scrollToPosition(messages.size - 1)
-                }
+            adapter.submitList(messages) {
+                if (messages.isNotEmpty())
+                    binding.rvMessages.scrollToPosition(messages.size - 1)
             }
         }
 
