@@ -46,22 +46,17 @@ class ChatsViewModel : ViewModel() {
                 } catch (_: Exception) { emptyMap() } ?: emptyMap()
 
                 if (role == "Client") {
-                    try {
-                        val resp = api.getMyTrainer()
-                        if (resp.isSuccessful) {
-                            resp.body()?.let { t ->
-                                val conv = convMap[t.userId]
-                                list.add(ChatListItem.PersonItem(
-                                    userId       = t.userId,
-                                    name         = "${t.firstName} ${t.lastName}",
-                                    avatar       = t.avatarUrl,
-                                    lastMessage  = conv?.lastMessage,
-                                    lastMessageAt = conv?.lastMessageAt,
-                                    unreadCount  = conv?.unreadCount ?: 0
-                                ))
-                            }
-                        }
-                    } catch (_: Exception) {}
+                    // Show all conversations (current + previous trainers)
+                    convMap.values.forEach { conv ->
+                        list.add(ChatListItem.PersonItem(
+                            userId        = conv.contactId,
+                            name          = conv.contactName,
+                            avatar        = conv.contactAvatar,
+                            lastMessage   = conv.lastMessage,
+                            lastMessageAt = conv.lastMessageAt,
+                            unreadCount   = conv.unreadCount
+                        ))
+                    }
                 } else if (role == "Trainer") {
                     try {
                         val resp = api.getMyClients()

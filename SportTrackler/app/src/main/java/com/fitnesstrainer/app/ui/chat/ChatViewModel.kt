@@ -333,8 +333,7 @@ class ChatViewModel : ViewModel() {
 
     private fun appendMessage(dto: MessageDto?) {
         dto ?: return
-        val list = _messages.value?.toMutableList() ?: mutableListOf()
-        list.add(dto)
+        val list = (_messages.value ?: emptyList()) + dto
         _messages.value = list
     }
 

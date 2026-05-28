@@ -33,6 +33,8 @@ import com.fitnesstrainer.app.databinding.ItemMessageReceivedBinding
 import com.fitnesstrainer.app.databinding.ItemMessageSentBinding
 import java.io.File
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 private const val TYPE_SENT     = 0
@@ -873,9 +875,15 @@ class ChatAdapter(
         }
 
         fun formatTime(sentAt: String) = try {
-            LocalDateTime.parse(sentAt, DateTimeFormatter.ISO_DATE_TIME)
+            OffsetDateTime.parse(sentAt, DateTimeFormatter.ISO_DATE_TIME)
+                .atZoneSameInstant(ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern("HH:mm"))
-        } catch (_: Exception) { "" }
+        } catch (_: Exception) {
+            try {
+                LocalDateTime.parse(sentAt, DateTimeFormatter.ISO_DATE_TIME)
+                    .format(DateTimeFormatter.ofPattern("HH:mm"))
+            } catch (_: Exception) { "" }
+        }
 
         fun playVideoInApp(view: View, url: String) {
             val ctx = view.context
