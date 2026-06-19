@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingVertical="4dp"
+    android:paddingVertical="2dp"
     android:paddingHorizontal="8dp"
     android:gravity="start">
 
@@ -117,6 +117,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:minWidth="180dp"
         android:maxWidth="260dp"
         android:background="@drawable/bg_message_received"
         android:padding="10dp">
@@ -128,14 +129,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="6dp"
-            android:background="#22FFFFFF"
-            android:padding="6dp"
+            android:background="#33000000"
+            android:padding="8dp"
             android:visibility="gone">
 
             <View
                 android:layout_width="3dp"
                 android:layout_height="match_parent"
-                android:background="@color/accent_indigo"
+                android:background="@color/accent_cyan"
                 android:layout_marginEnd="8dp"/>
 
             <LinearLayout
@@ -148,7 +149,7 @@
                     android:id="@+id/tv_reply_sender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/accent_indigo"
+                    android:textColor="@color/accent_cyan"
                     android:textSize="11sp"
                     android:fontFamily="sans-serif-medium"/>
 
@@ -156,7 +157,7 @@
                     android:id="@+id/tv_reply_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="#FFFFFF"
                     android:textSize="12sp"
                     android:maxLines="2"
                     android:ellipsize="end"/>

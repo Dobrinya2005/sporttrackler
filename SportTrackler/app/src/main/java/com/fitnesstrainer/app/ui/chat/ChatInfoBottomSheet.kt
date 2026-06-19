@@ -6,9 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.fitnesstrainer.app.App
+import com.fitnesstrainer.app.BuildConfig
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.data.model.MessageDto
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChatInfoBottomSheet(
     private val contactId: Int,
@@ -28,6 +36,30 @@ class ChatInfoBottomSheet(
         val initials = contactName.trim().split(" ")
             .take(2).mapNotNull { it.firstOrNull()?.uppercaseChar() }.joinToString("")
         view.findViewById<TextView>(R.id.tv_info_initials).text = initials
+
+        // Load avatar
+        val ivAvatar = view.findViewById<ImageView>(R.id.iv_info_avatar)
+        val tvInitials = view.findViewById<TextView>(R.id.tv_info_initials)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val resp = App.instance.apiService.getConversations()
+                val avatarRaw = resp.body()?.find { it.contactId == contactId }?.contactAvatar
+                val avatarUrl = avatarRaw?.let {
+                    if (it.startsWith("http")) it
+                    else BuildConfig.BASE_URL.trimEnd('/') + it
+                }
+                withContext(Dispatchers.Main) {
+                    if (!avatarUrl.isNullOrBlank() && isAdded) {
+                        ivAvatar.visibility = View.VISIBLE
+                        tvInitials.visibility = View.GONE
+                        Glide.with(requireContext())
+                            .load(avatarUrl)
+                            .transform(CircleCrop())
+                            .into(ivAvatar)
+                    }
+                }
+            } catch (_: Exception) {}
+        }
 
         // Name + message count
         view.findViewById<TextView>(R.id.tv_info_name).text = contactName

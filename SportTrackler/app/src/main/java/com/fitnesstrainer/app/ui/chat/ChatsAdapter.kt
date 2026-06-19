@@ -46,7 +46,7 @@ class ChatsAdapter(
                 bindUnread(b, item.unreadCount)
                 b.ivBadge.setImageResource(R.drawable.ic_person)
                 val placeholder = AvatarHelper.forName(item.name)
-                val avatarUrl = item.avatar?.let { BuildConfig.BASE_URL.trimEnd('/') + it }
+                val avatarUrl = resolveAvatarUrl(item.avatar)
                 Glide.with(b.ivAvatar).load(avatarUrl)
                     .placeholder(placeholder).error(placeholder)
                     .circleCrop().into(b.ivAvatar)
@@ -60,7 +60,7 @@ class ChatsAdapter(
                 bindUnread(b, item.unreadCount)
                 b.ivBadge.setImageResource(R.drawable.ic_group)
                 val placeholder = AvatarHelper.forName(item.name)
-                val avatarUrl = item.avatar?.let { BuildConfig.BASE_URL.trimEnd('/') + it }
+                val avatarUrl = resolveAvatarUrl(item.avatar)
                 Glide.with(b.ivAvatar).load(avatarUrl)
                     .placeholder(placeholder).error(placeholder)
                     .circleCrop().into(b.ivAvatar)
@@ -76,6 +76,12 @@ class ChatsAdapter(
         } else {
             b.tvUnread.visibility = View.GONE
         }
+    }
+
+    private fun resolveAvatarUrl(avatar: String?): String? {
+        if (avatar.isNullOrBlank()) return null
+        return if (avatar.startsWith("http")) avatar
+        else BuildConfig.BASE_URL.trimEnd('/') + avatar
     }
 
     private fun formatTime(iso: String?): String {

@@ -12,7 +12,6 @@ import com.fitnesstrainer.app.data.model.MeasurementResponse
 import com.fitnesstrainer.app.data.model.NewsItem
 import com.fitnesstrainer.app.data.model.TrainerInfo
 import com.fitnesstrainer.app.data.model.UserProfile
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -71,23 +70,18 @@ class ClientDashboardViewModel : ViewModel() {
                 val firstName = tokenStorage.getFirstName() ?: ""
                 val today     = LocalDate.now().toString()
 
-                val latestDeferred  = async { api.getLatestMeasurement(userId) }
-                val summaryDeferred = async { api.getDailySummary(userId, today) }
-                val avatarDeferred  = async { api.getMe() }
-                val trainerDeferred = async { api.getMyTrainer() }
+                val latestResp  = runCatching { api.getLatestMeasurement(userId) }.getOrNull()
+                val summaryResp = runCatching { api.getDailySummary(userId, today) }.getOrNull()
+                val avatarResp  = runCatching { api.getMe() }.getOrNull()
+                val trainerResp = runCatching { api.getMyTrainer() }.getOrNull()
 
-                val latestResp  = latestDeferred.await()
-                val summaryResp = summaryDeferred.await()
-                val avatarResp  = avatarDeferred.await()
-                val trainerResp = trainerDeferred.await()
+                if (avatarResp?.isSuccessful == true) _avatarUrl.value = avatarResp.body()?.avatarUrl
+                if (trainerResp?.isSuccessful == true) _myTrainer.value = trainerResp.body()
 
-                if (avatarResp.isSuccessful) _avatarUrl.value = avatarResp.body()?.avatarUrl
-                if (trainerResp.isSuccessful) _myTrainer.value = trainerResp.body()
-
-                val rawSummary = if (summaryResp.isSuccessful) summaryResp.body() else null
+                val rawSummary = if (summaryResp?.isSuccessful == true) summaryResp.body() else null
                 val todaySummary = rawSummary?.let { s ->
                     if (s.calorieGoal == null) {
-                        val weight = if (latestResp.isSuccessful) latestResp.body()?.weightKg else null
+                        val weight = if (latestResp?.isSuccessful == true) latestResp.body()?.weightKg else null
                         val estimated = weight?.let { ((it * 33) / 50).toInt() * 50 }
                         s.copy(calorieGoal = estimated)
                     } else s
@@ -96,7 +90,7 @@ class ClientDashboardViewModel : ViewModel() {
                 _state.value = DashboardState.Success(
                     DashboardData(
                         firstName    = firstName,
-                        latest       = if (latestResp.isSuccessful) latestResp.body() else null,
+                        latest       = if (latestResp?.isSuccessful == true) latestResp.body() else null,
                         todaySummary = todaySummary
                     )
                 )

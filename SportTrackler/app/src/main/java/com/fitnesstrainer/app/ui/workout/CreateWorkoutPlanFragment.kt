@@ -102,8 +102,8 @@ class CreateWorkoutPlanFragment : Fragment() {
     }
 
     private fun pickDate(isStart: Boolean) {
-        val cal = Calendar.getInstance()
-        DatePickerDialog(
+        val today = Calendar.getInstance()
+        val dialog = DatePickerDialog(
             requireContext(),
             { _, y, m, d ->
                 val formatted = "%04d-%02d-%02d".format(y, m + 1, d)
@@ -111,13 +111,35 @@ class CreateWorkoutPlanFragment : Fragment() {
                 if (isStart) {
                     binding.etStartDate.setText(display)
                     binding.etStartDate.tag = formatted
+                    // Если дата окончания раньше новой даты начала — сбрасываем её
+                    val endTag = binding.etEndDate.tag as? String
+                    if (endTag != null && endTag < formatted) {
+                        binding.etEndDate.setText("")
+                        binding.etEndDate.tag = null
+                    }
                 } else {
                     binding.etEndDate.setText(display)
                     binding.etEndDate.tag = formatted
                 }
             },
-            cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
-        ).show()
+            today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)
+        )
+        // Минимальная дата: сегодня для начала, дата начала (или сегодня) для конца
+        if (isStart) {
+            dialog.datePicker.minDate = today.timeInMillis
+        } else {
+            val startTag = binding.etStartDate.tag as? String
+            if (startTag != null) {
+                val startCal = Calendar.getInstance().apply {
+                    val parts = startTag.split("-")
+                    set(parts[0].toInt(), parts[1].toInt() - 1, parts[2].toInt())
+                }
+                dialog.datePicker.minDate = maxOf(today.timeInMillis, startCal.timeInMillis)
+            } else {
+                dialog.datePicker.minDate = today.timeInMillis
+            }
+        }
+        dialog.show()
     }
 
     private fun save() {

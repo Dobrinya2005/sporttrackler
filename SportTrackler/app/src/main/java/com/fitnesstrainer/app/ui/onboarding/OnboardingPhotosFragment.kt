@@ -2,6 +2,7 @@ package com.fitnesstrainer.app.ui.onboarding
 
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.result.PickVisualMediaRequest
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +30,7 @@ class OnboardingPhotosFragment : Fragment() {
     private var pendingPose: String = "front"
     private val uris = mutableMapOf<String, Uri>()
 
-    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    private val pickImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri ?: return@registerForActivityResult
         uris[pendingPose] = uri
         when (pendingPose) {
@@ -56,9 +57,10 @@ class OnboardingPhotosFragment : Fragment() {
             b.cardBack.layoutParams = params
         }
 
-        b.cardFront.setOnClickListener { pendingPose = "front"; pickImage.launch("image/*") }
-        b.cardSide.setOnClickListener  { pendingPose = "side";  pickImage.launch("image/*") }
-        b.cardBack.setOnClickListener  { pendingPose = "back";  pickImage.launch("image/*") }
+        val req = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        b.cardFront.setOnClickListener { pendingPose = "front"; pickImage.launch(req) }
+        b.cardSide.setOnClickListener  { pendingPose = "side";  pickImage.launch(req) }
+        b.cardBack.setOnClickListener  { pendingPose = "back";  pickImage.launch(req) }
 
         b.btnUpload.setOnClickListener { uploadAll() }
         b.btnSkip.setOnClickListener   { navigateToDashboard() }

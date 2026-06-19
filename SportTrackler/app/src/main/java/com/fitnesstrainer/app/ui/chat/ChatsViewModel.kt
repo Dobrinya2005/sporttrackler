@@ -57,6 +57,23 @@ class ChatsViewModel : ViewModel() {
                             unreadCount   = conv.unreadCount
                         ))
                     }
+                    // Если тренер привязан но сообщений ещё нет — всё равно показываем чат
+                    try {
+                        val trainerResp = api.getMyTrainer()
+                        if (trainerResp.isSuccessful) {
+                            val trainer = trainerResp.body()
+                            if (trainer != null && convMap[trainer.userId] == null) {
+                                list.add(ChatListItem.PersonItem(
+                                    userId      = trainer.userId,
+                                    name        = "${trainer.firstName} ${trainer.lastName}",
+                                    avatar      = trainer.avatarUrl,
+                                    lastMessage = null,
+                                    lastMessageAt = null,
+                                    unreadCount = 0
+                                ))
+                            }
+                        }
+                    } catch (_: Exception) {}
                 } else if (role == "Trainer") {
                     try {
                         val resp = api.getMyClients()

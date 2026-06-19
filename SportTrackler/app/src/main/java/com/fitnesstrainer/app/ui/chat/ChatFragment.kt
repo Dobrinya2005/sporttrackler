@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Context
+import androidx.activity.result.PickVisualMediaRequest
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -31,9 +32,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.databinding.FragmentChatBinding
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 
@@ -90,7 +93,11 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private val pickMedia = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    private val pickImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        uri ?: return@registerForActivityResult
+        sendUriAsAttachment(uri)
+    }
+    private val pickVideo = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri ?: return@registerForActivityResult
         sendUriAsAttachment(uri)
     }
@@ -142,10 +149,37 @@ class ChatFragment : Fragment() {
         val placeholder = AvatarHelper.forName(args.contactName)
         binding.ivToolbarAvatar.setImageDrawable(placeholder)
 
+        // Load real avatar from conversations
+        viewLifecycleOwner.lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val resp = com.fitnesstrainer.app.App.instance.apiService.getConversations()
+                val avatarRaw = resp.body()?.find { it.contactId == args.contactId }?.contactAvatar
+                val avatarUrl = avatarRaw?.let {
+                    if (it.startsWith("http")) it
+                    else com.fitnesstrainer.app.BuildConfig.BASE_URL.trimEnd('/') + it
+                }
+                if (!avatarUrl.isNullOrBlank()) {
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        if (_binding != null) {
+                            Glide.with(this@ChatFragment)
+                                .load(avatarUrl)
+                                .placeholder(placeholder)
+                                .circleCrop()
+                                .into(binding.ivToolbarAvatar)
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+
         binding.btnInfo.setOnClickListener {
             val msgs = viewModel.messages.value ?: emptyList()
             ChatInfoBottomSheet(args.contactId, args.contactName, msgs) { theme ->
                 binding.chatRoot.setBackgroundResource(theme.bgRes)
+                if (::adapter.isInitialized) {
+                    adapter.theme = theme
+                    adapter.notifyDataSetChanged()
+                }
             }.show(childFragmentManager, "chat_info")
         }
 
@@ -367,8 +401,8 @@ class ChatFragment : Fragment() {
             .setTitle("Вложение")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> pickMedia.launch("image/*")
-                    1 -> pickMedia.launch("video/*")
+                    0 -> pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    1 -> pickVideo.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
                     2 -> checkCameraAndRecord()
                     3 -> pickFile.launch("*/*")
                 }

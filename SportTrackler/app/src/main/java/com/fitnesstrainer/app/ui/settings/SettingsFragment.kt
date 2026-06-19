@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -35,6 +36,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import android.app.AlarmManager
 import android.content.Intent
 import android.provider.Settings
+import androidx.activity.result.PickVisualMediaRequest
 import java.io.File
 import java.io.FileOutputStream
 
@@ -43,7 +45,7 @@ class SettingsFragment : Fragment() {
     private var _b: FragmentSettingsBinding? = null
     private val b get() = _b!!
 
-    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    private val pickImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri ?: return@registerForActivityResult
         uploadAvatar(uri)
     }
@@ -83,7 +85,7 @@ class SettingsFragment : Fragment() {
         b.rowTheme.setOnClickListener { b.switchTheme.toggle() }
 
         // Аватар
-        b.btnChangeAvatar.setOnClickListener { pickImage.launch("image/*") }
+        b.btnChangeAvatar.setOnClickListener { pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
 
         // Редактирование профиля
         b.btnEditProfile.setOnClickListener { showEditProfileDialog() }
@@ -177,19 +179,26 @@ class SettingsFragment : Fragment() {
         // Выход
         b.rowLogout.setOnClickListener {
             SoundManager.playClick(it)
-            com.fitnesstrainer.app.ui.MainActivity.sessionAuthenticated = false
-            lifecycleScope.launch {
-                App.instance.tokenStorage.clearAuth()
-                App.instance.tokenStorage.clearPin()
-                val nav = androidx.navigation.Navigation.findNavController(b.root)
-                nav.navigate(R.id.loginFragment,
-                    null,
-                    androidx.navigation.NavOptions.Builder()
-                        .setPopUpTo(R.id.nav_graph, inclusive = true)
-                        .setLaunchSingleTop(true)
-                        .build()
-                )
-            }
+            AlertDialog.Builder(requireContext())
+                .setTitle("Выход из аккаунта")
+                .setMessage("Вы уверены, что хотите выйти?")
+                .setPositiveButton("Выйти") { _, _ ->
+                    com.fitnesstrainer.app.ui.MainActivity.sessionAuthenticated = false
+                    lifecycleScope.launch {
+                        App.instance.tokenStorage.clearAuth()
+                        App.instance.tokenStorage.clearPin()
+                        val nav = androidx.navigation.Navigation.findNavController(b.root)
+                        nav.navigate(R.id.loginFragment,
+                            null,
+                            androidx.navigation.NavOptions.Builder()
+                                .setPopUpTo(R.id.nav_graph, inclusive = true)
+                                .setLaunchSingleTop(true)
+                                .build()
+                        )
+                    }
+                }
+                .setNegativeButton("Отмена", null)
+                .show()
         }
     }
 

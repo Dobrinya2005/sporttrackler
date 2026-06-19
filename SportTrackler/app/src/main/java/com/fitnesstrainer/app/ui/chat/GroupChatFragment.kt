@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Context
+import androidx.activity.result.PickVisualMediaRequest
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -61,7 +62,11 @@ class GroupChatFragment : Fragment() {
         }
     }
 
-    private val pickMedia = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    private val pickImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        uri ?: return@registerForActivityResult
+        sendUriAsAttachment(uri)
+    }
+    private val pickVideo = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri ?: return@registerForActivityResult
         sendUriAsAttachment(uri)
     }
@@ -256,8 +261,8 @@ class GroupChatFragment : Fragment() {
             .setTitle("Вложение")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> pickMedia.launch("image/*")
-                    1 -> pickMedia.launch("video/*")
+                    0 -> pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    1 -> pickVideo.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
                     2 -> checkCameraAndRecord()
                     3 -> pickFile.launch("*/*")
                 }

@@ -38,6 +38,9 @@ class TrainerViewModel : ViewModel() {
     private val _trainerName = MutableLiveData<String>()
     val trainerName: LiveData<String> = _trainerName
 
+    private val _avatarUrl = MutableLiveData<String?>()
+    val avatarUrl: LiveData<String?> = _avatarUrl
+
     private val _stats = MutableLiveData<TrainerStats>()
     val stats: LiveData<TrainerStats> = _stats
 
@@ -64,6 +67,15 @@ class TrainerViewModel : ViewModel() {
             val first = tokenStorage.getFirstName() ?: ""
             val last  = tokenStorage.getLastName()  ?: ""
             _trainerName.value = "$first $last"
+            _avatarUrl.value = tokenStorage.getAvatarUrl()
+            try {
+                val resp = api.getMe()
+                if (resp.isSuccessful) {
+                    val url = resp.body()?.avatarUrl
+                    _avatarUrl.value = url
+                    if (url != null) tokenStorage.saveAvatarUrl(url)
+                }
+            } catch (_: Exception) {}
         }
     }
 

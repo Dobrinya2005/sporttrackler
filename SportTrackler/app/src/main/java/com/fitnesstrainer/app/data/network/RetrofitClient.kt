@@ -5,6 +5,7 @@ import com.fitnesstrainer.app.data.local.TokenStorage
 import com.fitnesstrainer.app.data.model.RefreshTokenRequest
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
+import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -26,35 +27,36 @@ object RetrofitClient {
     fun create(tokenStorage: TokenStorage): ApiService {
         val authenticator = object : Authenticator {
             override fun authenticate(route: Route?, response: Response): Request? {
-                // Не перехватываем 401 с auth-эндпоинтов — там это просто неверный пароль/код
-                val url = response.request.url.encodedPath
-                if (url.contains("/auth/") || url.contains("/fcm/")) return null
-                if (response.request.header("X-No-Retry") != null) return null
-                val refreshToken = runBlocking { tokenStorage.getRefreshToken() } ?: run {
-                    triggerSessionExpired(); return null
-                }
-                val refreshResponse = runBlocking {
-                    try {
-                        val tempApi = buildRetrofit(buildBaseClient().build()).create(ApiService::class.java)
-                        tempApi.refreshToken(RefreshTokenRequest(refreshToken))
-                    } catch (_: Exception) { null }
-                }
-                if (refreshResponse?.isSuccessful == true) {
-                    val body = refreshResponse.body()!!
-                    runBlocking { tokenStorage.saveAuth(
-                        body.accessToken, body.refreshToken,
-                        tokenStorage.getUserId(), tokenStorage.getUserRole() ?: "",
-                        tokenStorage.getFirstName() ?: "", tokenStorage.getLastName() ?: "",
-                        tokenStorage.getEmail() ?: "", tokenStorage.getAvatarUrl()
-                    ) }
-                    return response.request.newBuilder()
-                        .header("Authorization", "Bearer ${body.accessToken}")
-                        .build()
-                } else {
-                    runBlocking { tokenStorage.clearAuth() }
-                    triggerSessionExpired()
-                    return null
-                }
+                return try {
+                    val url = response.request.url.encodedPath
+                    if (url.contains("/auth/") || url.contains("/fcm/")) return null
+                    if (response.request.header("X-No-Retry") != null) return null
+                    val refreshToken = runBlocking { tokenStorage.getRefreshToken() } ?: run {
+                        triggerSessionExpired(); return null
+                    }
+                    val refreshResponse = runBlocking {
+                        try {
+                            val tempApi = buildRetrofit(buildBaseClient().build()).create(ApiService::class.java)
+                            tempApi.refreshToken(RefreshTokenRequest(refreshToken))
+                        } catch (_: Exception) { null }
+                    }
+                    if (refreshResponse?.isSuccessful == true) {
+                        val body = refreshResponse.body()!!
+                        runBlocking { tokenStorage.saveAuth(
+                            body.accessToken, body.refreshToken,
+                            tokenStorage.getUserId(), tokenStorage.getUserRole() ?: "",
+                            tokenStorage.getFirstName() ?: "", tokenStorage.getLastName() ?: "",
+                            tokenStorage.getEmail() ?: "", tokenStorage.getAvatarUrl()
+                        ) }
+                        response.request.newBuilder()
+                            .header("Authorization", "Bearer ${body.accessToken}")
+                            .build()
+                    } else {
+                        runBlocking { tokenStorage.clearAuth() }
+                        triggerSessionExpired()
+                        null
+                    }
+                } catch (_: Exception) { null }
             }
         }
 
@@ -99,9 +101,11 @@ object RetrofitClient {
     }
 
     private fun buildBaseClient() = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
+        .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true)
+        .connectionPool(ConnectionPool(5, 30, TimeUnit.SECONDS))
         .apply { trustAllCertificates() }
 
     private fun buildRetrofit(client: OkHttpClient) = Retrofit.Builder()

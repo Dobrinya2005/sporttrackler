@@ -204,6 +204,9 @@ interface ApiService {
     @GET("api/photos/{clientId}")
     suspend fun getPhotos(@Path("clientId") clientId: Int): Response<List<ProgressPhoto>>
 
+    @DELETE("api/photos/{photoId}")
+    suspend fun deletePhoto(@Path("photoId") photoId: Int): Response<Unit>
+
     // ── Admin ─────────────────────────────────────────────────
     @GET("api/admin/trainers")
     suspend fun adminGetTrainers(): Response<List<AdminTrainerItem>>

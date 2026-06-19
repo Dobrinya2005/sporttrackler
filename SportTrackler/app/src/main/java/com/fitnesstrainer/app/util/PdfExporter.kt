@@ -1,9 +1,14 @@
 package com.fitnesstrainer.app.util
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
 import android.graphics.pdf.PdfDocument
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.fitnesstrainer.app.data.model.MeasurementResponse
 import com.fitnesstrainer.app.data.model.MealSummary
@@ -11,6 +16,32 @@ import java.io.File
 import java.io.FileOutputStream
 
 object PdfExporter {
+
+    private fun saveToDownloads(context: Context, doc: PdfDocument, fileName: String) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val values = ContentValues().apply {
+                    put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                    put(MediaStore.Downloads.MIME_TYPE, "application/pdf")
+                    put(MediaStore.Downloads.IS_PENDING, 1)
+                }
+                val resolver = context.contentResolver
+                val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                uri?.let {
+                    resolver.openOutputStream(it)?.use { os -> doc.writeTo(os) }
+                    values.clear()
+                    values.put(MediaStore.Downloads.IS_PENDING, 0)
+                    resolver.update(it, values, null, null)
+                }
+            } else {
+                val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                FileOutputStream(File(dir, fileName)).use { doc.writeTo(it) }
+            }
+            Toast.makeText(context, "PDF сохранён в папку «Загрузки»", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            Toast.makeText(context, "Ошибка сохранения: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     fun exportMeasurements(context: Context, items: List<MeasurementResponse>, firstName: String) {
         val doc  = PdfDocument()
@@ -68,17 +99,8 @@ object PdfExporter {
 
         doc.finishPage(page)
 
-        val file = File(context.cacheDir, "measurements_${System.currentTimeMillis()}.pdf")
-        FileOutputStream(file).use { doc.writeTo(it) }
+        saveToDownloads(context, doc, "measurements_${System.currentTimeMillis()}.pdf")
         doc.close()
-
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "application/pdf"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        context.startActivity(Intent.createChooser(intent, "Поделиться PDF"))
     }
 
     fun exportFoodDiary(context: Context, meals: List<MealSummary>, date: String, firstName: String) {
@@ -145,16 +167,7 @@ object PdfExporter {
 
         doc.finishPage(page)
 
-        val file = File(context.cacheDir, "food_diary_${System.currentTimeMillis()}.pdf")
-        FileOutputStream(file).use { doc.writeTo(it) }
+        saveToDownloads(context, doc, "food_diary_${System.currentTimeMillis()}.pdf")
         doc.close()
-
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "application/pdf"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        context.startActivity(Intent.createChooser(intent, "Поделиться PDF"))
     }
 }

@@ -118,8 +118,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
-                android:inputType="text"
-                android:hint="напр. 10-12"/>
+                android:inputType="text"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

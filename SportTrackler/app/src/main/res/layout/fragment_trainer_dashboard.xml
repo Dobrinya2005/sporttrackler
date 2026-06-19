@@ -62,6 +62,14 @@
                                 android:fontFamily="sans-serif-medium"
                                 android:text="АС"/>
 
+                            <ImageView
+                                android:id="@+id/iv_avatar"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                android:visibility="gone"/>
+
                         </FrameLayout>
 
                         <LinearLayout

@@ -2,6 +2,8 @@ package com.fitnesstrainer.app.ui.photos
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -38,6 +40,9 @@ class PhotosViewModel : ViewModel() {
 
     private val _uploading = MutableLiveData(false)
     val uploading: LiveData<Boolean> = _uploading
+
+    private val _deleting = MutableLiveData(false)
+    val deleting: LiveData<Boolean> = _deleting
 
     private var targetClientId = -1
     var isOwnData = true
@@ -76,6 +81,19 @@ class PhotosViewModel : ViewModel() {
         }
     }
 
+    fun deletePhoto(photoId: Int, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            _deleting.value = true
+            try {
+                val resp = api.deletePhoto(photoId)
+                if (resp.isSuccessful) { load(); onSuccess() }
+            } catch (_: Exception) {
+            } finally {
+                _deleting.value = false
+            }
+        }
+    }
+
     fun uploadPhoto(uri: Uri, poseType: String?, description: String?) {
         viewModelScope.launch {
             _uploading.value = true
@@ -83,8 +101,26 @@ class PhotosViewModel : ViewModel() {
                 val context  = App.instance
                 val tmpFile  = withContext(Dispatchers.IO) {
                     val file = File(context.cacheDir, "upload_${System.currentTimeMillis()}.jpg")
-                    context.contentResolver.openInputStream(uri)?.use { input ->
-                        val bitmap = BitmapFactory.decodeStream(input)
+                    val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                    if (bytes != null) {
+                        // Read EXIF rotation before decoding
+                        val rotation = ExifInterface(bytes.inputStream()).let {
+                            when (it.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+                                ExifInterface.ORIENTATION_ROTATE_90  -> 90f
+                                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                                else -> 0f
+                            }
+                        }
+                        var bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        // Apply rotation from EXIF
+                        if (rotation != 0f) {
+                            val m = Matrix().apply { postRotate(rotation) }
+                            val rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, m, true)
+                            bitmap.recycle()
+                            bitmap = rotated
+                        }
+                        // Scale down if too large
                         val maxSide = 1080
                         val scaled = if (bitmap.width > maxSide || bitmap.height > maxSide) {
                             val ratio = bitmap.width.toFloat() / bitmap.height
@@ -93,9 +129,7 @@ class PhotosViewModel : ViewModel() {
                             else
                                 Bitmap.createScaledBitmap(bitmap, (maxSide * ratio).toInt(), maxSide, true)
                         } else bitmap
-                        FileOutputStream(file).use { out ->
-                            scaled.compress(Bitmap.CompressFormat.JPEG, 82, out)
-                        }
+                        FileOutputStream(file).use { out -> scaled.compress(Bitmap.CompressFormat.JPEG, 82, out) }
                         if (scaled !== bitmap) scaled.recycle()
                         bitmap.recycle()
                     }

@@ -1,18 +1,17 @@
 package com.fitnesstrainer.app.ui.photos
 
-import android.app.Activity
 import android.app.Dialog
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -33,12 +32,9 @@ class PhotosFragment : Fragment() {
     private val viewModel: PhotosViewModel by viewModels()
     private lateinit var adapter: PhotosAdapter
 
-    private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.let { uri ->
-                viewModel.uploadPhoto(uri, null, null)
-            }
-        }
+    private val pickImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        uri ?: return@registerForActivityResult
+        viewModel.uploadPhoto(uri, null, null)
     }
 
     override fun onCreateView(
@@ -56,8 +52,11 @@ class PhotosFragment : Fragment() {
                 if (!adapter.isSelecting) showFullScreen(photo.photoUrl)
             },
             onSelectionChanged = { selected ->
-                val showBar = selected.size == 2
-                binding.compareBar.visibility = if (showBar) View.VISIBLE else View.GONE
+                val count = selected.size
+                binding.compareBar.visibility = if (count >= 1) View.VISIBLE else View.GONE
+                binding.tvSelectedCount.text  = "$count фото выбрано"
+                binding.btnDelete.visibility  = if (count == 1) View.VISIBLE else View.GONE
+                binding.btnCompare.visibility = if (count == 2) View.VISIBLE else View.GONE
                 binding.fabUpload.visibility  = if (adapter.isSelecting) View.GONE else
                     if (viewModel.isOwnData) View.VISIBLE else View.GONE
             }
@@ -72,6 +71,10 @@ class PhotosFragment : Fragment() {
             val sel = adapter.getSelected()
             if (sel.size == 2) showCompareDialog(sel[0], sel[1])
         }
+        binding.btnDelete.setOnClickListener {
+            val sel = adapter.getSelected()
+            if (sel.size == 1) confirmDelete(sel[0])
+        }
 
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
 
@@ -82,8 +85,7 @@ class PhotosFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener { viewModel.load() }
 
         binding.fabUpload.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            pickImage.launch(intent)
+            pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         viewModel.init(args.clientId)
@@ -125,6 +127,17 @@ class PhotosFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun confirmDelete(photo: ProgressPhoto) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Удалить фото?")
+            .setMessage("Это действие нельзя отменить.")
+            .setPositiveButton("Удалить") { _, _ ->
+                viewModel.deletePhoto(photo.photoId) { adapter.clearSelection() }
+            }
+            .setNegativeButton("Отмена", null)
+            .show()
     }
 
     private fun showCompareDialog(p1: ProgressPhoto, p2: ProgressPhoto) {

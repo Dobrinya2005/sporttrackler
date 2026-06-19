@@ -12,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.fitnesstrainer.app.R
 import com.fitnesstrainer.app.databinding.FragmentTrainerDashboardBinding
 import com.fitnesstrainer.app.ui.news.NewsAdapter
@@ -84,6 +86,20 @@ class TrainerDashboardFragment : Fragment() {
                 .take(2)
                 .joinToString("") { it.first().uppercaseChar().toString() }
             binding.tvAvatarInitials.text = initials
+        }
+
+        viewModel.avatarUrl.observe(viewLifecycleOwner) { url ->
+            if (!url.isNullOrBlank()) {
+                binding.ivAvatar.visibility = View.VISIBLE
+                binding.tvAvatarInitials.visibility = View.GONE
+                Glide.with(this)
+                    .load(url)
+                    .transform(CircleCrop())
+                    .into(binding.ivAvatar)
+            } else {
+                binding.ivAvatar.visibility = View.GONE
+                binding.tvAvatarInitials.visibility = View.VISIBLE
+            }
         }
 
         viewModel.stats.observe(viewLifecycleOwner) { stats ->

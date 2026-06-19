@@ -38,9 +38,12 @@ object ChatThemeManager {
         ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit().putString("theme_$contactId", theme.id).apply()
 
-    fun load(ctx: Context, contactId: Int): Theme =
-        Theme.entries.find {
-            it.id == ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-                .getString("theme_$contactId", Theme.DEFAULT.id)
-        } ?: Theme.DEFAULT
+    private const val GLOBAL_ID = 0
+
+    fun load(ctx: Context, contactId: Int): Theme {
+        val prefs = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val perContact = prefs.getString("theme_$contactId", null)
+        val id = perContact ?: prefs.getString("theme_$GLOBAL_ID", Theme.DEFAULT.id) ?: Theme.DEFAULT.id
+        return Theme.entries.find { it.id == id } ?: Theme.DEFAULT
+    }
 }

@@ -1,6 +1,7 @@
 package com.fitnesstrainer.app.ui.auth
 
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,12 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val lettersOnly = InputFilter { source, start, end, _, _, _ ->
+            source.subSequence(start, end).filter { it.isLetter() || it == '-' || it == ' ' || it == '\'' }
+        }
+        binding.etFirstName.filters = arrayOf(lettersOnly)
+        binding.etLastName.filters  = arrayOf(lettersOnly)
 
         binding.btnRegister.setOnClickListener {
             val password = binding.etPassword.text.toString()

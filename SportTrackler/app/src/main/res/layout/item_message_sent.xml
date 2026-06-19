@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingVertical="4dp"
+    android:paddingVertical="2dp"
     android:paddingHorizontal="8dp"
     android:gravity="end">
 
@@ -121,6 +121,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:minWidth="180dp"
             android:maxWidth="260dp"
             android:background="@drawable/bg_message_sent"
             android:padding="10dp">
