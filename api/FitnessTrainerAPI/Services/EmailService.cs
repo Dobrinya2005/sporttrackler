@@ -23,7 +23,7 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
 
         if (string.IsNullOrEmpty(smtpHost) || string.IsNullOrEmpty(smtpUser) || string.IsNullOrEmpty(smtpPass))
         {
-            logger.LogWarning(“SMTP ne nastroyen - pismo ne otpravleno. Kod: {Code}”, code);
+            logger.LogWarning("SMTP ne nastroyen - pismo ne otpravleno. Kod: {Code}", code);
             return;
         }
 
